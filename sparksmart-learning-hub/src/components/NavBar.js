@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import lightbulbIcon from '../assets/lightbulb.png';
 
 const NavBarContainer = styled.nav`
   position: fixed;
@@ -10,22 +11,22 @@ const NavBarContainer = styled.nav`
   color: #FFD900;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
+  padding: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 `;
 
 const NavLinks = styled.div`
   display: flex;
-  align-items: center;
+  gap: 1rem;
 `;
 
 const NavLink = styled(Link)`
+  display: flex;
+  align-items: center;
   color: #FFD900;
   text-decoration: none;
   font-weight: bold;
-  margin-right: 2rem;
   &:hover {
     color: #FFFFFF;
   }
@@ -33,30 +34,37 @@ const NavLink = styled(Link)`
 
 const LoginButton = styled(Link)`
   color: #FFD900;
-  margin-right: 5rem;
   text-decoration: none;
+  margin-right: 2rem;
   font-weight: bold;
   &:hover {
     color: #FFFFFF;
   }
 `;
 
-const ProfileImg = styled.img`
+const ProfileLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  margin-right: 2rem;
+`;
+
+const ProfileImage = styled.img`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  margin-right: 5rem;
 `;
 
 const NavBar = ({ user }) => (
   <NavBarContainer>
     <NavLinks>
-      <NavLink to="/">Home</NavLink>
+      <NavLink to="/">
+        <img src={lightbulbIcon} alt="Home" style={{ width: '30px', height: '30px' }} />
+      </NavLink>
     </NavLinks>
     {user ? (
-      <NavLink to="/profile">
-        <ProfileImg src={user.photoURL} alt={user.displayName} />
-      </NavLink>
+      <ProfileLink to="/profile">
+        <ProfileImage src={user.photoURL} alt={user.displayName} />
+      </ProfileLink>
     ) : (
       <LoginButton to="/login">Login</LoginButton>
     )}

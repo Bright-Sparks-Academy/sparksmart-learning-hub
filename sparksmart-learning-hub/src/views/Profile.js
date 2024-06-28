@@ -1,127 +1,99 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { auth, updateProfile, updateUserProfile, logOut } from '../firebaseConfig';
+import { updateUserProfile, uploadAvatar, auth } from '../firebaseConfig';
 
-const PageContainer = styled.div`
-  margin-top: 80px;
-  padding: 2rem;
-  font-family: 'Gotham', 'Quicksand', sans-serif;
-  background-color: #FFFFFF;
-  color: #000000;
+const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 2rem;
+  font-family: 'Gotham', 'Quicksand', sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 2rem auto;
 `;
 
-const Avatar = styled.img`
+const ProfileImage = styled.img`
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  width: 100px;
-  height: 100px;
-`;
-
-const Heading = styled.h1`
-  font-size: 3rem;
-  font-weight: bold;
-  color: #000000;
-`;
-
-const Subheading = styled.p`
-  font-size: 1.5rem;
-  color: #FFD900;
-`;
-
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #FFD900;
-  color: #000000;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 5px;
-  margin-top: 1rem;
-  &:hover {
-    background-color: #FFC700;
-  }
+  margin-bottom: 1rem;
 `;
 
 const Input = styled.input`
   padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  width: 100%;
+`;
+
+const Button = styled.button`
+  background-color: #FFD900;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-weight: bold;
+  margin: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  &:hover {
+    background-color: #FFC300;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
   margin-top: 1rem;
-  font-size: 1rem;
 `;
 
 const Profile = ({ user, role }) => {
-  const [editingName, setEditingName] = useState(false);
-  const [editingAvatar, setEditingAvatar] = useState(false);
-  const [name, setName] = useState(user.displayName);
+  const [displayName, setDisplayName] = useState(user.displayName);
   const [avatar, setAvatar] = useState(user.photoURL);
+  const [error, setError] = useState(null);
 
-  const handleUpdateProfile = async () => {
+  const handleNameChange = async () => {
     try {
-      // Update Firebase Auth profile
-      await updateProfile(auth.currentUser, {
-        displayName: name,
-        photoURL: avatar
-      });
-
-      // Update Firestore document
-      await updateUserProfile(user.uid, {
-        displayName: name,
-        photoURL: avatar
-      });
-
-      setEditingName(false);
-      setEditingAvatar(false);
-      alert('Profile updated successfully');
+      await updateUserProfile(user.uid, { displayName });
+      await auth.currentUser.updateProfile({ displayName });
+      setError(null);
     } catch (error) {
-      console.error("Error updating profile:", error);
-      alert(`Failed to update profile: ${error.message}`);
+      setError("Failed to update profile");
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await logOut();
-      window.location.href = '/';
-    } catch (error) {
-      console.error("Error logging out:", error);
-      alert('Failed to log out');
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const avatarURL = await uploadAvatar(file, user.uid);
+        await updateUserProfile(user.uid, { photoURL: avatarURL });
+        await auth.currentUser.updateProfile({ photoURL: avatarURL });
+        setAvatar(avatarURL);
+        setError(null);
+      } catch (error) {
+        setError("Failed to update avatar");
+      }
     }
   };
 
   return (
-    <PageContainer>
-      <Avatar src={avatar} alt="Avatar" />
-      <Heading>{name}</Heading>
-      <Subheading>Your Role: {role}</Subheading>
-      {editingName ? (
-        <>
-          <Input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter new name"
-          />
-          <Button onClick={handleUpdateProfile}>Save Name</Button>
-        </>
-      ) : (
-        <Button onClick={() => setEditingName(true)}>Edit Name</Button>
-      )}
-      {editingAvatar ? (
-        <>
-          <Input
-            type="text"
-            value={avatar}
-            onChange={(e) => setAvatar(e.target.value)}
-            placeholder="Enter new avatar URL"
-          />
-          <Button onClick={handleUpdateProfile}>Save Avatar</Button>
-        </>
-      ) : (
-        <Button onClick={() => setEditingAvatar(true)}>Edit Avatar</Button>
-      )}
-      <Button onClick={handleLogout}>Log Out</Button>
-    </PageContainer>
+    <ProfileContainer>
+      <ProfileImage src={avatar} alt={displayName} />
+      <h2>{displayName}</h2>
+      <p>Your Role: {role}</p>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      <Input
+        type="text"
+        value={displayName}
+        onChange={(e) => setDisplayName(e.target.value)}
+        placeholder="Enter new display name"
+      />
+      <Button onClick={handleNameChange}>Save Name</Button>
+      <Input type="file" accept="image/*" onChange={handleAvatarChange} />
+      <Button onClick={() => auth.signOut()}>Log Out</Button>
+    </ProfileContainer>
   );
 };
 
