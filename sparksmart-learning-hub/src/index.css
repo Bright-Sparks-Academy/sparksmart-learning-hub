@@ -1,12 +1,15 @@
-
-body {
+body, html {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow-x: hidden; 
   font-family: 'Gotham', 'Quicksand', sans-serif;
-  background-color: #FFFFFF;
-  color: #000000;
-  overflow-x: hidden;
 }
+
+#root {
+  height: 100%;
+}
+
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -23,3 +26,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #FFD900;
 }
+
+
+

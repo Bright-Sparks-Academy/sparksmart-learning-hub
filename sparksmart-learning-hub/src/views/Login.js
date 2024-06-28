@@ -2,67 +2,78 @@ import React from 'react';
 import styled from 'styled-components';
 import { signInWithGoogle } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/lightbulb.png';
 
 const PageContainer = styled.div`
-  margin-top: 80px;
-  padding: 2rem;
-  font-family: 'Gotham', 'Quicksand', sans-serif;
-  background-color: #FFFFFF;
-  color: #000000;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #FFD700;
+`;
+
+const Card = styled.div`
+  background-color: #f5f5dc;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+`;
+
+const Logo = styled.img`
+  width: 50px;
+  height: 50px;
+  margin-bottom: 1rem;
 `;
 
 const Heading = styled.h1`
-  font-size: 3rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #000000;
+  margin-bottom: 1rem;
+  font-family: 'Gotham', 'Quicksand', sans-serif;
 `;
 
 const Button = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #FFD900;
+  background-color: #d3d3d3;
   color: #000000;
   border: none;
-  cursor: pointer;
+  border-radius: 30px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
   font-weight: bold;
-  border-radius: 5px;
+  margin-top: 1rem;
+  width: 200px;
+  cursor: pointer;
   &:hover {
-    background-color: #FFC700;
+    background-color: #c0c0c0;
   }
 `;
 
-const roles = {
-  "student@example.com": "student",
-  "teacher@example.com": "teacher",
-  "admin@example.com": "admin",
-  // Add more emails and roles as needed
-};
-
-const getRole = (email) => {
-  return roles[email] || "member";
-};
-
-const Login = ({ onLogin }) => {
+const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const user = await signInWithGoogle();
-      const userRole = getRole(user.email);
-      onLogin(userRole, user);
+      await signInWithGoogle();
       navigate('/');
     } catch (error) {
-      console.error("Error during sign-in:", error);
-      alert('Failed to sign in');
+      console.error("Error signing in with Google:", error);
     }
+  };
+
+  const handleSignupRedirect = () => {
+    window.location.href = 'https://tally.so/r/mO4r8A';
   };
 
   return (
     <PageContainer>
-      <Heading>Login</Heading>
-      <Button onClick={handleLogin}>Sign in with Google</Button>
+      <Card>
+        <Logo src={logo} alt="Lightbulb Logo" />
+        <Heading>SparkSmart Learning Hub</Heading>
+        <Button onClick={handleLogin}>Login</Button>
+        <Button onClick={handleSignupRedirect}>Sign up</Button>
+      </Card>
     </PageContainer>
   );
 };

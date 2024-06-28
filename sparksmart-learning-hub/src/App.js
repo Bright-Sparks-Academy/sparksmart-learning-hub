@@ -9,6 +9,7 @@ import TeacherDashboard from './views/TeacherDashboard';
 import StudentDashboard from './views/StudentDashboard';
 import { auth } from './firebaseConfig';
 import { getRole } from './roles';
+import GlobalStyle from './GlobalStyles';
 
 const App = () => {
   const [role, setRole] = useState(null);
@@ -18,8 +19,8 @@ const App = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         const userRole = getRole(user.email);
-        if (userRole === "member") {
-          window.location.href = "https://www.brightsparks.academy";
+        if (userRole === 'member') {
+          window.location.href = 'https://www.brightsparks.academy';
         } else {
           setUser(user);
           setRole(userRole);
@@ -40,16 +41,17 @@ const App = () => {
 
   return (
     <Router>
-      <NavBar user={user} role={role} />
+      <GlobalStyle />
+      <NavBar user={user} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         {user && (
           <>
             <Route path="/profile" element={<Profile user={user} role={role} />} />
-            {role === "admin" && <Route path="/admin/dashboard" element={<AdminDashboard />} />}
-            {role === "teacher" && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
-            {role === "student" && <Route path="/student/dashboard" element={<StudentDashboard />} />}
+            {role === 'admin' && <Route path="/admin/dashboard" element={<AdminDashboard />} />}
+            {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
+            {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
           </>
         )}
         <Route path="*" element={<Navigate to="/" />} />

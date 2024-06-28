@@ -10,20 +10,22 @@ const NavBarContainer = styled.nav`
   color: #FFD900;
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
+  align-items: center;
+  padding: 1rem 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 `;
 
 const NavLinks = styled.div`
   display: flex;
-  gap: 1rem;
+  align-items: center;
 `;
 
 const NavLink = styled(Link)`
   color: #FFD900;
   text-decoration: none;
   font-weight: bold;
+  margin-right: 2rem;
   &:hover {
     color: #FFFFFF;
   }
@@ -31,6 +33,7 @@ const NavLink = styled(Link)`
 
 const LoginButton = styled(Link)`
   color: #FFD900;
+  margin-right: 5rem;
   text-decoration: none;
   font-weight: bold;
   &:hover {
@@ -38,26 +41,22 @@ const LoginButton = styled(Link)`
   }
 `;
 
-const Avatar = styled.img`
-  border-radius: 50%;
+const ProfileImg = styled.img`
   width: 40px;
   height: 40px;
-  margin-right: 10px;
+  border-radius: 50%;
+  margin-right: 5rem;
 `;
 
-const NavBar = ({ user, role }) => (
+const NavBar = ({ user }) => (
   <NavBarContainer>
     <NavLinks>
       <NavLink to="/">Home</NavLink>
-      {user && role !== 'member' && <NavLink to={`/${role}/dashboard`}>Dashboard</NavLink>}
-      {user && <NavLink to="/profile">Profile</NavLink>}
     </NavLinks>
     {user ? (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar src={user.photoURL} alt="Avatar" />
-        <NavLink to="/profile">{user.displayName}</NavLink>
-        <LoginButton to="/logout">Logout</LoginButton>
-      </div>
+      <NavLink to="/profile">
+        <ProfileImg src={user.photoURL} alt={user.displayName} />
+      </NavLink>
     ) : (
       <LoginButton to="/login">Login</LoginButton>
     )}
