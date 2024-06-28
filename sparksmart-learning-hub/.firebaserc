@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "default": "bright-sparks-22e8c"
+  },
+  "dataconnectEmulatorConfig": {
+    "postgres": {
+      "localConnectionString": "postgresql://localhost:5432?sslmode=disable"
+    }
+  }
+}
