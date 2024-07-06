@@ -1,6 +1,6 @@
 // Firestore.js
 import { db } from "./firebaseConfig";
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
 
 /**
  * Adds a new document to a specified Firestore collection.
@@ -94,4 +94,26 @@ const addMessage = async (sender, recipient, content) => {
   }
 };
 
-export { addData, getData, updateData, deleteData, addMessage };
+/**
+ * Listens for real-time updates to messages in Firestore.
+ * Function created by Tom Wang.
+ * @param {string} userEmail - The email of the current user.
+ * @param {string} recipientEmail - The email of the recipient.
+ * @param {function} callback - The callback function to handle new messages.
+ * @returns {function} - Unsubscribe function to stop listening for updates.
+ * @throws Will throw an error if the messages cannot be retrieved.
+ */
+const listenForMessages = (userEmail, recipientEmail, callback) => {
+  const q = query(
+    collection(db, 'messages'),
+    where('sender', 'in', [userEmail, recipientEmail]),
+    where('recipient', 'in', [userEmail, recipientEmail]),
+    orderBy('timestamp', 'asc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const messages = snapshot.docs.map(doc => doc.data());
+    callback(messages);
+  });
+};
+
+export { addData, getData, updateData, deleteData, addMessage, listenForMessages };
