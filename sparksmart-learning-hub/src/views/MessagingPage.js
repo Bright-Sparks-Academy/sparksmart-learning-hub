@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { addMessage, listenForMessages } from './Firestore';
 import { auth } from './firebaseConfig';
+import MessageForm from './MessageForm';
 
 /**
  * PageContainer is the main container for the MessagingPage.
@@ -104,7 +105,13 @@ const MessagingPage = () => {
     <PageContainer>
       <Heading>Messaging</Heading>
       <Subheading>Send a Message</Subheading>
-      {/* MessageForm component will be added here */}
+      <MessageForm
+        message={message}
+        setMessage={setMessage}
+        recipient={recipient}
+        setRecipient={setRecipient}
+        onSend={handleSendMessage}
+      />
       <Subheading>Past Messages</Subheading>
       {/* MessageList component will be added here */}
     </PageContainer>
