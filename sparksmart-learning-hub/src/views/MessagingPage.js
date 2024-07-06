@@ -7,6 +7,7 @@ import { addMessage, listenForMessages } from './Firestore';
 import { auth } from './firebaseConfig';
 import MessageForm from './MessageForm';
 import MessageList from './MessageList';
+import ContactList from './ContactList'; // Import ContactList component
 
 /**
  * PageContainer is the main container for the MessagingPage.
@@ -19,6 +20,31 @@ const PageContainer = styled.div`
   background-color: #FFFFFF;
   color: #000000;
   padding: 2rem;
+`;
+
+/**
+ * MainSection is a styled-component for the main section of the page.
+ * Created by Tom Wang.
+ */
+const MainSection = styled.main`
+  display: flex;
+`;
+
+/**
+ * Sidebar is a styled-component for the sidebar section.
+ * Created by Tom Wang.
+ */
+const Sidebar = styled.div`
+  width: 300px;
+  margin-right: 2rem;
+`;
+
+/**
+ * ContentArea is a styled-component for the main content area.
+ * Created by Tom Wang.
+ */
+const ContentArea = styled.div`
+  flex: 1;
 `;
 
 /**
@@ -48,7 +74,7 @@ const Subheading = styled.h2`
 
 /**
  * MessagingPage component renders the main messaging interface.
- * It includes MessageForm and MessageList components.
+ * It includes ContactList, MessageForm, and MessageList components.
  * This component is the entry point for the messaging feature.
  * Created by Tom Wang.
  */
@@ -105,16 +131,23 @@ const MessagingPage = () => {
   return (
     <PageContainer>
       <Heading>Messaging</Heading>
-      <Subheading>Send a Message</Subheading>
-      <MessageForm
-        message={message}
-        setMessage={setMessage}
-        recipient={recipient}
-        setRecipient={setRecipient}
-        onSend={handleSendMessage}
-      />
-      <Subheading>Past Messages</Subheading>
-      <MessageList messages={messages} />
+      <MainSection>
+        <Sidebar>
+          <ContactList setRecipient={setRecipient} />
+        </Sidebar>
+        <ContentArea>
+          <Subheading>Send a Message</Subheading>
+          <MessageForm
+            message={message}
+            setMessage={setMessage}
+            recipient={recipient}
+            setRecipient={setRecipient}
+            onSend={handleSendMessage}
+          />
+          <Subheading>Past Messages</Subheading>
+          <MessageList messages={messages} />
+        </ContentArea>
+      </MainSection>
     </PageContainer>
   );
 };
