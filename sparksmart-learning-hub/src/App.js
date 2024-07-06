@@ -11,21 +11,30 @@ import { auth } from './firebaseConfig';
 import { getRole } from './roles';
 import GlobalStyle from './GlobalStyles';
 
-const App = () => {
+const App = () =>
+{
   const [role, setRole] = useState(null);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
+  useEffect(() =>
+  {
+    const unsubscribe = auth.onAuthStateChanged((user) =>
+    {
+      if (user)
+      {
         const userRole = getRole(user.email);
-        if (userRole === 'member') {
+        if (userRole === 'member')
+        {
           window.location.href = 'https://www.brightsparks.academy';
-        } else {
+        }
+        else
+        {
           setUser(user);
           setRole(userRole);
         }
-      } else {
+      }
+      else
+      {
         setUser(null);
         setRole(null);
       }
@@ -34,7 +43,8 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = (userRole, user) => {
+  const handleLogin = (userRole, user) =>
+  {
     setRole(userRole);
     setUser(user);
   };
