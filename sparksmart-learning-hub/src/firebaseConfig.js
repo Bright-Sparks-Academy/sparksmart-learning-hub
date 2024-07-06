@@ -1,3 +1,6 @@
+// src/firebaseConfig.js
+// Author: Tom Wang
+
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { getFirestore, doc, updateDoc, setDoc } from "firebase/firestore";
@@ -16,12 +19,25 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// Get a reference to the auth service
 const auth = getAuth(app);
+
+// Get a reference to the Firestore service
 const db = getFirestore(app);
+
+// Get a reference to the storage service
 const storage = getStorage(app);
 
+// Initialize Google Auth Provider
 const googleProvider = new GoogleAuthProvider();
 
+/**
+ * Signs in a user using Google authentication.
+ * Function created by Tom Wang.
+ * @returns {Promise<Object>} - The signed-in user object.
+ * @throws Will throw an error if the sign-in process fails.
+ */
 const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
@@ -42,6 +58,12 @@ const signInWithGoogle = async () => {
   }
 };
 
+/**
+ * Logs out the currently signed-in user.
+ * Function created by Tom Wang.
+ * @returns {Promise<void>}
+ * @throws Will throw an error if the sign-out process fails.
+ */
 const logOut = async () => {
   try {
     await signOut(auth);
@@ -51,6 +73,14 @@ const logOut = async () => {
   }
 };
 
+/**
+ * Updates a user profile in Firestore.
+ * Function created by Tom Wang.
+ * @param {string} uid - The user ID.
+ * @param {Object} data - The new user data.
+ * @returns {Promise<void>}
+ * @throws Will throw an error if the update process fails.
+ */
 const updateUserProfile = async (uid, data) => {
   try {
     const userDocRef = doc(db, "users", uid);
@@ -61,6 +91,14 @@ const updateUserProfile = async (uid, data) => {
   }
 };
 
+/**
+ * Uploads a user avatar to Firebase Storage.
+ * Function created by Tom Wang.
+ * @param {File} file - The file to upload.
+ * @param {string} userId - The user ID.
+ * @returns {Promise<string>} - The download URL of the uploaded file.
+ * @throws Will throw an error if the upload process fails.
+ */
 const uploadAvatar = async (file, userId) => {
   try {
     const storageRef = ref(storage, `avatars/${userId}`);
@@ -74,4 +112,3 @@ const uploadAvatar = async (file, userId) => {
 };
 
 export { auth, db, signInWithGoogle, logOut, updateUserProfile, uploadAvatar };
-
