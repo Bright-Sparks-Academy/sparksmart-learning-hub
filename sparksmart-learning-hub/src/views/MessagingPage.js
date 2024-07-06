@@ -1,8 +1,10 @@
 // src/views/MessagingPage.js
 // Author: Tom Wang
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { addMessage, listenForMessages } from './Firestore';
+import { auth } from './firebaseConfig';
 
 /**
  * PageContainer is the main container for the MessagingPage.
@@ -49,26 +51,54 @@ const Subheading = styled.h2`
  * Created by Tom Wang.
  */
 const MessagingPage = () => {
-  /**
-   * State for managing the list of messages.
-   * This will be used to store the messages fetched from Firestore.
-   * Created by Tom Wang.
-   */
+  // State for managing the list of messages
   const [messages, setMessages] = useState([]);
 
-  /**
-   * State for managing the input message.
-   * This will be used to store the content of the message being typed by the user.
-   * Created by Tom Wang.
-   */
+  // State for managing the input message
   const [message, setMessage] = useState("");
 
+  // State for managing the recipient of the message
+  const [recipient, setRecipient] = useState("");
+
+  // Get the current authenticated user
+  const user = auth.currentUser;
+
   /**
-   * State for managing the recipient of the message.
-   * This will be used to store the email of the recipient to whom the message will be sent.
+   * useEffect hook to listen for real-time updates to messages.
+   * It sets up a Firestore listener when the user and recipient are set.
+   * The listener is cleaned up when the component is unmounted or the dependencies change.
    * Created by Tom Wang.
    */
-  const [recipient, setRecipient] = useState("");
+  useEffect(() => {
+    let unsubscribe;
+    if (user && recipient) {
+      unsubscribe = listenForMessages(user.email, recipient, (msgs) => {
+        setMessages(msgs);
+      });
+    }
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user, recipient]);
+
+  /**
+   * handleSendMessage function to send a new message.
+   * It uses the addMessage function from Firestore to add a new message document.
+   * If an error occurs, it is logged to the console.
+   * Created by Tom Wang.
+   * @param {string} content - The content of the message to be sent.
+   */
+  const handleSendMessage = async (content) => {
+    if (user) {
+      try {
+        await addMessage(user.email, recipient, content);
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
+  };
 
   return (
     <PageContainer>
