@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { addMessage, listenForMessages } from './Firestore';
 import { auth } from './firebaseConfig';
 import MessageForm from './MessageForm';
+import MessageList from './MessageList';
 
 /**
  * PageContainer is the main container for the MessagingPage.
@@ -47,7 +48,7 @@ const Subheading = styled.h2`
 
 /**
  * MessagingPage component renders the main messaging interface.
- * It includes placeholders for MessageForm and MessageList components.
+ * It includes MessageForm and MessageList components.
  * This component is the entry point for the messaging feature.
  * Created by Tom Wang.
  */
@@ -113,7 +114,7 @@ const MessagingPage = () => {
         onSend={handleSendMessage}
       />
       <Subheading>Past Messages</Subheading>
-      {/* MessageList component will be added here */}
+      <MessageList messages={messages} />
     </PageContainer>
   );
 };
