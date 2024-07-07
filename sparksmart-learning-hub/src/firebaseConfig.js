@@ -1,12 +1,15 @@
-// src/firebaseConfig.js
-// Author: Tom Wang
-
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { getFirestore, doc, updateDoc, setDoc } from "firebase/firestore";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-// Firebase configuration
+// Author: Tom Wang
+// This configuration initializes Firebase and provides authentication, Firestore, and storage functionality.
+
+/**
+ * Firebase configuration object containing API keys and identifiers.
+ * Created by Tom Wang.
+ */
 const firebaseConfig = {
   apiKey: "AIzaSyBMsiL4J0x7cbie4Tm7QNkt7Cs6dpHFtZo",
   authDomain: "bright-sparks-22e8c.firebaseapp.com",
@@ -19,96 +22,89 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Get a reference to the auth service
 const auth = getAuth(app);
-
-// Get a reference to the Firestore service
 const db = getFirestore(app);
-
-// Get a reference to the storage service
 const storage = getStorage(app);
 
-// Initialize Google Auth Provider
-const googleProvider = new GoogleAuthProvider();
+/**
+ * Mock user object for testing purposes.
+ * This is used in place of a real authenticated user during development.
+ * Created by Tom Wang.
+ */
+const mockUser = {
+  email: "testuser@example.com",
+  displayName: "Test User",
+  uid: "testuid123",
+  photoURL: "/src/assets/user-avatar_6596121.png" // Update this path as needed
+};
 
 /**
- * Signs in a user using Google authentication.
- * Function created by Tom Wang.
- * @returns {Promise<Object>} - The signed-in user object.
- * @throws Will throw an error if the sign-in process fails.
+ * Function to handle sign-in with Google using Firebase authentication.
+ * It uses a GoogleAuthProvider to open a sign-in popup and returns the signed-in user.
+ * If sign-in is successful, user data is optionally saved to Firestore.
+ * Created by Tom Wang.
+ * @returns {Promise<User | void>} The signed-in user object or void if an error occurs.
  */
 const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
   try {
-    const result = await signInWithPopup(auth, googleProvider);
+    const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    
-    // Ensure Firestore has the user document
-    const userDocRef = doc(db, "users", user.uid);
-    await setDoc(userDocRef, {
+    console.log("Signed in user:", user);
+    // Optionally, save user data to Firestore
+    await setDoc(doc(db, "users", user.uid), {
       displayName: user.displayName,
-      photoURL: user.photoURL,
-      email: user.email
+      email: user.email,
+      photoURL: user.photoURL
     }, { merge: true });
-
     return user;
   } catch (error) {
-    console.error("Error signing in with Google:", error);
-    throw error;
+    console.error("Error during sign-in:", error);
   }
 };
 
 /**
- * Logs out the currently signed-in user.
- * Function created by Tom Wang.
- * @returns {Promise<void>}
- * @throws Will throw an error if the sign-out process fails.
+ * Function to handle user sign-out using Firebase authentication.
+ * It signs out the current user and logs the action.
+ * Created by Tom Wang.
+ * @returns {Promise<void>} Resolves when the user is signed out.
  */
 const logOut = async () => {
   try {
     await signOut(auth);
+    console.log("User logged out");
   } catch (error) {
-    console.error("Error logging out:", error);
-    throw error;
+    console.error("Error during sign-out:", error);
   }
 };
 
 /**
- * Updates a user profile in Firestore.
- * Function created by Tom Wang.
- * @param {string} uid - The user ID.
- * @param {Object} data - The new user data.
- * @returns {Promise<void>}
- * @throws Will throw an error if the update process fails.
+ * Function to update a user's profile in Firestore.
+ * It updates the user document with the given data, merging with existing data.
+ * Created by Tom Wang.
+ * @param {string} uid - The user's unique ID.
+ * @param {Object} data - The data to update in the user's profile.
+ * @returns {Promise<void>} Resolves when the user's profile is updated.
  */
 const updateUserProfile = async (uid, data) => {
-  try {
-    const userDocRef = doc(db, "users", uid);
-    await updateDoc(userDocRef, data);
-  } catch (error) {
-    console.error("Error updating Firestore user document:", error);
-    throw error;
-  }
+  const userDocRef = doc(db, "users", uid);
+  await setDoc(userDocRef, data, { merge: true });
 };
 
 /**
- * Uploads a user avatar to Firebase Storage.
- * Function created by Tom Wang.
+ * Function to upload a user's avatar to Firebase Storage.
+ * It uploads the given file to the specified storage reference and returns the download URL.
+ * Created by Tom Wang.
  * @param {File} file - The file to upload.
- * @param {string} userId - The user ID.
- * @returns {Promise<string>} - The download URL of the uploaded file.
- * @throws Will throw an error if the upload process fails.
+ * @param {string} userId - The user's unique ID.
+ * @returns {Promise<string>} The download URL of the uploaded file.
  */
 const uploadAvatar = async (file, userId) => {
-  try {
-    const storageRef = ref(storage, `avatars/${userId}`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
-  } catch (error) {
-    console.error("Error uploading avatar:", error);
-    throw error;
-  }
+  const storageRef = ref(storage, `avatars/${userId}`);
+  await uploadBytes(storageRef, file);
+  const downloadURL = await getDownloadURL(storageRef);
+  return downloadURL;
 };
 
-export { auth, db, signInWithGoogle, logOut, updateUserProfile, uploadAvatar };
+// Exporting the functions and mockUser for use in other parts of the application
+export { auth, db, signInWithGoogle, logOut, updateUserProfile, uploadAvatar, mockUser };
