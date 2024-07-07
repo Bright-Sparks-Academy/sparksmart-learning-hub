@@ -1,4 +1,3 @@
-// Firestore.js
 import { db } from "./firebaseConfig";
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore"; // Import necessary Firestore functions
 
@@ -8,6 +7,7 @@ import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, o
  * @param {Object} data - The data to be added to the collection.
  * @returns {Promise<string>} - The ID of the newly created document.
  * @throws Will throw an error if the document cannot be added.
+ * Function created by Tom Wang.
  */
 const addData = async (collectionName, data) => {
   try {
@@ -25,6 +25,7 @@ const addData = async (collectionName, data) => {
  * @param {string} collectionName - The name of the Firestore collection.
  * @returns {Promise<Array>} - An array of objects containing the document data.
  * @throws Will throw an error if the documents cannot be retrieved.
+ * Function created by Tom Wang.
  */
 const getData = async (collectionName) => {
   try {
@@ -45,6 +46,7 @@ const getData = async (collectionName) => {
  * @param {Object} data - The new data to update in the document.
  * @returns {Promise<void>}
  * @throws Will throw an error if the document cannot be updated.
+ * Function created by Tom Wang.
  */
 const updateData = async (collectionName, docId, data) => {
   try {
@@ -63,6 +65,7 @@ const updateData = async (collectionName, docId, data) => {
  * @param {string} docId - The ID of the document to delete.
  * @returns {Promise<void>}
  * @throws Will throw an error if the document cannot be deleted.
+ * Function created by Tom Wang.
  */
 const deleteData = async (collectionName, docId) => {
   try {
@@ -77,21 +80,26 @@ const deleteData = async (collectionName, docId) => {
 
 /**
  * Adds a message to the Firestore messages collection.
- * Function created by Tom Wang.
- * @param {string} sender - The email of the sender.
- * @param {string} recipient - The email of the recipient.
+ * @param {string} senderEmail - The email of the sender.
+ * @param {string} recipientEmail - The email of the recipient.
  * @param {string} content - The content of the message.
  * @returns {Promise<void>}
  * @throws Will throw an error if the message cannot be added.
+ * Function created by Tom Wang.
  */
-const addMessage = async (sender, recipient, content) => {
+const addMessage = async (senderEmail, recipientEmail, content) => {
+  if (!senderEmail || !recipientEmail || !content) {
+    console.error('Missing required fields for adding message:', { senderEmail, recipientEmail, content });
+    throw new Error('Missing required fields for adding message.');
+  }
+
   try {
-    console.log(`Adding message from ${sender} to ${recipient}: ${content}`);
+    console.log(`Adding message from ${senderEmail} to ${recipientEmail}: ${content}`);
     await addDoc(collection(db, 'messages'), {
-      sender,
-      recipient,
+      sender: senderEmail,
+      recipient: recipientEmail,
       content,
-      timestamp: serverTimestamp()  // Ensure a timestamp is added
+      timestamp: serverTimestamp()
     });
   } catch (error) {
     console.error('Error adding message:', error);
@@ -101,14 +109,19 @@ const addMessage = async (sender, recipient, content) => {
 
 /**
  * Listens for real-time updates to messages in Firestore.
- * Function created by Tom Wang.
  * @param {string} userEmail - The email of the current user.
  * @param {string} recipientEmail - The email of the recipient.
  * @param {function} callback - The callback function to handle new messages.
  * @returns {function} - Unsubscribe function to stop listening for updates.
  * @throws Will throw an error if the messages cannot be retrieved.
+ * Function created by Tom Wang.
  */
 const listenForMessages = (userEmail, recipientEmail, callback) => {
+  if (!userEmail || !recipientEmail) {
+    console.error('Missing required fields for listening to messages:', { userEmail, recipientEmail });
+    throw new Error('Missing required fields for listening to messages.');
+  }
+
   console.log(`Listening for messages between ${userEmail} and ${recipientEmail}`);
   const q = query(
     collection(db, 'messages'),
