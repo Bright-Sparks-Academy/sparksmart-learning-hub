@@ -1,105 +1,153 @@
-// src/views/MessagingPage.js
-// Author: Tom Wang
-
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { addMessage, listenForMessages } from './Firestore';
-import { auth } from './firebaseConfig';
+import { addMessage, listenForMessages } from '../Firestore';
+import { mockUser } from '../firebaseConfig'; // Ensure the correct import path
 import MessageForm from './MessageForm';
 import MessageList from './MessageList';
-import ContactList from './ContactList'; // Import ContactList component
+import LightBulbAnimation from '../components/LightBulbAnimation';
 
-/**
- * PageContainer is the main container for the MessagingPage.
- * It uses styled-components for styling.
- * This component sets the font family, background color, text color, and padding.
- * Created by Tom Wang.
- */
+// Styled component for the page container
 const PageContainer = styled.div`
-  font-family: 'Gotham', 'Quicksand', sans-serif;
-  background-color: #FFFFFF;
-  color: #000000;
-  padding: 2rem;
-`;
-
-/**
- * MainSection is a styled-component for the main section of the page.
- * Created by Tom Wang.
- */
-const MainSection = styled.main`
   display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Quicksand', sans-serif;
+  background-color: #f9f9f9;
+  color: #000000;
 `;
 
-/**
- * Sidebar is a styled-component for the sidebar section.
- * Created by Tom Wang.
- */
-const Sidebar = styled.div`
-  width: 300px;
-  margin-right: 2rem;
+// Styled component for the messaging box
+const MessagingBox = styled.div`
+  width: 80%;
+  max-width: 1000px;
+  height: 80%;
+  border: 12px solid #FFD900;
+  border-radius: 30px;
+  background-color: #EDEDED;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  position: relative;
 `;
 
-/**
- * ContentArea is a styled-component for the main content area.
- * Created by Tom Wang.
- */
-const ContentArea = styled.div`
-  flex: 1;
+// Styled component for the header
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #FFD900;
+  border-radius: 8px;
+  margin-bottom: 10px;
 `;
 
-/**
- * Heading is a styled-component for the main heading of the page.
- * It sets the font size, font weight, text color, text alignment, and margin.
- * Created by Tom Wang.
- */
+// Styled component for the centered title
+const CenteredTitle = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+`;
+
+// Styled component for the heading
 const Heading = styled.h1`
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #000000;
-  text-align: center;
-  margin-bottom: 1.5rem;
+  margin: 0;
 `;
 
-/**
- * Subheading is a styled-component for the subheadings on the page.
- * It sets the font size, text color, text alignment, and margin.
- * Created by Tom Wang.
- */
+// Styled component for the dropdown
+const Dropdown = styled.select`
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+`;
+
+// Styled component for the light bulb container
+const LightBulbContainer = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+`;
+
+// Styled component for the content wrapper
+const ContentWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  background-color: #D3D3D3;
+  border-radius: 10px;
+  padding: 10px;
+`;
+
+// Styled component for the content area
+const ContentArea = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #CFCFCF;
+  border-radius: 5px;
+  padding: 10px;
+`;
+
+// Styled component for the subheading
 const Subheading = styled.h2`
-  font-size: 2rem;
-  color: #FFD900;
+  font-size: 1.2rem;
+  color: #000000;
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
+`;
+
+// Styled component for the conversation area
+const ConversationArea = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+`;
+
+// Styled component for the footer
+const Footer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #E0E0E0;
+  border-radius: 8px;
 `;
 
 /**
- * MessagingPage component renders the main messaging interface.
- * It includes ContactList, MessageForm, and MessageList components.
- * This component is the entry point for the messaging feature.
- * Created by Tom Wang.
+ * MessagingPage component handles the messaging interface.
+ * Function created by Tom Wang.
  */
 const MessagingPage = () => {
-  // State for managing the list of messages
+  // State for storing messages
   const [messages, setMessages] = useState([]);
-
-  // State for managing the input message
+  // State for storing the current message input by the user
   const [message, setMessage] = useState("");
-
-  // State for managing the recipient of the message
+  // State for storing the selected recipient
   const [recipient, setRecipient] = useState("");
 
-  // Get the current authenticated user
-  const user = auth.currentUser;
+  const user = mockUser;
 
-  /**
-   * useEffect hook to listen for real-time updates to messages.
-   * It sets up a Firestore listener when the user and recipient are set.
-   * The listener is cleaned up when the component is unmounted or the dependencies change.
-   * Created by Tom Wang.
-   */
   useEffect(() => {
     let unsubscribe;
     if (user && recipient) {
+      /**
+       * Listens for messages from Firestore and updates the state.
+       * @param {string} user.email - The email of the user.
+       * @param {string} recipient - The email of the recipient.
+       * @param {Function} callback - Callback function to handle the messages.
+       */
       unsubscribe = listenForMessages(user.email, recipient, (msgs) => {
         setMessages(msgs);
       });
@@ -112,11 +160,11 @@ const MessagingPage = () => {
   }, [user, recipient]);
 
   /**
-   * handleSendMessage function to send a new message.
-   * It uses the addMessage function from Firestore to add a new message document.
-   * If an error occurs, it is logged to the console.
-   * Created by Tom Wang.
-   * @param {string} content - The content of the message to be sent.
+   * Adds a message to the Firestore messages collection.
+   * Function created by Tom Wang.
+   * @param {string} content - The content of the message.
+   * @returns {Promise<void>}
+   * @throws Will throw an error if the message cannot be added.
    */
   const handleSendMessage = async (content) => {
     if (user) {
@@ -130,24 +178,37 @@ const MessagingPage = () => {
 
   return (
     <PageContainer>
-      <Heading>Messaging</Heading>
-      <MainSection>
-        <Sidebar>
-          <ContactList setRecipient={setRecipient} />
-        </Sidebar>
-        <ContentArea>
-          <Subheading>Send a Message</Subheading>
-          <MessageForm
-            message={message}
-            setMessage={setMessage}
-            recipient={recipient}
-            setRecipient={setRecipient}
-            onSend={handleSendMessage}
-          />
-          <Subheading>Past Messages</Subheading>
-          <MessageList messages={messages} />
-        </ContentArea>
-      </MainSection>
+      <MessagingBox>
+        <LightBulbContainer>
+          <LightBulbAnimation />
+        </LightBulbContainer>
+        <Header>
+          <Dropdown onChange={(e) => setRecipient(e.target.value)}>
+            <option value="">Select Instructor</option>
+            <option value="instructor1@example.com">Instructor 1</option>
+            <option value="instructor2@example.com">Instructor 2</option>
+          </Dropdown>
+          <CenteredTitle>
+            <Heading>Messaging</Heading>
+          </CenteredTitle>
+        </Header>
+        <ContentWrapper>
+          <ContentArea>
+            <Subheading>Your conversation with {recipient ? `Instructor ${recipient.split('@')[0].split('instructor')[1]}` : "Instructor"}:</Subheading>
+            <ConversationArea>
+              <MessageList messages={messages} />
+            </ConversationArea>
+            <Footer>
+              <MessageForm
+                message={message}
+                setMessage={setMessage}
+                onSend={handleSendMessage}
+                avatarUrl={user.photoURL || '../assets/user-avatar_6596121.png'} // Pass the avatar URL here
+              />
+            </Footer>
+          </ContentArea>
+        </ContentWrapper>
+      </MessagingBox>
     </PageContainer>
   );
 };
