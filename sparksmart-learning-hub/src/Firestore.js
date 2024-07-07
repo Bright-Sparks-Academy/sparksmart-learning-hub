@@ -1,6 +1,6 @@
 // Firestore.js
 import { db } from "./firebaseConfig";
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore"; // Import necessary Firestore functions
 
 /**
  * Adds a new document to a specified Firestore collection.
@@ -11,6 +11,7 @@ import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, o
  */
 const addData = async (collectionName, data) => {
   try {
+    console.log(`Adding document to collection: ${collectionName}`, data);
     const docRef = await addDoc(collection(db, collectionName), data);
     return docRef.id;
   } catch (error) {
@@ -27,6 +28,7 @@ const addData = async (collectionName, data) => {
  */
 const getData = async (collectionName) => {
   try {
+    console.log(`Getting documents from collection: ${collectionName}`);
     const querySnapshot = await getDocs(collection(db, collectionName));
     const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return data;
@@ -46,6 +48,7 @@ const getData = async (collectionName) => {
  */
 const updateData = async (collectionName, docId, data) => {
   try {
+    console.log(`Updating document in collection: ${collectionName}`, docId, data);
     const docRef = doc(db, collectionName, docId);
     await updateDoc(docRef, data);
   } catch (error) {
@@ -63,6 +66,7 @@ const updateData = async (collectionName, docId, data) => {
  */
 const deleteData = async (collectionName, docId) => {
   try {
+    console.log(`Deleting document from collection: ${collectionName}`, docId);
     const docRef = doc(db, collectionName, docId);
     await deleteDoc(docRef);
   } catch (error) {
@@ -82,11 +86,12 @@ const deleteData = async (collectionName, docId) => {
  */
 const addMessage = async (sender, recipient, content) => {
   try {
+    console.log(`Adding message from ${sender} to ${recipient}: ${content}`);
     await addDoc(collection(db, 'messages'), {
       sender,
       recipient,
       content,
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp()  // Ensure a timestamp is added
     });
   } catch (error) {
     console.error('Error adding message:', error);
@@ -113,6 +118,7 @@ const listenForMessages = (userEmail, recipientEmail, callback) => {
   );
   return onSnapshot(q, (snapshot) => {
     const messages = snapshot.docs.map(doc => doc.data());
+    console.log('Received messages:', messages);
     callback(messages);
   });
 };
