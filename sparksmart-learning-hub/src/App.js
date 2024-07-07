@@ -55,8 +55,14 @@ const App = () => {
     }
   }, []);
 
-  const handleLogin = (userRole, user) =>
-  {
+  /**
+   * Function to handle user login.
+   * It updates the user and role state based on the provided user role and user information.
+   * Created by Tom Wang.
+   * @param {string} userRole - The role of the authenticated user.
+   * @param {Object} user - The authenticated user object.
+   */
+  const handleLogin = (userRole, user) => {
     setRole(userRole);
     setUser(user);
   };
