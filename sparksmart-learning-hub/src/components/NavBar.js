@@ -16,7 +16,7 @@ const NavBarContainer = styled.nav`
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: #000000;
+  background-color: #fff;
   color: #FFD900;
   display: flex;
   justify-content: space-between;
@@ -44,11 +44,11 @@ const NavLinks = styled.div`
 const NavLink = styled(Link)`
   display: flex;
   align-items: center;
-  color: #FFD900;
+  color: #000;
   text-decoration: none;
   font-weight: bold;
   &:hover {
-    color: #FFFFFF;
+    color: gray;
   }
 `;
 
