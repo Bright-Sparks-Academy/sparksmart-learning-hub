@@ -13,6 +13,7 @@ const ProfileContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   margin: 2rem auto;
+  font-family: 'Quicksand', sans-serif;
 `;
 
 const ProfileImage = styled.img`
@@ -20,6 +21,7 @@ const ProfileImage = styled.img`
   height: 120px;
   border-radius: 50%;
   margin-bottom: 1rem;
+  font-family: 'Quicksand', sans-serif;
 `;
 
 const Input = styled.input`
@@ -28,6 +30,7 @@ const Input = styled.input`
   border-radius: 5px;
   margin-bottom: 1rem;
   width: 100%;
+  font-family: 'Quicksand', sans-serif;
 `;
 
 const Button = styled.button`
@@ -41,6 +44,8 @@ const Button = styled.button`
   &:hover {
     background-color: #FFC300;
   }
+  font-family: 'Quicksand', sans-serif;
+  border-radius: 10px;
 `;
 
 const ErrorMessage = styled.p`

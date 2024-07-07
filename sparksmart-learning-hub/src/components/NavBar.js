@@ -46,9 +46,8 @@ const NavLink = styled(Link)`
   align-items: center;
   color: #000;
   text-decoration: none;
-  font-weight: bold;
   &:hover {
-    color: gray;
+    font-weight: bold;
   }
 `;
 
@@ -100,7 +99,7 @@ const NavBar = ({ user }) => (
   <NavBarContainer>
     <NavLinks>
       <NavLink to="/">
-        <img src={lightbulbIcon} alt="Home" style={{ width: '30px', height: '30px' }} />
+        <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
       </NavLink>
       {user && (
         <>

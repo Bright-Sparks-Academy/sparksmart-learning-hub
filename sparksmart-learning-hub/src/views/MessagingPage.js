@@ -101,6 +101,7 @@ const Subheading = styled.h2`
   color: #000000;
   text-align: center;
   margin-bottom: 10px;
+  font-family: 'Quicksand', sans-serif;
 `;
 
 // Styled component for the conversation area
@@ -113,6 +114,7 @@ const ConversationArea = styled.div`
   padding: 10px;
   overflow-y: auto;
   margin-bottom: 10px;
+  font-family: 'Quicksand', sans-serif;
 `;
 
 // Styled component for the footer
@@ -122,7 +124,7 @@ const Footer = styled.div`
   align-items: center;
   padding: 10px;
   background-color: #E0E0E0;
-  border-radius: 8px;
+ : 8px; border-radius
 `;
 
 /**

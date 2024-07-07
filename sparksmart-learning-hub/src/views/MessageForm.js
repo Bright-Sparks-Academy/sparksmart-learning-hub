@@ -83,6 +83,7 @@ const Textarea = styled.input`
   border: none;
   outline: none;
   background-color: #e6e6e6;
+  font-family: 'Quicksand', sans-serif;
 `;
 
 /**
