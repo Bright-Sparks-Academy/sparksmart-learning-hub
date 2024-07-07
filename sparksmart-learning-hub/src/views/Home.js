@@ -33,7 +33,7 @@ const Heading = styled.h1`
 
 const Subheading = styled.p`
   font-size: 1.5rem;
-  color: #FFD900;
+  color: black;
   text-align: center;
   margin-bottom: 3rem;
 `;
@@ -78,8 +78,8 @@ const Home = () => {
   return (
     <PageContainer>
       <ContentContainer>
-        <Heading ref={headingRef}>Welcome to Bright Sparks Academy</Heading>
-        <Subheading ref={subheadingRef}>thy journey</Subheading>
+        <Heading ref={headingRef}>Welcome to SparkSmart Learning Hub</Heading>
+        <Subheading ref={subheadingRef}>Available in August</Subheading>
         <ParallaxSection className="light-bulb">
           <LightBulbAnimation />
         </ParallaxSection>
