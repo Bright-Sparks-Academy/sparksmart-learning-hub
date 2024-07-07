@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import defaultAvatar from '../assets/user-avatar_6596121.png';
+import Picker from 'emoji-picker-react'; // Import emoji picker
 
 // Author: Tom Wang
 // This component renders a form for sending messages with icons for different actions and a text input area.
@@ -129,6 +130,8 @@ const ButtonText = styled.span`
  * Created by Tom Wang.
  */
 const MessageForm = ({ message, setMessage, onSend, user }) => {
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
   /**
    * Handles form submission.
    * @param {Object} e - The event object.
@@ -142,11 +145,34 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   };
 
   /**
+   * Handles emoji selection.
+   * @param {Object} event - The event object.
+   * @param {Object} emojiObject - The selected emoji object.
+   */
+  const handleEmojiClick = (event, emojiObject) => {
+    setMessage(prevMessage => prevMessage + emojiObject.emoji);
+    setShowEmojiPicker(false);
+  };
+
+  /**
    * Handles icon click actions.
    * @param {string} iconType - The type of icon clicked.
    */
   const handleIconClick = (iconType) => {
-    console.log(`${iconType} icon clicked`);
+    switch (iconType) {
+      case 'emoji':
+        setShowEmojiPicker(!showEmojiPicker);
+        break;
+      case 'image':
+        // Add image upload logic here
+        break;
+      case 'attachment':
+        // Add attachment upload logic here
+        break;
+      // Add more cases for other icons as needed
+      default:
+        console.log(`${iconType} icon clicked`);
+    }
   };
 
   const avatarUrl = user?.photoURL || defaultAvatar;
@@ -165,6 +191,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         <Icon src="../assets/underline.png" alt="underline" onClick={() => handleIconClick('underline')} />
         <Icon src="../assets/pen.png" alt="pen" onClick={() => handleIconClick('pen')} />
       </IconBar>
+      {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
       <InputArea>
         <Avatar src={avatarUrl} alt="User Avatar" />
         <Textarea
