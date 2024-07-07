@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import NavBar from './components/NavBar';
@@ -7,33 +8,60 @@ import Home from './views/Home';
 import AdminDashboard from './views/AdminDashboard';
 import TeacherDashboard from './views/TeacherDashboard';
 import StudentDashboard from './views/StudentDashboard';
-import { auth } from './firebaseConfig';
+import MessagingPage from './views/MessagingPage';
+import { auth, mockUser } from './firebaseConfig';
 import { getRole } from './roles';
 import GlobalStyle from './GlobalStyles';
 
+// Author: Tom Wang
+// This component serves as the main application wrapper, handling routing and user authentication state.
+
 const App = () => {
-  const [role, setRole] = useState(null);
-  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null); // State for managing the user's role
+  const [user, setUser] = useState(null); // State for managing the authenticated user
 
+  /**
+   * useEffect hook to monitor authentication state changes.
+   * It sets the user and role state based on authentication status and user role.
+   * Created by Tom Wang.
+   */
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        const userRole = getRole(user.email);
-        if (userRole === 'member') {
-          window.location.href = 'https://www.brightsparks.academy';
+    console.log('useEffect called');
+    if (mockUser) {
+      console.log('Using mock user:', mockUser);
+      const userRole = getRole(mockUser.email);
+      console.log('User role:', userRole);
+      setUser(mockUser);
+      setRole(userRole);
+    } else {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        console.log('Auth state changed:', user);
+        if (user) {
+          const userRole = getRole(user.email);
+          console.log('User role:', userRole);
+          if (userRole === 'member') {
+            window.location.href = 'https://www.brightsparks.academy';
+          } else {
+            setUser(user);
+            setRole(userRole);
+          }
         } else {
-          setUser(user);
-          setRole(userRole);
+          setUser(null);
+          setRole(null);
         }
-      } else {
-        setUser(null);
-        setRole(null);
-      }
-    });
+      });
 
-    return () => unsubscribe();
+      return () => unsubscribe(); // Clean up the subscription on unmount
+    }
   }, []);
 
+  /**
+   * Function to handle user login.
+   * It updates the user and role state based on the provided user role and user information.
+   * Created by Tom Wang.
+   * @param {string} userRole - The role of the authenticated user.
+   * @param {Object} user - The authenticated user object.
+   */
   const handleLogin = (userRole, user) => {
     setRole(userRole);
     setUser(user);
@@ -52,6 +80,7 @@ const App = () => {
             {role === 'admin' && <Route path="/admin/dashboard" element={<AdminDashboard />} />}
             {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
             {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
+            <Route path="/messaging" element={<MessagingPage />} />
           </>
         )}
         <Route path="*" element={<Navigate to="/" />} />
