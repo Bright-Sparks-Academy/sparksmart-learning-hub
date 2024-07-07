@@ -104,6 +104,7 @@ const addMessage = async (sender, recipient, content) => {
  * @throws Will throw an error if the messages cannot be retrieved.
  */
 const listenForMessages = (userEmail, recipientEmail, callback) => {
+  console.log(`Listening for messages between ${userEmail} and ${recipientEmail}`);
   const q = query(
     collection(db, 'messages'),
     where('sender', 'in', [userEmail, recipientEmail]),
