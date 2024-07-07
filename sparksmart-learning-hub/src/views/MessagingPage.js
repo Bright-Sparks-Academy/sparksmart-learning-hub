@@ -130,7 +130,7 @@ const Footer = styled.div`
   align-items: center;
   padding: 10px;
   background-color: #E0E0E0;
- : 8px; border-radius
+  border-radius: 8px;
 `;
 
 /**
