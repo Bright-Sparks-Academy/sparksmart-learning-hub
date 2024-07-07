@@ -1,40 +1,54 @@
-// src/views/ContactList.js
-// Author: Tom Wang
-
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { db } from '../firebaseConfig';
 
+// Author: Tom Wang
+// This component fetches and displays a list of contacts, allowing the user to select a recipient for messaging.
+
 /**
- * ContactListContainer is a styled-component that provides styling for the contact list container.
+ * ContactListContainer is the main container for the contact list.
+ * It sets the margin, overflow behavior, max height, border radius, and background color.
  * Created by Tom Wang.
  */
 const ContactListContainer = styled.div`
-  margin-top: 2rem;
+  margin-top: 1rem;
+  overflow-y: auto;
+  max-height: 400px;
+  border-radius: 8px;
+  background-color: #ffffff;
 `;
 
 /**
- * ContactItem is a styled-component that provides styling for individual contacts.
+ * ContactItem is a styled-component for each individual contact.
+ * It sets the padding, border, margin, border radius, cursor style, background color, and hover effects.
  * Created by Tom Wang.
  */
 const ContactItem = styled.div`
   padding: 1rem;
-  border: 1px solid #000000;
+  border: 1px solid #FFD900;
   margin-bottom: 1rem;
+  border-radius: 8px;
   cursor: pointer;
+  background-color: #f9f9f9;
+  &:hover {
+    background-color: #FFD900;
+    color: #fff;
+  }
 `;
 
 /**
- * ContactList component renders a list of contacts.
- * @param {function} setRecipient - Function to set the selected recipient email.
+ * ContactList component fetches and displays a list of contacts.
+ * @param {function} setRecipient - Function to set the recipient of the message.
  * Created by Tom Wang.
  */
 const ContactList = ({ setRecipient }) => {
+  // State for managing the list of contacts
   const [contacts, setContacts] = useState([]);
 
   /**
-   * useEffect hook to fetch contacts from Firestore when the component is mounted.
-   * The contacts are stored in the local state.
+   * useEffect hook to fetch contacts from Firestore.
+   * It sets up a Firestore query to fetch the contacts and updates the state with the fetched data.
+   * The query is executed once when the component mounts.
    * Created by Tom Wang.
    */
   useEffect(() => {
