@@ -75,7 +75,7 @@ const Avatar = styled.img`
  * It sets the flex, font size, padding, border radius, border, outline, and background color.
  * Created by Tom Wang.
  */
-const Textarea = styled.input`
+const Textarea = styled.textarea`
   flex: 1;
   font-size: 1rem;
   padding: 0.5rem;
@@ -83,7 +83,8 @@ const Textarea = styled.input`
   border: none;
   outline: none;
   background-color: #e6e6e6;
-  font-family: 'Quicksand', sans-serif;
+  resize: none;
+  height: 3rem;
 `;
 
 /**
@@ -134,8 +135,10 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
    */
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSend(message);
-    setMessage('');
+    if (message.trim()) {
+      onSend(message);
+      setMessage('');
+    }
   };
 
   /**
