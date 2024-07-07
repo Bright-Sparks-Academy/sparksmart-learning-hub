@@ -53,9 +53,13 @@ const ContactList = ({ setRecipient }) => {
    */
   useEffect(() => {
     const fetchContacts = async () => {
-      const contactsSnapshot = await db.collection('contacts').get();
-      const contactsData = contactsSnapshot.docs.map(doc => doc.data());
-      setContacts(contactsData);
+      try {
+        const contactsSnapshot = await db.collection('contacts').get();
+        const contactsData = contactsSnapshot.docs.map(doc => doc.data());
+        setContacts(contactsData);
+      } catch (error) {
+        console.error('Error fetching contacts:', error);
+      }
     };
     fetchContacts();
   }, []);

@@ -124,23 +124,29 @@ const ButtonText = styled.span`
  * @param {string} message - The current message input by the user.
  * @param {function} setMessage - The function to update the message state.
  * @param {function} onSend - The function to handle sending the message.
- * @param {string} avatarUrl - The URL of the user's avatar image.
+ * @param {object} user - The user object containing user info.
  * Created by Tom Wang.
  */
-const MessageForm = ({ message, setMessage, onSend, avatarUrl }) => {
-  // Handle form submission
+const MessageForm = ({ message, setMessage, onSend, user }) => {
+  /**
+   * Handles form submission.
+   * @param {Object} e - The event object.
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
     onSend(message);
     setMessage('');
   };
 
-  // Handle icon click actions
+  /**
+   * Handles icon click actions.
+   * @param {string} iconType - The type of icon clicked.
+   */
   const handleIconClick = (iconType) => {
     console.log(`${iconType} icon clicked`);
   };
 
-  const defaultAvatarUrl = avatarUrl || defaultAvatar;
+  const avatarUrl = user?.photoURL || defaultAvatar;
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -157,7 +163,7 @@ const MessageForm = ({ message, setMessage, onSend, avatarUrl }) => {
         <Icon src="../assets/pen.png" alt="pen" onClick={() => handleIconClick('pen')} />
       </IconBar>
       <InputArea>
-        <Avatar src={defaultAvatarUrl} alt="User Avatar" />
+        <Avatar src={avatarUrl} alt="User Avatar" />
         <Textarea
           placeholder="Type your message here..."
           value={message}

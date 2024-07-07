@@ -6,6 +6,12 @@ import MessageForm from './MessageForm';
 import MessageList from './MessageList';
 import LightBulbAnimation from '../components/LightBulbAnimation';
 
+// Mock data for instructors
+const mockInstructors = [
+  { name: "Instructor 1", email: "instructor1@example.com" },
+  { name: "Instructor 2", email: "instructor2@example.com" },
+];
+
 // Styled component for the page container
 const PageContainer = styled.div`
   display: flex;
@@ -139,21 +145,23 @@ const MessagingPage = () => {
   // State for storing the selected recipient
   const [recipient, setRecipient] = useState("");
 
+  // Mock user object for demonstration
   const user = mockUser;
 
+  /**
+   * useEffect hook to listen for messages between the current user and the selected recipient.
+   * Function created by Tom Wang.
+   * It sets up a Firestore snapshot listener that updates the state with new messages in real-time.
+   */
   useEffect(() => {
     let unsubscribe;
     if (user && recipient) {
-      /**
-       * Listens for messages from Firestore and updates the state.
-       * @param {string} user.email - The email of the user.
-       * @param {string} recipient - The email of the recipient.
-       * @param {Function} callback - Callback function to handle the messages.
-       */
+      console.log('Listening for messages:', { userEmail: user.email, recipient });
       unsubscribe = listenForMessages(user.email, recipient, (msgs) => {
         setMessages(msgs);
       });
     }
+    // Clean up the snapshot listener on component unmount or when dependencies change
     return () => {
       if (unsubscribe) {
         unsubscribe();
@@ -169,12 +177,15 @@ const MessagingPage = () => {
    * @throws Will throw an error if the message cannot be added.
    */
   const handleSendMessage = async (content) => {
-    if (user) {
+    if (user && recipient) {
       try {
+        console.log('Sending message:', { sender: user.email, recipient, content });
         await addMessage(user.email, recipient, content);
       } catch (error) {
         console.error('Error sending message:', error);
       }
+    } else {
+      console.error('Sender or recipient email is missing.', { sender: user.email, recipient, content });
     }
   };
 
@@ -185,10 +196,11 @@ const MessagingPage = () => {
           <LightBulbAnimation />
         </LightBulbContainer>
         <Header>
-          <Dropdown onChange={(e) => setRecipient(e.target.value)}>
+          <Dropdown onChange={(e) => setRecipient(e.target.value)} value={recipient}>
             <option value="">Select Instructor</option>
-            <option value="instructor1@example.com">Instructor 1</option>
-            <option value="instructor2@example.com">Instructor 2</option>
+            {mockInstructors.map((instructor, index) => (
+              <option key={index} value={instructor.email}>{instructor.name}</option>
+            ))}
           </Dropdown>
           <CenteredTitle>
             <Heading>Messaging</Heading>
@@ -196,7 +208,7 @@ const MessagingPage = () => {
         </Header>
         <ContentWrapper>
           <ContentArea>
-            <Subheading>Your conversation with {recipient ? `Instructor ${recipient.split('@')[0].split('instructor')[1]}` : "Instructor"}:</Subheading>
+            <Subheading>Your conversation with {recipient ? `Instructor ${mockInstructors.find(inst => inst.email === recipient)?.name || "Unknown"}` : "Instructor"}:</Subheading>
             <ConversationArea>
               <MessageList messages={messages} />
             </ConversationArea>
@@ -205,7 +217,7 @@ const MessagingPage = () => {
                 message={message}
                 setMessage={setMessage}
                 onSend={handleSendMessage}
-                avatarUrl={user.photoURL || '../assets/user-avatar_6596121.png'} // Pass the avatar URL here
+                user={user}
               />
             </Footer>
           </ContentArea>

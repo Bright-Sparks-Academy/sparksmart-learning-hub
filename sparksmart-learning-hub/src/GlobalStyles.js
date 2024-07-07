@@ -1,30 +1,34 @@
 import { createGlobalStyle } from 'styled-components';
 
+/**
+ * GlobalStyle component to define global styles for the application.
+ * It includes basic styles for the body and scrollbar customization.
+ * Created by Danny Chan.
+ * Comments added by Tom Wang.
+ */
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Gotham:wght@400;700&family=Quicksand:wght@400;700&display=swap');
-
   body {
     margin: 0;
     padding: 0;
-    font-family: 'Gotham', 'Quicksand', sans-serif;
-    background-color: #FFFFFF;
-    color: #000000;
+    font-family: 'Quicksand', sans-serif; // Use Quicksand font for the entire application
+    background-color: #FFFFFF; // Set the background color to white
+    color: #000000; // Set the text color to black
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 8px; // Set the width of the scrollbar
   }
 
   ::-webkit-scrollbar-track {
-    background: #000000;
+    background: #000000; // Set the background color of the scrollbar track to black
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #FFD900;
+    background: #FFD900; // Set the color of the scrollbar thumb to yellow
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #FFD900;
+    background: #FFD900; // Keep the color of the scrollbar thumb yellow on hover
   }
 `;
 

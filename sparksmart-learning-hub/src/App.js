@@ -1,6 +1,7 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import NavBar from './components/NavBar';
 import Login from './views/Login';
 import Profile from './views/Profile';
@@ -68,24 +69,29 @@ const App = () => {
   };
 
   return (
-    <Router>
+    <div>
+      <Helmet>
+        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet" />
+      </Helmet>
       <GlobalStyle />
-      <NavBar user={user} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        {user && (
-          <>
-            <Route path="/profile" element={<Profile user={user} role={role} />} />
-            {role === 'admin' && <Route path="/admin/dashboard" element={<AdminDashboard />} />}
-            {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
-            {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
-            <Route path="/messaging" element={<MessagingPage />} />
-          </>
-        )}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </Router>
+      <Router>
+        <NavBar user={user} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          {user && (
+            <>
+              <Route path="/profile" element={<Profile user={user} role={role} />} />
+              {role === 'admin' && <Route path="/admin/dashboard" element={<AdminDashboard />} />}
+              {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
+              {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
+              <Route path="/messaging" element={<MessagingPage />} />
+            </>
+          )}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Router>
+    </div>
   );
 };
 
