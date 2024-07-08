@@ -85,9 +85,9 @@ const Textarea = styled.textarea`
   background-color: #e6e6e6;
   resize: none;
   height: 3rem;
-  ${({ isBold }) => isBold && 'font-weight: bold;'}
-  ${({ isItalic }) => isItalic && 'font-style: italic;'}
-  ${({ isUnderline }) => isUnderline && 'text-decoration: underline;'}
+  ${({ $isBold }) => $isBold && 'font-weight: bold;'}
+  ${({ $isItalic }) => $isItalic && 'font-style: italic;'}
+  ${({ $isUnderline }) => $isUnderline && 'text-decoration: underline;'}
 `;
 
 /**
@@ -310,9 +310,9 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
           placeholder="Type your message here..."
           value={message}
           onChange={(e) => setMessage(e.target.value)} // Updates the message state when the input changes
-          isBold={isBold} // Applies bold style if isBold is true
-          isItalic={isItalic} // Applies italic style if isItalic is true
-          isUnderline={isUnderline} // Applies underline style if isUnderline is true
+          $isBold={isBold} // Applies bold style if isBold is true
+          $isItalic={isItalic} // Applies italic style if isItalic is true
+          $isUnderline={isUnderline} // Applies underline style if isUnderline is true
         />
         <Button type="submit">
           <ButtonText>Send</ButtonText>
