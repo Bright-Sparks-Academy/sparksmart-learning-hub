@@ -71,11 +71,11 @@ const Avatar = styled.img`
 `;
 
 /**
- * Textarea is a styled-component for the message input field.
+ * EditableDiv is a styled-component for the message input field.
  * It sets the flex, font size, padding, border radius, border, outline, and background color.
  * Created by Tom Wang.
  */
-const Textarea = styled.textarea`
+const EditableDiv = styled.div`
   flex: 1;
   font-size: 1rem;
   padding: 0.5rem;
@@ -83,11 +83,9 @@ const Textarea = styled.textarea`
   border: none;
   outline: none;
   background-color: #e6e6e6;
-  resize: none;
-  height: 3rem;
-  ${({ $isBold }) => $isBold && 'font-weight: bold;'}
-  ${({ $isItalic }) => $isItalic && 'font-style: italic;'}
-  ${({ $isUnderline }) => $isUnderline && 'text-decoration: underline;'}
+  min-height: 3rem;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 `;
 
 /**
@@ -152,16 +150,14 @@ const Canvas = styled.canvas`
  */
 const MessageForm = ({ message, setMessage, onSend, user }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to manage the visibility of the emoji picker
-  const [isBold, setIsBold] = useState(false); // State to toggle bold text
-  const [isItalic, setIsItalic] = useState(false); // State to toggle italic text
-  const [isUnderline, setIsUnderline] = useState(false); // State to toggle underline text
-  const [isDrawing, setIsDrawing] = useState(false); // State to track drawing status
   const [showCanvas, setShowCanvas] = useState(false); // State to toggle the visibility of the drawing canvas
+  const [isDrawing, setIsDrawing] = useState(false); // State to track drawing status
   const imageInputRef = useRef(null); // Ref for the image input element
   const attachmentInputRef = useRef(null); // Ref for the attachment input element
   const canvasRef = useRef(null); // Ref for the canvas element
   const ctxRef = useRef(null); // Ref for the canvas context
   const drawingData = useRef([]); // Ref to store drawing data
+  const editableDivRef = useRef(null); // Ref for the editable div
 
   /**
    * Handles form submission.
@@ -169,9 +165,17 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
    */
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevents the default form submission behavior
-    if (message.trim()) { // Checks if the message is not empty or just whitespace
-      onSend(message); // Calls the onSend function to handle the message sending
-      setMessage(''); // Resets the message input field
+    const text = editableDivRef.current.innerHTML; // Gets the innerHTML of the editable div
+    if (text.trim() || drawingData.current.length > 0) { // Checks if the text is not empty or if there is drawing data
+      if (drawingData.current.length > 0) { // If there is drawing data
+        const drawingMessage = `${text}\n[Drawing Attached]`; // Appends the drawing message
+        onSend(drawingMessage, drawingData.current); // Sends the message with the drawing
+      } else {
+        onSend(text); // Sends the text message
+      }
+      editableDivRef.current.innerHTML = ''; // Clears the editable div
+      drawingData.current = []; // Resets the drawing data
+      setShowCanvas(false); // Hides the canvas
     }
   };
 
@@ -180,8 +184,9 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
    * @param {Object} emojiData - The selected emoji data.
    */
   const handleEmojiClick = (emojiData) => {
-    setMessage((prevMessage) => prevMessage + emojiData.emoji); // Appends the selected emoji to the current message
-    setShowEmojiPicker(false); // Hides the emoji picker after selection
+    editableDivRef.current.focus(); // Focuses the editable div
+    document.execCommand('insertText', false, emojiData.emoji); // Inserts the emoji into the editable div
+    setShowEmojiPicker(false); // Hides the emoji picker
   };
 
   /**
@@ -189,6 +194,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
    * @param {string} iconType - The type of icon clicked.
    */
   const handleIconClick = (iconType) => {
+    editableDivRef.current.focus(); // Focuses the editable div
     switch (iconType) {
       case 'emoji':
         setShowEmojiPicker(!showEmojiPicker); // Toggles the visibility of the emoji picker
@@ -200,28 +206,28 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         attachmentInputRef.current.click(); // Triggers the attachment input click
         break;
       case 'group':
-        alert('Group management feature not implemented yet.'); // Placeholder alert for group management
+        alert('Group management feature not implemented yet.'); // Alerts the user about the group management feature
         break;
       case 'microphone':
-        alert('Microphone recording feature not implemented yet.'); // Placeholder alert for microphone recording
+        alert('Microphone recording feature not implemented yet.'); // Alerts the user about the microphone recording feature
         break;
       case 'video':
-        alert('Video recording feature not implemented yet.'); // Placeholder alert for video recording
+        alert('Video recording feature not implemented yet.'); // Alerts the user about the video recording feature
         break;
       case 'bold':
-        setIsBold(!isBold); // Toggles bold text
+        document.execCommand('bold'); // Applies bold formatting to the selected text
         break;
       case 'italic':
-        setIsItalic(!isItalic); // Toggles italic text
+        document.execCommand('italic'); // Applies italic formatting to the selected text
         break;
       case 'underline':
-        setIsUnderline(!isUnderline); // Toggles underline text
+        document.execCommand('underline'); // Applies underline formatting to the selected text
         break;
       case 'pen':
         setShowCanvas(!showCanvas); // Toggles the visibility of the drawing canvas
         break;
       default:
-        console.log(`${iconType} icon clicked`);
+        console.log(`${iconType} icon clicked`); // Logs the icon type
     }
   };
 
@@ -306,13 +312,10 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
       </CanvasWrapper>
       <InputArea>
         <Avatar src={avatarUrl} alt="User Avatar" />
-        <Textarea
+        <EditableDiv
+          ref={editableDivRef}
+          contentEditable
           placeholder="Type your message here..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)} // Updates the message state when the input changes
-          $isBold={isBold} // Applies bold style if isBold is true
-          $isItalic={isItalic} // Applies italic style if isItalic is true
-          $isUnderline={isUnderline} // Applies underline style if isUnderline is true
         />
         <Button type="submit">
           <ButtonText>Send</ButtonText>
