@@ -2,13 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import defaultAvatar from '../assets/user-avatar_6596121.png';
 import Picker from 'emoji-picker-react';
+import { saveAs } from 'file-saver';
+import { ReactMediaRecorder } from 'react-media-recorder';
+import html2canvas from 'html2canvas';
 
 // Styled components definitions...
 
 /**
  * Form is a styled-component for the message form container.
  * It sets the display, flex direction, width, background color, border radius, padding, and font family.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const Form = styled.form`
   display: flex;
@@ -23,7 +26,7 @@ const Form = styled.form`
 /**
  * IconBar is a styled-component for the icon bar.
  * It sets the display, justification, margin, background color, padding, and border radius.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const IconBar = styled.div`
   display: flex;
@@ -37,7 +40,7 @@ const IconBar = styled.div`
 /**
  * Icon is a styled-component for the action icons.
  * It sets the size and cursor style.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const Icon = styled.img`
   width: 24px;
@@ -48,7 +51,7 @@ const Icon = styled.img`
 /**
  * InputArea is a styled-component for the input area.
  * It sets the display, alignment, background color, border radius, and padding.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const InputArea = styled.div`
   display: flex;
@@ -61,7 +64,7 @@ const InputArea = styled.div`
 /**
  * Avatar is a styled-component for the user's avatar image.
  * It sets the size, border radius, and margin.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const Avatar = styled.img`
   width: 40px;
@@ -73,7 +76,7 @@ const Avatar = styled.img`
 /**
  * EditableDiv is a styled-component for the message input field.
  * It sets the flex, font size, padding, border radius, border, outline, and background color.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const EditableDiv = styled.div`
   flex: 1;
@@ -92,7 +95,7 @@ const EditableDiv = styled.div`
  * Button is a styled-component for the send button.
  * It sets the display, alignment, font size, padding, color, background color, border, border radius, cursor, margin, and font family.
  * It also changes the background color on hover.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const Button = styled.button`
   display: flex;
@@ -115,7 +118,7 @@ const Button = styled.button`
 /**
  * ButtonText is a styled-component for the text inside the button.
  * It sets the margin.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const ButtonText = styled.span`
   margin-left: 5px;
@@ -124,6 +127,7 @@ const ButtonText = styled.span`
 /**
  * CanvasWrapper is a styled-component to conditionally display the drawing canvas.
  * @param {boolean} show - Determines whether to show the canvas.
+ * @author Tom Wang
  */
 const CanvasWrapper = styled.div`
   position: relative;
@@ -133,6 +137,7 @@ const CanvasWrapper = styled.div`
 /**
  * Canvas is a styled-component for the drawing canvas.
  * It sets the size and border of the canvas.
+ * @author Tom Wang
  */
 const Canvas = styled.canvas`
   width: 100%;
@@ -141,17 +146,37 @@ const Canvas = styled.canvas`
 `;
 
 /**
+ * SaveButton is a styled-component for the save drawing button.
+ * @param {boolean} show - Determines whether to show the button.
+ * @author Tom Wang
+ */
+const SaveButton = styled.button`
+  display: ${({ show }) => (show ? 'block' : 'none')};
+  margin-top: 5px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 5px;
+  font-family: 'Quicksand', sans-serif;
+`;
+
+/**
  * MessageForm component renders a form for sending messages.
  * @param {string} message - The current message input by the user.
  * @param {function} setMessage - The function to update the message state.
  * @param {function} onSend - The function to handle sending the message.
  * @param {object} user - The user object containing user info.
- * Created by Tom Wang.
+ * @author Tom Wang
  */
 const MessageForm = ({ message, setMessage, onSend, user }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to manage the visibility of the emoji picker
   const [showCanvas, setShowCanvas] = useState(false); // State to toggle the visibility of the drawing canvas
   const [isDrawing, setIsDrawing] = useState(false); // State to track drawing status
+  const [messages, setMessages] = useState([]); // State to manage messages
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false); // State to manage audio recording
+  const [isRecordingVideo, setIsRecordingVideo] = useState(false); // State to manage video recording
   const imageInputRef = useRef(null); // Ref for the image input element
   const attachmentInputRef = useRef(null); // Ref for the attachment input element
   const canvasRef = useRef(null); // Ref for the canvas element
@@ -162,6 +187,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   /**
    * Handles form submission.
    * @param {Object} e - The event object.
+   * @author Tom Wang
    */
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevents the default form submission behavior
@@ -176,12 +202,14 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
       editableDivRef.current.innerHTML = ''; // Clears the editable div
       drawingData.current = []; // Resets the drawing data
       setShowCanvas(false); // Hides the canvas
+      setMessages([...messages, { text, id: Date.now(), editing: false }]); // Adds the message to the state
     }
   };
 
   /**
    * Handles emoji selection.
    * @param {Object} emojiData - The selected emoji data.
+   * @author Tom Wang
    */
   const handleEmojiClick = (emojiData) => {
     editableDivRef.current.focus(); // Focuses the editable div
@@ -192,6 +220,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   /**
    * Handles icon click actions.
    * @param {string} iconType - The type of icon clicked.
+   * @author Tom Wang
    */
   const handleIconClick = (iconType) => {
     editableDivRef.current.focus(); // Focuses the editable div
@@ -206,13 +235,13 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         attachmentInputRef.current.click(); // Triggers the attachment input click
         break;
       case 'group':
-        alert('Group management feature not implemented yet.'); // Alerts the user about the group management feature
+        // Group management logic
         break;
       case 'microphone':
-        alert('Microphone recording feature not implemented yet.'); // Alerts the user about the microphone recording feature
+        setIsRecordingAudio(!isRecordingAudio); // Toggles the audio recording state
         break;
       case 'video':
-        alert('Video recording feature not implemented yet.'); // Alerts the user about the video recording feature
+        setIsRecordingVideo(!isRecordingVideo); // Toggles the video recording state
         break;
       case 'bold':
         document.execCommand('bold'); // Applies bold formatting to the selected text
@@ -234,6 +263,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   /**
    * Handles file input changes.
    * @param {Object} event - The event object.
+   * @author Tom Wang
    */
   const handleFileChange = (event) => {
     const file = event.target.files[0]; // Gets the selected file
@@ -245,6 +275,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   /**
    * Starts drawing on the canvas.
    * @param {Object} nativeEvent - The native event object.
+   * @author Tom Wang
    */
   const startDrawing = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
@@ -255,6 +286,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
 
   /**
    * Finishes drawing on the canvas.
+   * @author Tom Wang
    */
   const finishDrawing = () => {
     ctxRef.current.closePath();
@@ -265,6 +297,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   /**
    * Draws on the canvas.
    * @param {Object} nativeEvent - The native event object.
+   * @author Tom Wang
    */
   const draw = ({ nativeEvent }) => {
     if (!isDrawing) return;
@@ -275,6 +308,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
 
   /**
    * Sets up the canvas context.
+   * @author Tom Wang
    */
   useEffect(() => {
     if (showCanvas) {
@@ -288,6 +322,52 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
     }
   }, [showCanvas]);
 
+  /**
+   * Saves the drawing as an image file.
+   * @author Tom Wang
+   */
+  const saveDrawing = () => {
+    html2canvas(canvasRef.current).then((canvas) => {
+      canvas.toBlob((blob) => {
+        saveAs(blob, 'drawing.png');
+      });
+    });
+  };
+
+  /**
+   * Toggles the edit state of a message.
+   * @param {number} id - The id of the message to edit.
+   * @author Tom Wang
+   */
+  const toggleEditMessage = (id) => {
+    setMessages(
+      messages.map((msg) =>
+        msg.id === id ? { ...msg, editing: !msg.editing } : msg
+      )
+    );
+  };
+
+  /**
+   * Deletes a message.
+   * @param {number} id - The id of the message to delete.
+   * @author Tom Wang
+   */
+  const deleteMessage = (id) => {
+    setMessages(messages.filter((msg) => msg.id !== id));
+  };
+
+  /**
+   * Handles message text change during editing.
+   * @param {number} id - The id of the message to update.
+   * @param {string} text - The new text of the message.
+   * @author Tom Wang
+   */
+  const handleEditMessageChange = (id, text) => {
+    setMessages(
+      messages.map((msg) => (msg.id === id ? { ...msg, text } : msg))
+    );
+  };
+
   const avatarUrl = user?.photoURL || defaultAvatar; // Uses the user's photo URL if available, otherwise uses a default avatar
 
   return (
@@ -299,8 +379,26 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         <Icon src="../assets/attachment.png" alt="attachment" onClick={() => handleIconClick('attachment')} />
         <input type="file" ref={attachmentInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
         <Icon src="../assets/group.png" alt="group" onClick={() => handleIconClick('group')} />
-        <Icon src="../assets/microphone.png" alt="microphone" onClick={() => handleIconClick('microphone')} />
-        <Icon src="../assets/video.png" alt="video" onClick={() => handleIconClick('video')} />
+        <ReactMediaRecorder
+          audio
+          render={({ startRecording, stopRecording, mediaBlobUrl }) => (
+            <>
+              <Icon src="../assets/microphone.png" alt="microphone" onClick={startRecording} />
+              <Icon src="../assets/stop.png" alt="stop" onClick={stopRecording} />
+              {mediaBlobUrl && <audio src={mediaBlobUrl} controls />}
+            </>
+          )}
+        />
+        <ReactMediaRecorder
+          video
+          render={({ startRecording, stopRecording, mediaBlobUrl }) => (
+            <>
+              <Icon src="../assets/video.png" alt="video" onClick={startRecording} />
+              <Icon src="../assets/stop.png" alt="stop" onClick={stopRecording} />
+              {mediaBlobUrl && <video src={mediaBlobUrl} controls />}
+            </>
+          )}
+        />
         <Icon src="../assets/bold.png" alt="bold" onClick={() => handleIconClick('bold')} />
         <Icon src="../assets/italic.png" alt="italic" onClick={() => handleIconClick('italic')} />
         <Icon src="../assets/underline.png" alt="underline" onClick={() => handleIconClick('underline')} />
@@ -309,6 +407,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
       {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />} {/* Renders the emoji picker if showEmojiPicker is true */}
       <CanvasWrapper show={showCanvas}>
         <Canvas ref={canvasRef} onMouseDown={startDrawing} onMouseUp={finishDrawing} onMouseMove={draw} />
+        <SaveButton show={showCanvas} onClick={saveDrawing}>Save Drawing</SaveButton>
       </CanvasWrapper>
       <InputArea>
         <Avatar src={avatarUrl} alt="User Avatar" />
@@ -321,6 +420,29 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
           <ButtonText>Send</ButtonText>
         </Button>
       </InputArea>
+      <div>
+        {messages.map((message) => (
+          <div key={message.id}>
+            {message.editing ? (
+              <EditableDiv
+                contentEditable
+                suppressContentEditableWarning={true}
+                onBlur={(e) =>
+                  handleEditMessageChange(message.id, e.target.innerText)
+                }
+              >
+                {message.text}
+              </EditableDiv>
+            ) : (
+              <p>{message.text}</p>
+            )}
+            <button onClick={() => toggleEditMessage(message.id)}>
+              {message.editing ? 'Save' : 'Edit'}
+            </button>
+            <button onClick={() => deleteMessage(message.id)}>Delete</button>
+          </div>
+        ))}
+      </div>
     </Form>
   );
 };
