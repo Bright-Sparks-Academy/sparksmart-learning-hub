@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import defaultAvatar from '../assets/user-avatar_6596121.png';
-import Picker from 'emoji-picker-react'; // Import emoji picker
+import Picker from 'emoji-picker-react';
 
 // Styled components definitions...
 
@@ -85,6 +85,9 @@ const Textarea = styled.textarea`
   background-color: #e6e6e6;
   resize: none;
   height: 3rem;
+  ${({ isBold }) => isBold && 'font-weight: bold;'}
+  ${({ isItalic }) => isItalic && 'font-style: italic;'}
+  ${({ isUnderline }) => isUnderline && 'text-decoration: underline;'}
 `;
 
 /**
@@ -121,6 +124,25 @@ const ButtonText = styled.span`
 `;
 
 /**
+ * CanvasWrapper is a styled-component to conditionally display the drawing canvas.
+ * @param {boolean} show - Determines whether to show the canvas.
+ */
+const CanvasWrapper = styled.div`
+  position: relative;
+  display: ${({ show }) => (show ? 'block' : 'none')};
+`;
+
+/**
+ * Canvas is a styled-component for the drawing canvas.
+ * It sets the size and border of the canvas.
+ */
+const Canvas = styled.canvas`
+  width: 100%;
+  height: 200px;
+  border: 1px solid #ddd;
+`;
+
+/**
  * MessageForm component renders a form for sending messages.
  * @param {string} message - The current message input by the user.
  * @param {function} setMessage - The function to update the message state.
@@ -130,6 +152,16 @@ const ButtonText = styled.span`
  */
 const MessageForm = ({ message, setMessage, onSend, user }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to manage the visibility of the emoji picker
+  const [isBold, setIsBold] = useState(false); // State to toggle bold text
+  const [isItalic, setIsItalic] = useState(false); // State to toggle italic text
+  const [isUnderline, setIsUnderline] = useState(false); // State to toggle underline text
+  const [isDrawing, setIsDrawing] = useState(false); // State to track drawing status
+  const [showCanvas, setShowCanvas] = useState(false); // State to toggle the visibility of the drawing canvas
+  const imageInputRef = useRef(null); // Ref for the image input element
+  const attachmentInputRef = useRef(null); // Ref for the attachment input element
+  const canvasRef = useRef(null); // Ref for the canvas element
+  const ctxRef = useRef(null); // Ref for the canvas context
+  const drawingData = useRef([]); // Ref to store drawing data
 
   /**
    * Handles form submission.
@@ -162,16 +194,93 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         setShowEmojiPicker(!showEmojiPicker); // Toggles the visibility of the emoji picker
         break;
       case 'image':
-        // Add image upload logic here
+        imageInputRef.current.click(); // Triggers the image input click
         break;
       case 'attachment':
-        // Add attachment upload logic here
+        attachmentInputRef.current.click(); // Triggers the attachment input click
         break;
-      // Add more cases for other icons as needed
+      case 'group':
+        alert('Group management feature not implemented yet.'); // Placeholder alert for group management
+        break;
+      case 'microphone':
+        alert('Microphone recording feature not implemented yet.'); // Placeholder alert for microphone recording
+        break;
+      case 'video':
+        alert('Video recording feature not implemented yet.'); // Placeholder alert for video recording
+        break;
+      case 'bold':
+        setIsBold(!isBold); // Toggles bold text
+        break;
+      case 'italic':
+        setIsItalic(!isItalic); // Toggles italic text
+        break;
+      case 'underline':
+        setIsUnderline(!isUnderline); // Toggles underline text
+        break;
+      case 'pen':
+        setShowCanvas(!showCanvas); // Toggles the visibility of the drawing canvas
+        break;
       default:
         console.log(`${iconType} icon clicked`);
     }
   };
+
+  /**
+   * Handles file input changes.
+   * @param {Object} event - The event object.
+   */
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]; // Gets the selected file
+    if (file) {
+      alert(`Selected file - ${file.name}`); // Placeholder alert for file selection
+    }
+  };
+
+  /**
+   * Starts drawing on the canvas.
+   * @param {Object} nativeEvent - The native event object.
+   */
+  const startDrawing = ({ nativeEvent }) => {
+    const { offsetX, offsetY } = nativeEvent;
+    ctxRef.current.beginPath();
+    ctxRef.current.moveTo(offsetX, offsetY);
+    setIsDrawing(true);
+  };
+
+  /**
+   * Finishes drawing on the canvas.
+   */
+  const finishDrawing = () => {
+    ctxRef.current.closePath();
+    setIsDrawing(false);
+    drawingData.current.push(ctxRef.current.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height));
+  };
+
+  /**
+   * Draws on the canvas.
+   * @param {Object} nativeEvent - The native event object.
+   */
+  const draw = ({ nativeEvent }) => {
+    if (!isDrawing) return;
+    const { offsetX, offsetY } = nativeEvent;
+    ctxRef.current.lineTo(offsetX, offsetY);
+    ctxRef.current.stroke();
+  };
+
+  /**
+   * Sets up the canvas context.
+   */
+  useEffect(() => {
+    if (showCanvas) {
+      const canvas = canvasRef.current;
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 2;
+      ctxRef.current = ctx;
+    }
+  }, [showCanvas]);
 
   const avatarUrl = user?.photoURL || defaultAvatar; // Uses the user's photo URL if available, otherwise uses a default avatar
 
@@ -180,7 +289,9 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
       <IconBar>
         <Icon src="../assets/emoji.png" alt="emoji" onClick={() => handleIconClick('emoji')} />
         <Icon src="../assets/image.png" alt="image" onClick={() => handleIconClick('image')} />
+        <input type="file" ref={imageInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
         <Icon src="../assets/attachment.png" alt="attachment" onClick={() => handleIconClick('attachment')} />
+        <input type="file" ref={attachmentInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
         <Icon src="../assets/group.png" alt="group" onClick={() => handleIconClick('group')} />
         <Icon src="../assets/microphone.png" alt="microphone" onClick={() => handleIconClick('microphone')} />
         <Icon src="../assets/video.png" alt="video" onClick={() => handleIconClick('video')} />
@@ -190,12 +301,18 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         <Icon src="../assets/pen.png" alt="pen" onClick={() => handleIconClick('pen')} />
       </IconBar>
       {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />} {/* Renders the emoji picker if showEmojiPicker is true */}
+      <CanvasWrapper show={showCanvas}>
+        <Canvas ref={canvasRef} onMouseDown={startDrawing} onMouseUp={finishDrawing} onMouseMove={draw} />
+      </CanvasWrapper>
       <InputArea>
         <Avatar src={avatarUrl} alt="User Avatar" />
         <Textarea
           placeholder="Type your message here..."
           value={message}
           onChange={(e) => setMessage(e.target.value)} // Updates the message state when the input changes
+          isBold={isBold} // Applies bold style if isBold is true
+          isItalic={isItalic} // Applies italic style if isItalic is true
+          isUnderline={isUnderline} // Applies underline style if isUnderline is true
         />
         <Button type="submit">
           <ButtonText>Send</ButtonText>
