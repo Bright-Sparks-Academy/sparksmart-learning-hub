@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import defaultAvatar from '../assets/user-avatar_6596121.png';
 import Picker from 'emoji-picker-react'; // Import emoji picker
 
-// Author: Tom Wang
-// This component renders a form for sending messages with icons for different actions and a text input area.
+// Styled components definitions...
 
 /**
  * Form is a styled-component for the message form container.
@@ -130,28 +129,27 @@ const ButtonText = styled.span`
  * Created by Tom Wang.
  */
 const MessageForm = ({ message, setMessage, onSend, user }) => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to manage the visibility of the emoji picker
 
   /**
    * Handles form submission.
    * @param {Object} e - The event object.
    */
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (message.trim()) {
-      onSend(message);
-      setMessage('');
+    e.preventDefault(); // Prevents the default form submission behavior
+    if (message.trim()) { // Checks if the message is not empty or just whitespace
+      onSend(message); // Calls the onSend function to handle the message sending
+      setMessage(''); // Resets the message input field
     }
   };
 
   /**
    * Handles emoji selection.
-   * @param {Object} event - The event object.
-   * @param {Object} emojiObject - The selected emoji object.
+   * @param {Object} emojiData - The selected emoji data.
    */
-  const handleEmojiClick = (event, emojiObject) => {
-    setMessage(prevMessage => prevMessage + emojiObject.emoji);
-    setShowEmojiPicker(false);
+  const handleEmojiClick = (emojiData) => {
+    setMessage((prevMessage) => prevMessage + emojiData.emoji); // Appends the selected emoji to the current message
+    setShowEmojiPicker(false); // Hides the emoji picker after selection
   };
 
   /**
@@ -161,7 +159,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   const handleIconClick = (iconType) => {
     switch (iconType) {
       case 'emoji':
-        setShowEmojiPicker(!showEmojiPicker);
+        setShowEmojiPicker(!showEmojiPicker); // Toggles the visibility of the emoji picker
         break;
       case 'image':
         // Add image upload logic here
@@ -175,7 +173,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
     }
   };
 
-  const avatarUrl = user?.photoURL || defaultAvatar;
+  const avatarUrl = user?.photoURL || defaultAvatar; // Uses the user's photo URL if available, otherwise uses a default avatar
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -191,13 +189,13 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         <Icon src="../assets/underline.png" alt="underline" onClick={() => handleIconClick('underline')} />
         <Icon src="../assets/pen.png" alt="pen" onClick={() => handleIconClick('pen')} />
       </IconBar>
-      {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+      {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />} {/* Renders the emoji picker if showEmojiPicker is true */}
       <InputArea>
         <Avatar src={avatarUrl} alt="User Avatar" />
         <Textarea
           placeholder="Type your message here..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => setMessage(e.target.value)} // Updates the message state when the input changes
         />
         <Button type="submit">
           <ButtonText>Send</ButtonText>
