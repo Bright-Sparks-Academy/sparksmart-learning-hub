@@ -26,6 +26,9 @@ body, html {
 ::-webkit-scrollbar-thumb:hover {
   background: #FFD900;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 
 
