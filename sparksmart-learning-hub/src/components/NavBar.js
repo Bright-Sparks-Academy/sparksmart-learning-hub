@@ -105,7 +105,6 @@ const NavBar = ({ user }) => (
         <>
           <NavLink to="/profile">Profile</NavLink>
           <NavLink to="/messaging">Messaging</NavLink>
-          <NavLink to="/homework">Homework</NavLink> {/* Add HomeworkPage link here */}
         </>
       )}
     </NavLinks>
