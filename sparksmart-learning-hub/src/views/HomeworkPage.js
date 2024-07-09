@@ -3,13 +3,13 @@ import styled from 'styled-components';
 import Todolist from './Todolist';
 
 // Author: John Nguyen
-// Design the the Homework website page 
+// Design the Homework website page
 
-// make a position of HomeworkPageContainer
+// Make a position of HomeworkPageContainer
 const HomeworkPageContainer = styled.div`
   position: relative;
 `;
-//move the location of contain to the right way 
+// Move the location of the container to the right way
 const AbsoluteContainer = styled.div`
   position: absolute;
   width: 1385px;
@@ -17,14 +17,15 @@ const AbsoluteContainer = styled.div`
   top: 154px;
   left: 20px;
 `;
-//Build the scroll container to scroll the task
+// Build the scroll container to scroll the task
 const ScrollContainer = styled.div`
-  overflow-y:auto; /* Equivalent to overscroll-auto */
-  top:20px;
-  position:absolute;
-  width:1320px;
+  overflow-y: scroll; /* Equivalent to overscroll-auto */
+  top: 20px;
+  position: absolute;
+  width: 1320px;
+  height: 186px;
 `;
-//Build yellow background to container
+// Build yellow background to container
 const YellowBackground = styled.div`
   position: absolute;
   width: 1385px;
@@ -34,17 +35,17 @@ const YellowBackground = styled.div`
   left: 0;
   background-color: #f7f03e;
 `;
-//Build white background to container
+// Build white background to container
 const WhiteBackground = styled.div`
   position: absolute;
-  width: 1350px;
+  width: 1365px;
   height: 470px;
-  top: 202px;
+  top: 195px;
   border-radius: 1rem;
-  left: 20px;
+  left: 10px;
   background-color: white;
 `;
-//Build Taskheader container
+// Build TaskHeader container
 const TaskHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -59,12 +60,16 @@ const TaskHeader = styled.div`
   border-radius: 1.25rem;
   background-color: #d9d9d9;
 `;
-//Build Taskheader text
+// Build TaskHeader text
 const TaskHeaderItem = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: bold;
-  font-size: 0.875rem;
+  font-size: 0.920rem;
+  width: 100px; /* Adjust width as needed */
 `;
-//Build TaskHeader button to fit the task header container
+// Build TaskHeader button to fit the task header container
 const TaskButton = styled.button`
   background-color: black;
   color: #f7f03e;
@@ -73,7 +78,7 @@ const TaskButton = styled.button`
   margin-left: 1rem;
   cursor: pointer;
 `;
-//Build Headtitle style of the Text Homework
+// Build HeadTitle style of the Text Homework
 const HeaderTitle = styled.div`
   position: absolute;
   width: 463px;
@@ -84,7 +89,7 @@ const HeaderTitle = styled.div`
   color: black;
   letter-spacing: 0.15rem;
 `;
-//Build WelcomBanner to the the Text welcom firstname
+// Build WelcomeBanner to the Text welcome firstname
 const WelcomeBanner = styled.div`
   position: absolute;
   width: 362px;
@@ -100,7 +105,7 @@ const WelcomeBanner = styled.div`
   font-size: 1.5rem;
   color: black;
 `;
-//Build the another task container
+// Build another task container
 const TaskLabels = styled.div`
   position: absolute;
   display: flex;
@@ -113,7 +118,7 @@ const TaskLabels = styled.div`
   border-radius: 1.25rem;
   padding: 0.5rem;
 `;
-//Build the label style to fit the container
+// Build the label style to fit the container
 const Label = styled.div`
   display: flex;
   align-items: center;
@@ -137,39 +142,38 @@ const HomeworkPage = () => {
         <YellowBackground />
         <WhiteBackground>
           <ScrollContainer>
-          <TaskHeader>
-            <span className="relative left-[20px]">Decimal Practices #1</span>
-            <TaskHeaderItem className="relative left-[40px]">06/23</TaskHeaderItem>
-            <TaskHeaderItem className="relative left-[55px]">100</TaskHeaderItem>
-            <div className="flex items-center">
-              <TaskButton>View</TaskButton>
-              <TaskButton>Submit</TaskButton>
-            </div>
-           </TaskHeader>
+            <TaskHeader>
+            <TaskHeaderItem style={{ width: '150px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
+              <TaskHeaderItem>06/23</TaskHeaderItem>
+              <TaskHeaderItem>100</TaskHeaderItem>
+              <div className="flex items-center">
+                <TaskButton>View</TaskButton>
+                <TaskButton>Submit</TaskButton>
+              </div>
+            </TaskHeader>
 
-          <TaskLabels>
-            <span className="relative left-[20px]">Decimal Practices #1</span>
-            <TaskHeaderItem className="relative left-[40px]">06/23</TaskHeaderItem>
-            <TaskHeaderItem className="relative left-[55px]">100</TaskHeaderItem>
-            <div className="flex items-center">
-              <TaskButton>View</TaskButton>
-              <TaskButton>Submit</TaskButton>
-            </div>
-          </TaskLabels>
-          
+            <TaskLabels>
+                <TaskHeaderItem style={{ width: '150px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
+              <TaskHeaderItem>06/23</TaskHeaderItem>
+              <TaskHeaderItem>100</TaskHeaderItem>
+              <div className="flex items-center">
+                <TaskButton>View</TaskButton>
+                <TaskButton>Submit</TaskButton>
+              </div>
+            </TaskLabels>
 
-          <Label style={{ top: '15px', left: '50px', width: '135px' }}>
-            Assignment
-          </Label>
-          <Label style={{ top: '-22px', left: '400px', width: '135px' }}>
-            Due Date
-          </Label>
-          <Label style={{ top: '-60px', left: '660px', width: '164px' }}>
-            Points
-          </Label>
-          <Label style={{ top: '-99px', left: '1040px', width: '220px' }}>
-            Submission
-          </Label>
+            <Label style={{ top: '15px', left: '50px', width: '135px' }}>
+              Assignment
+            </Label>
+            <Label style={{ top: '-22px', left: '400px', width: '135px' }}>
+              Due Date
+            </Label>
+            <Label style={{ top: '-60px', left: '683px', width: '164px' }}>
+              Points
+            </Label>
+            <Label style={{ top: '-99px', left: '1040px', width: '220px' }}>
+              Submission
+            </Label>
           </ScrollContainer>
         </WhiteBackground>
       </AbsoluteContainer>
@@ -181,5 +185,3 @@ const HomeworkPage = () => {
 };
 
 export default HomeworkPage;
-
-
