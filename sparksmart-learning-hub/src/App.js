@@ -10,10 +10,10 @@ import AdminDashboard from './views/AdminDashboard';
 import TeacherDashboard from './views/TeacherDashboard';
 import StudentDashboard from './views/StudentDashboard';
 import MessagingPage from './views/MessagingPage';
+import HomeworkPage from './views/HomeworkPage'; // Import HomeworkPage component
 import { auth, mockUser } from './firebaseConfig';
 import { getRole } from './roles';
 import GlobalStyle from './GlobalStyles';
-import HomeworkPage from './views/HomeworkPage';
 
 // Author: Tom Wang
 // This component serves as the main application wrapper, handling routing and user authentication state.
@@ -87,10 +87,10 @@ const App = () => {
               {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
               {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
               <Route path="/messaging" element={<MessagingPage />} />
+              <Route path="/homework" element={<HomeworkPage />} /> {/* Add HomeworkPage route here */}
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />
-          
         </Routes>
       </Router>
     </div>
