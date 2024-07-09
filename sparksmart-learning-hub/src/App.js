@@ -13,6 +13,7 @@ import MessagingPage from './views/MessagingPage';
 import { auth, mockUser } from './firebaseConfig';
 import { getRole } from './roles';
 import GlobalStyle from './GlobalStyles';
+import HomeworkPage from './views/HomeworkPage';
 
 // Author: Tom Wang
 // This component serves as the main application wrapper, handling routing and user authentication state.
@@ -89,6 +90,7 @@ const App = () => {
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/Homework" element={<HomeworkPage/>}/>
         </Routes>
       </Router>
     </div>
