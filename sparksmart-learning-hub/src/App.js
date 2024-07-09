@@ -90,7 +90,7 @@ const App = () => {
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />
-          <Route path="/Homework" element={<HomeworkPage/>}/>
+          
         </Routes>
       </Router>
     </div>
