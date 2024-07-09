@@ -85,19 +85,23 @@ const Profile = ({ user, role }) => {
 
   return (
     <ProfileContainer>
+
       <ProfileImage src={avatar} alt={displayName} />
       <h2>{displayName}</h2>
       <p>Your Role: {role}</p>
       {error && <ErrorMessage>{error}</ErrorMessage>}
+      
       <Input
         type="text"
         value={displayName}
         onChange={(e) => setDisplayName(e.target.value)}
         placeholder="Enter new display name"
       />
+
       <Button onClick={handleNameChange}>Save Name</Button>
       <Input type="file" accept="image/*" onChange={handleAvatarChange} />
       <Button onClick={() => auth.signOut()}>Log Out</Button>
+
     </ProfileContainer>
   );
 };

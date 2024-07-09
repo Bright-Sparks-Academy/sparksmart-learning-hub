@@ -62,11 +62,11 @@ const MessageContent = styled.div`
  * Created by Tom Wang.
  */
 const MessageList = ({ messages }) => {
-  const defaultAvatarUrl = defaultAvatar;
+const defaultAvatarUrl = defaultAvatar;
 
   return (
     <MessageListContainer>
-      {messages.map((msg, index) => (
+      {messages.map((msg, index) =>(
         <MessageItem key={index}>
           <Avatar src={msg.avatarUrl || defaultAvatarUrl} alt="User Avatar" />
           <MessageContent>

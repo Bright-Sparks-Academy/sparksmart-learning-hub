@@ -1,8 +1,6 @@
 import React from 'react';
 
-
 const Todolist = () => {
-    
       
   return (
     <div className="absolute w-[653px] h-[753px] top-[854px] left-[189px] bg-yellow-400 rounded-xl p-6 overflow-hidden">
@@ -16,7 +14,6 @@ const Todolist = () => {
            <span>Week 3: 06/17 - 06/23</span>
           </p>
           <button className="bg-black text-white rounded-full w-8 h-8 flex items-center justify-center ml-2">{'>'}</button>
-
           </div>
         </div>
        
@@ -32,8 +29,8 @@ const Todolist = () => {
             <button className="bg-black text-amber-400 px-2 cursor-pointer py-1 rounded-md">View</button>
           </div>
         </div>
-        </div>
-        </div>
+      </div>
+    </div>
         
       
     
