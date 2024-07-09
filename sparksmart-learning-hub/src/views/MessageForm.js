@@ -2,17 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import defaultAvatar from '../assets/user-avatar_6596121.png';
 import Picker from 'emoji-picker-react';
-
-// Placeholder icons
-const emojiIcon = 'path/to/emojiIcon.png';
-const imageIcon = 'path/to/imageIcon.png';
-const attachmentIcon = 'path/to/attachmentIcon.png';
-const microphoneIcon = 'path/to/microphoneIcon.png';
-const videoIcon = 'path/to/videoIcon.png';
-const boldIcon = 'path/to/boldIcon.png';
-const italicIcon = 'path/to/italicIcon.png';
-const underlineIcon = 'path/to/underlineIcon.png';
-const penIcon = 'path/to/penIcon.png';
+import emojiIcon from '../assets/smile.png';
+import imageIcon from '../assets/icons8-image-48.png';
+import attachmentIcon from '../assets/icons8-attachment-50.png';
+import microphoneIcon from '../assets/icons8-microphone-50.png';
+import videoIcon from '../assets/icons8-video-48.png';
+import boldIcon from '../assets/icons8-bold-50.png';
+import italicIcon from '../assets/icons8-italic-32.png';
+import underlineIcon from '../assets/icons8-underline-50.png';
+import penIcon from '../assets/icons8-pen-48.png';
 
 // Styled components definitions...
 
@@ -134,12 +132,12 @@ const ButtonText = styled.span`
 
 /**
  * CanvasWrapper is a styled-component to conditionally display the drawing canvas.
- * @param {boolean} show - Determines whether to show the canvas.
+ * @param {boolean} $show - Determines whether to show the canvas.
  * Created by Tom Wang.
  */
 const CanvasWrapper = styled.div`
   position: relative;
-  display: ${({ show }) => (show ? 'block' : 'none')};
+  display: ${({ $show }) => ($show ? 'block' : 'none')};
 `;
 
 /**
@@ -162,107 +160,112 @@ const Canvas = styled.canvas`
  * Created by Tom Wang.
  */
 const MessageForm = ({ message, setMessage, onSend, user }) => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to manage the visibility of the emoji picker
-  const [showCanvas, setShowCanvas] = useState(false); // State to toggle the visibility of the drawing canvas
-  const [isDrawing, setIsDrawing] = useState(false); // State to track drawing status
-  const [isRecordingAudio, setIsRecordingAudio] = useState(false); // State to track audio recording status
-  const [isRecordingVideo, setIsRecordingVideo] = useState(false); // State to track video recording status
-  const [mediaRecorder, setMediaRecorder] = useState(null); // State to store media recorder
-  const [recordedChunks, setRecordedChunks] = useState([]); // State to store recorded media chunks
-  const imageInputRef = useRef(null); // Ref for the image input element
-  const attachmentInputRef = useRef(null); // Ref for the attachment input element
-  const videoInputRef = useRef(null); // Ref for the video input element
-  const canvasRef = useRef(null); // Ref for the canvas element
-  const ctxRef = useRef(null); // Ref for the canvas context
-  const drawingData = useRef([]); // Ref to store drawing data
-  const editableDivRef = useRef(null); // Ref for the editable div
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showCanvas, setShowCanvas] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+  const [isRecordingVideo, setIsRecordingVideo] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [recordedChunks, setRecordedChunks] = useState([]);
+  const imageInputRef = useRef(null);
+  const attachmentInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+  const canvasRef = useRef(null);
+  const ctxRef = useRef(null);
+  const drawingData = useRef([]);
+  const editableDivRef = useRef(null);
 
   /**
    * Handles form submission.
    * @param {Object} e - The event object.
+   * Created by Tom Wang.
    */
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevents the default form submission behavior
-    const text = editableDivRef.current.innerHTML; // Gets the innerHTML of the editable div
-    if (text.trim() || drawingData.current.length > 0) { // Checks if the text is not empty or if there is drawing data
-      if (drawingData.current.length > 0) { // If there is drawing data
-        const drawingMessage = `${text}\n[Drawing Attached]`; // Appends the drawing message
-        onSend(drawingMessage, drawingData.current); // Sends the message with the drawing
+    e.preventDefault();
+    const text = editableDivRef.current.innerHTML;
+    if (text.trim() || drawingData.current.length > 0) {
+      if (drawingData.current.length > 0) {
+        const drawingMessage = `${text}\n[Drawing Attached]`;
+        onSend(drawingMessage, drawingData.current);
       } else {
-        onSend(text); // Sends the text message
+        onSend(text);
       }
-      editableDivRef.current.innerHTML = ''; // Clears the editable div
-      drawingData.current = []; // Resets the drawing data
-      setShowCanvas(false); // Hides the canvas
+      editableDivRef.current.innerHTML = '';
+      drawingData.current = [];
+      setShowCanvas(false);
     }
   };
 
   /**
    * Handles emoji selection.
    * @param {Object} emojiData - The selected emoji data.
+   * Created by Tom Wang.
    */
   const handleEmojiClick = (emojiData) => {
-    editableDivRef.current.focus(); // Focuses the editable div
-    document.execCommand('insertText', false, emojiData.emoji); // Inserts the emoji into the editable div
-    setShowEmojiPicker(false); // Hides the emoji picker
+    editableDivRef.current.focus();
+    document.execCommand('insertText', false, emojiData.emoji);
+    setShowEmojiPicker(false);
   };
 
   /**
    * Handles icon click actions.
    * @param {string} iconType - The type of icon clicked.
+   * Created by Tom Wang.
    */
   const handleIconClick = (iconType) => {
-    editableDivRef.current.focus(); // Focuses the editable div
+    editableDivRef.current.focus();
     switch (iconType) {
       case 'emoji':
-        setShowEmojiPicker(!showEmojiPicker); // Toggles the visibility of the emoji picker
+        setShowEmojiPicker(!showEmojiPicker);
         break;
       case 'image':
-        imageInputRef.current.click(); // Triggers the image input click
+        imageInputRef.current.click();
         break;
       case 'attachment':
-        attachmentInputRef.current.click(); // Triggers the attachment input click
+        attachmentInputRef.current.click();
         break;
       case 'group':
-        alert('Group management feature not implemented yet.'); // Alerts the user about the group management feature
+        alert('Group management feature not implemented yet.');
         break;
       case 'microphone':
-        toggleRecording('audio'); // Toggles audio recording
+        toggleRecording('audio');
         break;
       case 'video':
-        toggleRecording('video'); // Toggles video recording
+        toggleRecording('video');
         break;
       case 'bold':
-        document.execCommand('bold'); // Applies bold formatting to the selected text
+        document.execCommand('bold');
         break;
       case 'italic':
-        document.execCommand('italic'); // Applies italic formatting to the selected text
+        document.execCommand('italic');
         break;
       case 'underline':
-        document.execCommand('underline'); // Applies underline formatting to the selected text
+        document.execCommand('underline');
         break;
       case 'pen':
-        setShowCanvas(!showCanvas); // Toggles the visibility of the drawing canvas
+        setShowCanvas(!showCanvas);
         break;
       default:
-        console.log(`${iconType} icon clicked`); // Logs the icon type
+        console.log(`${iconType} icon clicked`);
     }
   };
 
   /**
    * Handles file input changes.
    * @param {Object} event - The event object.
+   * Created by Tom Wang.
    */
   const handleFileChange = (event) => {
-    const file = event.target.files[0]; // Gets the selected file
+    const file = event.target.files[0];
     if (file) {
-      alert(`Selected file - ${file.name}`); // Placeholder alert for file selection
+      alert(`Selected file - ${file.name}`);
     }
   };
 
   /**
    * Starts drawing on the canvas.
    * @param {Object} nativeEvent - The native event object.
+   * Created by Tom Wang.
    */
   const startDrawing = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
@@ -273,6 +276,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
 
   /**
    * Finishes drawing on the canvas.
+   * Created by Tom Wang.
    */
   const finishDrawing = () => {
     ctxRef.current.closePath();
@@ -283,6 +287,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   /**
    * Draws on the canvas.
    * @param {Object} nativeEvent - The native event object.
+   * Created by Tom Wang.
    */
   const draw = ({ nativeEvent }) => {
     if (!isDrawing) return;
@@ -293,6 +298,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
 
   /**
    * Sets up the canvas context.
+   * Created by Tom Wang.
    */
   useEffect(() => {
     if (showCanvas) {
@@ -309,6 +315,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   /**
    * Toggles audio or video recording.
    * @param {string} type - The type of recording ('audio' or 'video').
+   * Created by Tom Wang.
    */
   const toggleRecording = (type) => {
     if (type === 'audio') {
@@ -360,7 +367,7 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
     }
   };
 
-  const avatarUrl = user?.photoURL || defaultAvatar; // Uses the user's photo URL if available, otherwise uses a default avatar
+  const avatarUrl = user?.photoURL || defaultAvatar;
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -378,8 +385,8 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
         <Icon src={underlineIcon} alt="underline" onClick={() => handleIconClick('underline')} />
         <Icon src={penIcon} alt="pen" onClick={() => handleIconClick('pen')} />
       </IconBar>
-      {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />} {/* Renders the emoji picker if showEmojiPicker is true */}
-      <CanvasWrapper show={showCanvas}>
+      {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+      <CanvasWrapper $show={showCanvas}>
         <Canvas ref={canvasRef} onMouseDown={startDrawing} onMouseUp={finishDrawing} onMouseMove={draw} />
       </CanvasWrapper>
       <InputArea>
