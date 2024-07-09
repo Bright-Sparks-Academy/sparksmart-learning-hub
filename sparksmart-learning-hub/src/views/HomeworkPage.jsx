@@ -67,7 +67,7 @@ const HomeworkPage = () => {
 
           
           <div className="absolute w-[463px] top-0 left-[595px] font-bold text-black text-[40px] tracking-[2.40px] leading-[normal]">
-            HomeWork
+            Homework
           </div>
           <div className="absolute w-[362px] h-[63px] top-[86px] left-8 rounded-lg  bg-[#f7f03e]" >
           <span className="relative  w-[751px] top-auto bottom-[-15px] left-14  font-bold text-black text-2xl tracking-[1.44px] leading-[normal]"> Welcome {`First Name`}</span>
