@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import defaultAvatar from '../assets/user-avatar_6596121.png';
+import defaultAvatar from '../assets/icons8-avatar-50.png';
 import Picker from 'emoji-picker-react';
 import emojiIcon from '../assets/smile.png';
 import imageIcon from '../assets/icons8-image-48.png';
@@ -160,20 +160,20 @@ const Canvas = styled.canvas`
  * Created by Tom Wang.
  */
 const MessageForm = ({ message, setMessage, onSend, user }) => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showCanvas, setShowCanvas] = useState(false);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
-  const [isRecordingVideo, setIsRecordingVideo] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [recordedChunks, setRecordedChunks] = useState([]);
-  const imageInputRef = useRef(null);
-  const attachmentInputRef = useRef(null);
-  const videoInputRef = useRef(null);
-  const canvasRef = useRef(null);
-  const ctxRef = useRef(null);
-  const drawingData = useRef([]);
-  const editableDivRef = useRef(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to manage the visibility of the emoji picker
+  const [showCanvas, setShowCanvas] = useState(false); // State to toggle the visibility of the drawing canvas
+  const [isDrawing, setIsDrawing] = useState(false); // State to track drawing status
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false); // State to track audio recording status
+  const [isRecordingVideo, setIsRecordingVideo] = useState(false); // State to track video recording status
+  const [mediaRecorder, setMediaRecorder] = useState(null); // State to store the media recorder
+  const [recordedChunks, setRecordedChunks] = useState([]); // State to store recorded chunks
+  const imageInputRef = useRef(null); // Ref for the image input element
+  const attachmentInputRef = useRef(null); // Ref for the attachment input element
+  const videoInputRef = useRef(null); // Ref for the video input element
+  const canvasRef = useRef(null); // Ref for the canvas element
+  const ctxRef = useRef(null); // Ref for the canvas context
+  const drawingData = useRef([]); // Ref to store drawing data
+  const editableDivRef = useRef(null); // Ref for the editable div
 
   /**
    * Handles form submission.
