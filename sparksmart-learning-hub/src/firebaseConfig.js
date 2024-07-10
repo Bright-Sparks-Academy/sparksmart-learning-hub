@@ -35,7 +35,7 @@ const mockUser = {
   email: "testuser@example.com",
   displayName: "Test User",
   uid: "testuid123",
-  photoURL: "/src/assets/user-avatar_6596121.png" // Update this path as needed
+  photoURL: '../assets/user-avatar_6596121.png'// Update this path as needed
 };
 
 /**
