@@ -11,6 +11,7 @@ import TeacherDashboard from './views/TeacherDashboard.js';
 import StudentDashboard from './views/StudentDashboard.js';
 import MessagingPage from './views/MessagingPage.js';
 import HomeworkPage from './views/HomeworkPage.js'; // Import HomeworkPage component
+import AiLearningPlansPage from './components/AiLearningPlans/AiLearningPlansPage'; // Import AiLearningPlansPage component
 import { auth, mockUser } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
@@ -88,6 +89,7 @@ const App = () => {
               {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
               <Route path="/messaging" element={<MessagingPage />} />
               <Route path="/homework" element={<HomeworkPage />} /> {/* Add HomeworkPage route here */}
+              <Route path="/ai-learning-plans" element={<AiLearningPlansPage />} /> {/* Add AI Learning Plans route */}
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />
