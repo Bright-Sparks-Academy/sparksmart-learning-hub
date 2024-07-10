@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Questionnaire from './Questionnaire.js';
 import LearningPlan from './LearningPlan.js';
-import { PageContainer, Header, ContentWrapper } from './styles';
+import { PageContainer, Header, ContentWrapper } from './styles.js';
 
 /**
  * Main page component for AI-powered learning plans.
