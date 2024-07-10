@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, signOut } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getRole } from "./roles"; // Make sure this is correctly implemented
+import { getRole } from "./roles"; // Ensure this is correctly implemented
 
 // Firebase configuration object
 const firebaseConfig = {
@@ -108,11 +108,16 @@ const uploadAvatar = async (file, userId) => {
  * Created by Tom Wang.
  * @returns {Promise<Object>} A promise that resolves to the mock user object.
  */
-const getMockUser = () => {
-  return new Promise((resolve) => {
-    resolve(mockUser);
-  });
+const signInMockUser = async () => {
+  await signInAnonymously(auth);
+  const user = auth.currentUser;
+  await setDoc(doc(db, "users", user.uid), {
+    displayName: mockUser.displayName,
+    email: mockUser.email,
+    photoURL: mockUser.photoURL
+  }, { merge: true });
+  return user;
 };
 
 // Exporting the functions and mockUser for use in other parts of the application
-export { auth, db, signInWithGoogle, logOut, updateUserProfile, uploadAvatar, mockUser, getMockUser };
+export { auth, db, signInWithGoogle, logOut, updateUserProfile, uploadAvatar, mockUser, signInMockUser };

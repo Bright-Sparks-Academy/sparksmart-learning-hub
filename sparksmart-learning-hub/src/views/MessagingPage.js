@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { addMessage, listenForMessages } from '../Firestore';
-import { mockUser } from '../firebaseConfig'; // Ensure the correct import path
-import MessageForm from './MessageForm';
-import MessageList from './MessageList';
-import LightBulbAnimation from '../components/LightBulbAnimation';
+import { addMessage, listenForMessages } from '../Firestore.js';
+import { mockUser } from '../firebaseConfig.js'; // Ensure the correct import path
+import MessageForm from './MessageForm.js';
+import MessageList from './MessageList.js';
+import LightBulbAnimation from '../components/LightBulbAnimation.js';
 
 // Mock data for instructors
 const mockInstructors = [

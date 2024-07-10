@@ -61,7 +61,7 @@
       "port": 9000
     },
     "hosting": {
-      "port": 5000
+      "port": 5002
     },
     "pubsub": {
       "port": 8085
@@ -73,7 +73,8 @@
       "port": 9299
     },
     "dataconnect": {
-      "port": 9399
+      "port": 9399,
+      "source": "path/to/data-source"   
     },
     "ui": {
       "enabled": true

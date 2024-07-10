@@ -2,18 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import NavBar from './components/NavBar';
-import Login from './views/Login';
-import Profile from './views/Profile';
-import Home from './views/Home';
-import AdminDashboard from './views/AdminDashboard';
-import TeacherDashboard from './views/TeacherDashboard';
-import StudentDashboard from './views/StudentDashboard';
-import MessagingPage from './views/MessagingPage';
-import HomeworkPage from './views/HomeworkPage'; // Import HomeworkPage component
-import { auth, mockUser } from './firebaseConfig';
-import { getRole } from './roles';
-import GlobalStyle from './GlobalStyles';
+import NavBar from './components/NavBar.js';
+import Login from './views/Login.js';
+import Profile from './views/Profile.js';
+import Home from './views/Home.js';
+import AdminDashboard from './views/AdminDashboard.js';
+import TeacherDashboard from './views/TeacherDashboard.js';
+import StudentDashboard from './views/StudentDashboard.js';
+import MessagingPage from './views/MessagingPage.js';
+import HomeworkPage from './views/HomeworkPage.js'; // Import HomeworkPage component
+import { auth, mockUser } from './firebaseConfig.js';
+import { getRole } from './roles.js';
+import GlobalStyle from './GlobalStyles.js';
 
 // Author: Tom Wang
 // This component serves as the main application wrapper, handling routing and user authentication state.

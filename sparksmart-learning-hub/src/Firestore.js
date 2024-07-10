@@ -1,4 +1,4 @@
-import { db } from "./firebaseConfig";
+import { db } from './firebaseConfig.js';
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore"; // Import necessary Firestore functions
 
 /**
@@ -99,7 +99,7 @@ const addMessage = async (senderEmail, recipientEmail, content) => {
       sender: senderEmail,
       recipient: recipientEmail,
       content,
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp() // Ensure serverTimestamp is set correctly
     });
   } catch (error) {
     console.error('Error adding message:', error);

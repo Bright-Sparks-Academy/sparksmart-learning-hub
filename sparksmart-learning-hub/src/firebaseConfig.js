@@ -3,6 +3,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
+
 // Author: Tom Wang
 // This configuration initializes Firebase and provides authentication, Firestore, and storage functionality.
 
@@ -35,7 +36,23 @@ const mockUser = {
   email: "testuser@example.com",
   displayName: "Test User",
   uid: "testuid123",
-  photoURL: '../assets/user-avatar_6596121.png'// Update this path as needed
+  photoURL: '../assets/user-avatar_6596121.png' // Update this path as needed
+};
+
+/**
+ * Function to handle mock sign-in for testing.
+ * This simulates the sign-in process and uses the mock user.
+ * @returns {Promise<Object>} The mock user object.
+ */
+const signInMockUser = async () => {
+  console.log("Mock user signed in:", mockUser);
+  // Optionally, save mock user data to Firestore
+  await setDoc(doc(db, "users", mockUser.uid), {
+    displayName: mockUser.displayName,
+    email: mockUser.email,
+    photoURL: mockUser.photoURL
+  }, { merge: true });
+  return mockUser;
 };
 
 /**
@@ -107,4 +124,4 @@ const uploadAvatar = async (file, userId) => {
 };
 
 // Exporting the functions and mockUser for use in other parts of the application
-export { auth, db, signInWithGoogle, logOut, updateUserProfile, uploadAvatar, mockUser };
+export { auth, db, signInWithGoogle, logOut, updateUserProfile, uploadAvatar, mockUser, signInMockUser };

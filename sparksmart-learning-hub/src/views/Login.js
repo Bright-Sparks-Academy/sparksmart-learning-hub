@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { signInWithGoogle } from '../firebaseConfig';
+import { signInWithGoogle } from '../firebaseConfig.js';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/lightbulb.png';
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import LightBulbAnimation from '../components/LightBulbAnimation';
+import LightBulbAnimation from '../components/LightBulbAnimation.js';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger.js';
 
 gsap.registerPlugin(ScrollTrigger);
 

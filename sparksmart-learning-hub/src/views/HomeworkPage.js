@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Todolist from './Todolist';
+import Todolist from './Todolist.js';
 
 // Author: John Nguyen
 // Design the Homework page

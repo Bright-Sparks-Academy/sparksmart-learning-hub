@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { updateUserProfile, uploadAvatar, auth } from '../firebaseConfig';
+import { updateUserProfile, uploadAvatar, auth } from '../firebaseConfig.js';
 
 const ProfileContainer = styled.div`
   display: flex;
