@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import Todolist from './Todolist';
 
 // Author: John Nguyen
-// Design the Homework website page
+// Design the Homework page
 
 // Make a position of HomeworkPageContainer
 const HomeworkPageContainer = styled.div`
   position: relative;
 `;
+
 // Move the location of the container to the right way
 const AbsoluteContainer = styled.div`
   position: absolute;
@@ -17,6 +18,7 @@ const AbsoluteContainer = styled.div`
   top: 154px;
   left: 20px;
 `;
+
 // Build the scroll container to scroll the task
 const ScrollContainer = styled.div`
   overflow-y: scroll; /* Equivalent to overscroll-auto */
@@ -25,6 +27,7 @@ const ScrollContainer = styled.div`
   width: 1320px;
   height: 186px;
 `;
+
 // Build yellow background to container
 const YellowBackground = styled.div`
   position: absolute;
@@ -35,6 +38,7 @@ const YellowBackground = styled.div`
   left: 0;
   background-color: #FFD900;
 `;
+
 // Build white background to container
 const WhiteBackground = styled.div`
   position: absolute;
@@ -45,6 +49,7 @@ const WhiteBackground = styled.div`
   left: 10px;
   background-color: white;
 `;
+
 // Build TaskHeader container
 const TaskHeader = styled.div`
   display: flex;
@@ -60,15 +65,16 @@ const TaskHeader = styled.div`
   border-radius: 1.25rem;
   background-color: #d9d9d9;
 `;
+
 // Build TaskHeader text
 const TaskHeaderItem = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  
   font-size: 1.2rem;
   width: 100px; /* Adjust width as needed */
 `;
+
 // Build TaskHeader button to fit the task header container
 const TaskButton = styled.button`
   background-color: black;
@@ -79,6 +85,7 @@ const TaskButton = styled.button`
   cursor: pointer;
   
 `;
+
 // Build HeadTitle style of the Text Homework
 const HeaderTitle = styled.div`
   position: absolute;
@@ -90,6 +97,7 @@ const HeaderTitle = styled.div`
   color: black;
   letter-spacing: 0.15rem;
 `;
+
 // Build WelcomeBanner to the Text welcome firstname
 const WelcomeBanner = styled.div`
   position: absolute;
@@ -106,6 +114,7 @@ const WelcomeBanner = styled.div`
   font-size: 1.5rem;
   color: black;
 `;
+
 // Build another task container
 const TaskLabels = styled.div`
   position: absolute;
@@ -119,6 +128,7 @@ const TaskLabels = styled.div`
   border-radius: 1.25rem;
   padding: 0.5rem;
 `;
+
 // Build the label style to fit the container
 const Label = styled.div`
   display: flex;
@@ -178,7 +188,7 @@ const HomeworkPage = () => {
           </ScrollContainer>
         </WhiteBackground>
       </AbsoluteContainer>
-      <HeaderTitle>HomeWork</HeaderTitle>
+      <HeaderTitle>Homework</HeaderTitle>
       <WelcomeBanner>Welcome {`First Name`}</WelcomeBanner>
       <Todolist />
     </HomeworkPageContainer>

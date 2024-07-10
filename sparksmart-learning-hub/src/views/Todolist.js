@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-//Build the Todolist part like this picture
+// Author: John Nguyen
+// Design Todolist part of the Homework page
 
-//Build the Todoliscontainer shape and background color yellow
+// Build the Todoliscontainer shape and background color yellow
 const TodolistContainer = styled.div`
   position: absolute;
   width: 653px;
@@ -15,7 +16,8 @@ const TodolistContainer = styled.div`
   padding: 1.5rem; /* Equivalent to p-6 */
   overflow: hidden;
 `;
-//Build the TodolistInner with background white to fit the container
+
+// Build the TodolistInner with background white to fit the container
 const TodolistInner = styled.div`
   position: relative;
   width: 563px;
@@ -27,29 +29,34 @@ const TodolistInner = styled.div`
   border-radius: 1rem; /* Equivalent to rounded-lg */
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Equivalent to shadow-inner */
 `;
-//Build the Header to fit the text Todolist , title , and navbutton inside the container
+
+// Build the Header to fit the text Todolist , title , and navbutton inside the container
 const Header = styled.div`
   text-align: center;
   margin-bottom: 1rem; /* Equivalent to mb-4 */
 `;
-//Build Title to fit the container
+
+// Build Title to fit the container
 const Title = styled.h2`
   font-size: 1.5rem; /* Equivalent to text-2xl */
   font-weight: bold;
 `;
-//Build the Subtitle to fit the container
+
+// Build the Subtitle to fit the container
 const SubTitle = styled.p`
   font-size: 1.125rem; /* Equivalent to text-lg */
   font-weight: 600; /* Equivalent to font-semibold */
 `;
-//Build the NavButton to fit in calender
+
+// Build the NavButton to fit in calender
 const NavButtonsContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem; /* Equivalent to mb-4 */
 `;
-//Build the style of Navbutton
+
+// Build the style of Navbutton
 const NavButton = styled.button`
   background-color: black;
   color: white;
@@ -61,7 +68,8 @@ const NavButton = styled.button`
   justify-content: center;
   margin: 0 0.5rem; /* Equivalent to mr-2 and ml-2 */
 `;
-//Build the title of calendar
+
+// Build the title of calendar
 const WeekDisplay = styled.p`
   font-weight: 600; /* Equivalent to font-semibold */
   background-color: #f7f03e; /* Equivalent to bg-primary-color */
@@ -75,14 +83,16 @@ const WeekDisplay = styled.p`
   box-shadow: 0 1px black; /* Equivalent to shadow-[0_1px_black] */
   border-radius: 0; /* Equivalent to rounded-[0px] */
 `;
-//Build the scroll container to fit the box of task container
+
+// Build the scroll container to fit the box of task container
 const ScrollContainer = styled.div`
   overflow-y: auto; /* Equivalent to overscroll-auto */
-  height:92px;
-  position:absolute;
-  width:550px;
+  height: 92px;
+  position: absolute;
+  width: 550px;
 `;
-//Build the Taskcontainer 
+
+// Build the Taskcontainer 
 const TaskContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -95,7 +105,8 @@ const TaskContainer = styled.div`
   margin: 0 auto; /* Equivalent to mx-auto */
   position:relative;
 `;
-//Build the Task Button to fit the container
+
+// Build the Task Button to fit the container
 const TaskButton = styled.button`
   background-color: black;
   color: #f59e0b; /* Equivalent to text-amber-400 */
