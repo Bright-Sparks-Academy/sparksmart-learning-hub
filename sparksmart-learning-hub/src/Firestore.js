@@ -1,5 +1,8 @@
 import { db } from './firebaseConfig.js';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore"; // Import necessary Firestore functions
+import { 
+  collection, addDoc, getDocs, doc, updateDoc, deleteDoc, 
+  query, where, orderBy, onSnapshot, serverTimestamp, Timestamp 
+} from "firebase/firestore"; // Import necessary Firestore functions
 
 /**
  * Adds a new document to a specified Firestore collection.
@@ -82,7 +85,7 @@ const deleteData = async (collectionName, docId) => {
  * Adds a message to the Firestore messages collection.
  * @param {string} senderEmail - The email of the sender.
  * @param {string} recipientEmail - The email of the recipient.
- * @param {string} content - The content of the message.
+ * @param {Object} content - The content of the message which includes text and timestamp.
  * @returns {Promise<void>}
  * @throws Will throw an error if the message cannot be added.
  * Function created by Tom Wang.
@@ -94,12 +97,13 @@ const addMessage = async (senderEmail, recipientEmail, content) => {
   }
 
   try {
-    console.log(`Adding message from ${senderEmail} to ${recipientEmail}: ${content}`);
+    console.log(`Adding message from ${senderEmail} to ${recipientEmail}:`, content);
     await addDoc(collection(db, 'messages'), {
       sender: senderEmail,
       recipient: recipientEmail,
-      content,
-      timestamp: serverTimestamp() // Ensure serverTimestamp is set correctly
+      content: content.text,
+      timestamp: content.timestamp ? Timestamp.fromDate(content.timestamp) : serverTimestamp(), // Use serverTimestamp if content.timestamp is not provided
+      drawing: content.drawing || null,
     });
   } catch (error) {
     console.error('Error adding message:', error);

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import defaultAvatar from '../assets/user-avatar_6596121.png';
+import defaultAvatar from '../assets/icons8-avatar-50.png';
+import { format } from 'date-fns';
 
 // Author: Tom Wang
 // This component renders a list of messages in a styled container.
@@ -57,21 +58,34 @@ const MessageContent = styled.div`
 `;
 
 /**
+ * Converts Firestore Timestamp to a formatted string.
+ * @param {Object} timestamp - The Firestore Timestamp object.
+ * @returns {string} - The formatted timestamp.
+ */
+const formatTimestamp = (timestamp) => {
+  if (timestamp && timestamp.seconds) {
+    const date = new Date(timestamp.seconds * 1000);
+    return format(date, 'yyyy-MM-dd hh:mm:ss a');
+  }
+  return 'Invalid date';
+};
+
+/**
  * MessageList component renders a list of messages.
  * @param {Array} messages - An array of message objects to be displayed.
  * Created by Tom Wang.
  */
 const MessageList = ({ messages }) => {
-const defaultAvatarUrl = defaultAvatar;
+  const defaultAvatarUrl = defaultAvatar;
 
   return (
     <MessageListContainer>
-      {messages.map((msg, index) =>(
+      {messages.map((msg, index) => (
         <MessageItem key={index}>
           <Avatar src={msg.avatarUrl || defaultAvatarUrl} alt="User Avatar" />
           <MessageContent>
             <p><strong>{msg.sender}</strong>: {msg.content}</p>
-            <p><em>{new Date(msg.timestamp.seconds * 1000).toLocaleString()}</em></p>
+            <p><em>{formatTimestamp(msg.timestamp)}</em></p>
           </MessageContent>
         </MessageItem>
       ))}

@@ -183,13 +183,14 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const text = editableDivRef.current.innerHTML;
+    const timestamp = new Date(); // Add current timestamp
     if (text.trim() || drawingData.current.length > 0) {
-      if (drawingData.current.length > 0) {
-        const drawingMessage = `${text}\n[Drawing Attached]`;
-        onSend(drawingMessage, drawingData.current);
-      } else {
-        onSend(text);
-      }
+      const message = {
+        text: text.trim() || '',
+        timestamp, // Include the timestamp in the message object
+        drawing: drawingData.current.length > 0 ? drawingData.current : null,
+      };
+      onSend(message);
       editableDivRef.current.innerHTML = '';
       drawingData.current = [];
       setShowCanvas(false);
