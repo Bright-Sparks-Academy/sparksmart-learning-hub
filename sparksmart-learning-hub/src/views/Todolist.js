@@ -10,7 +10,7 @@ const TodolistContainer = styled.div`
   height: 753px;
   top: 854px;
   left: 20px;
-  background-color: #fbbf24; /* Equivalent to bg-yellow-400 */
+  background-color: #FFD900; /* Equivalent to bg-yellow-400 */
   border-radius: 1rem; /* Equivalent to rounded-xl */
   padding: 1.5rem; /* Equivalent to p-6 */
   overflow: hidden;
@@ -78,6 +78,9 @@ const WeekDisplay = styled.p`
 //Build the scroll container to fit the box of task container
 const ScrollContainer = styled.div`
   overflow-y: auto; /* Equivalent to overscroll-auto */
+  height:92px;
+  position:absolute;
+  width:550px;
 `;
 //Build the Taskcontainer 
 const TaskContainer = styled.div`
@@ -99,6 +102,7 @@ const TaskButton = styled.button`
   padding: 0.25rem 0.5rem; /* Equivalent to px-2 and py-1 */
   cursor: pointer;
   border-radius: 0.375rem; /* Equivalent to rounded-md */
+ 
 `;
 
 const Todolist = () => {
@@ -115,15 +119,15 @@ const Todolist = () => {
           </NavButtonsContainer>
         </Header>
         <ScrollContainer>
-          <TaskContainer>
+          <TaskContainer style ={{ top: '2px', left: '12px', width: '460px' }} >
             <span>Decimal Practices #1-3</span>
             <span className="text-sm">06/18</span>
             <TaskButton>View</TaskButton>
           </TaskContainer>
-          <TaskContainer  style={{ top: '5px', left: '1px', width: '460px' }}>
+          <TaskContainer  style={{ top: '7px', left: '12px', width: '460px' }}>
             <span>Fraction Multiplication</span>
             <span className="text-sm">06/22</span>
-            <TaskButton>View</TaskButton>
+            <TaskButton >View</TaskButton>
           </TaskContainer>
         </ScrollContainer>
       </TodolistInner>

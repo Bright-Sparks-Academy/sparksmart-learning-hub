@@ -33,7 +33,7 @@ const YellowBackground = styled.div`
   border-radius: 0.5rem;
   top: 11rem;
   left: 0;
-  background-color: #f7f03e;
+  background-color: #FFD900;
 `;
 // Build white background to container
 const WhiteBackground = styled.div`
@@ -65,8 +65,8 @@ const TaskHeaderItem = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: bold;
-  font-size: 0.920rem;
+  
+  font-size: 1.2rem;
   width: 100px; /* Adjust width as needed */
 `;
 // Build TaskHeader button to fit the task header container
@@ -77,6 +77,7 @@ const TaskButton = styled.button`
   border-radius: 0.5rem;
   margin-left: 1rem;
   cursor: pointer;
+  
 `;
 // Build HeadTitle style of the Text Homework
 const HeaderTitle = styled.div`
@@ -97,7 +98,7 @@ const WelcomeBanner = styled.div`
   top: 250px;
   left: 20px;
   border-radius: 0.5rem;
-  background-color: #f7f03e;
+  background-color: #FFD900;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,7 +144,7 @@ const HomeworkPage = () => {
         <WhiteBackground>
           <ScrollContainer>
             <TaskHeader>
-            <TaskHeaderItem style={{ width: '150px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
+            <TaskHeaderItem style={{ width: '200px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
               <TaskHeaderItem>06/23</TaskHeaderItem>
               <TaskHeaderItem>100</TaskHeaderItem>
               <div className="flex items-center">
@@ -153,7 +154,7 @@ const HomeworkPage = () => {
             </TaskHeader>
 
             <TaskLabels>
-                <TaskHeaderItem style={{ width: '150px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
+                <TaskHeaderItem style={{ width: '200px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
               <TaskHeaderItem>06/23</TaskHeaderItem>
               <TaskHeaderItem>100</TaskHeaderItem>
               <div className="flex items-center">
@@ -165,10 +166,10 @@ const HomeworkPage = () => {
             <Label style={{ top: '15px', left: '50px', width: '135px' }}>
               Assignment
             </Label>
-            <Label style={{ top: '-22px', left: '400px', width: '135px' }}>
+            <Label style={{ top: '-22px', left: '420px', width: '135px' }}>
               Due Date
             </Label>
-            <Label style={{ top: '-60px', left: '683px', width: '164px' }}>
+            <Label style={{ top: '-60px', left: '705px', width: '164px' }}>
               Points
             </Label>
             <Label style={{ top: '-99px', left: '1040px', width: '220px' }}>
