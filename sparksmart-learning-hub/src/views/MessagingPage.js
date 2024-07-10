@@ -157,8 +157,12 @@ const MessagingPage = () => {
     let unsubscribe;
     if (user && recipient) {
       console.log('Listening for messages:', { userEmail: user.email, recipient });
-      unsubscribe = listenForMessages(user.email, recipient, (msgs) => {
+      listenForMessages(user.email, recipient, (msgs) => {
         setMessages(msgs);
+      }).then((unsub) => {
+        unsubscribe = unsub;
+      }).catch((error) => {
+        console.error('Error setting up listener:', error);
       });
     }
     // Clean up the snapshot listener on component unmount or when dependencies change
@@ -172,20 +176,21 @@ const MessagingPage = () => {
   /**
    * Adds a message to the Firestore messages collection.
    * Function created by Tom Wang.
-   * @param {string} content - The content of the message.
+   * @param {string} text - The text content of the message.
    * @returns {Promise<void>}
    * @throws Will throw an error if the message cannot be added.
    */
-  const handleSendMessage = async (content) => {
+  const handleSendMessage = async (text) => {
     if (user && recipient) {
       try {
+        const content = { text, timestamp: new Date() }; // Ensure content is structured properly
         console.log('Sending message:', { sender: user.email, recipient, content });
         await addMessage(user.email, recipient, content);
       } catch (error) {
         console.error('Error sending message:', error);
       }
     } else {
-      console.error('Sender or recipient email is missing.', { sender: user.email, recipient, content });
+      console.error('Sender or recipient email is missing.', { sender: user.email, recipient });
     }
   };
 

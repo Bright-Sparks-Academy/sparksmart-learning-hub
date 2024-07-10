@@ -13,7 +13,7 @@ import { format } from 'date-fns';
  */
 const MessageListContainer = styled.div`
   margin-top: 1rem;
-  max-height: 300px;
+  max-height: 500px;
   overflow-y: auto;
   padding: 1rem;
   border-radius: 8px;
@@ -84,7 +84,7 @@ const MessageList = ({ messages }) => {
         <MessageItem key={index}>
           <Avatar src={msg.avatarUrl || defaultAvatarUrl} alt="User Avatar" />
           <MessageContent>
-            <p><strong>{msg.sender}</strong>: {msg.content}</p>
+            <p><strong>{msg.sender}</strong>: {msg.content.text}</p>
             <p><em>{formatTimestamp(msg.timestamp)}</em></p>
           </MessageContent>
         </MessageItem>

@@ -112,7 +112,7 @@ const addMessage = async (senderEmail, recipientEmail, content) => {
 };
 
 /**
- * Listens for real-time updates to messages in Firestore.
+ * Listens for real-time updates to messages in Firestore with rate limiting.
  * @param {string} userEmail - The email of the current user.
  * @param {string} recipientEmail - The email of the recipient.
  * @param {function} callback - The callback function to handle new messages.
@@ -127,16 +127,26 @@ const listenForMessages = (userEmail, recipientEmail, callback) => {
   }
 
   console.log(`Listening for messages between ${userEmail} and ${recipientEmail}`);
+
   const q = query(
     collection(db, 'messages'),
     where('sender', 'in', [userEmail, recipientEmail]),
     where('recipient', 'in', [userEmail, recipientEmail]),
     orderBy('timestamp', 'asc')
   );
-  return onSnapshot(q, (snapshot) => {
-    const messages = snapshot.docs.map(doc => doc.data());
-    console.log('Received messages:', messages);
-    callback(messages);
+
+  // Implement a delay before setting up the snapshot listener
+  const delay = 1000; // 1 second delay
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const messages = snapshot.docs.map(doc => doc.data());
+        console.log('Received messages:', messages);
+        callback(messages);
+      });
+      resolve(unsubscribe);
+    }, delay);
   });
 };
 
