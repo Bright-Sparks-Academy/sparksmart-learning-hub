@@ -11,7 +11,7 @@ import TeacherDashboard from './views/TeacherDashboard.js';
 import StudentDashboard from './views/StudentDashboard.js';
 import MessagingPage from './views/MessagingPage.js';
 import HomeworkPage from './views/HomeworkPage.js'; // Import HomeworkPage component
-import AiLearningPlansPage from './components/AiLearningPlans/AiLearningPlansPage'; // Import AiLearningPlansPage component
+import AiLearningPlansPage from './views/AiLearningPlans/AiLearningPlansPage.js'; // Import AiLearningPlansPage component
 import { auth, mockUser } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
