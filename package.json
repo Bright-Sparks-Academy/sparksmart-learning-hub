@@ -1,6 +1,10 @@
 {
   "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
     "emoji-picker-react": "^4.11.1",
+    "express": "^4.19.2",
+    "openai": "^4.52.7",
     "react-helmet": "^6.1.0"
   }
 }

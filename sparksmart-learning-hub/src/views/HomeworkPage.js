@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Todolist from './Todolist.js';
+import axios from 'axios';
 
-// Author: John Nguyen
+// Author: John Nguyen 
 // Design the Homework page
 
 // Make a position of HomeworkPageContainer
@@ -83,7 +84,6 @@ const TaskButton = styled.button`
   border-radius: 0.5rem;
   margin-left: 1rem;
   cursor: pointer;
-  
 `;
 
 // Build HeadTitle style of the Text Homework
@@ -146,7 +146,55 @@ const Label = styled.div`
   position: relative;
 `;
 
+// New components for the question-answer feature
+const QuestionContainer = styled.div`
+  margin: 2rem;
+`;
+
+const QuestionText = styled.div`
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const AnswerInput = styled.input`
+  padding: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const FeedbackText = styled.div`
+  font-size: 1.2rem;
+  color: ${(props) => (props.correct ? 'green' : 'red')};
+  margin-top: 1rem;
+`;
+
+const HintText = styled.div`
+  font-size: 1rem;
+  color: blue;
+  margin-top: 1rem;
+`;
+
 const HomeworkPage = () => {
+  // State to store the current question, user's answer, feedback, and hints
+  const [question, setQuestion] = useState('What is 2 + 2?');
+  const [userAnswer, setUserAnswer] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [hints, setHints] = useState([]);
+
+  // Function to check the answer and get feedback from the backend
+  const checkAnswer = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/check-answer', {
+        question,
+        answer: userAnswer,
+      });
+      setFeedback(response.data.feedback);
+      setHints(response.data.hints);
+    } catch (error) {
+      console.error('Error checking answer:', error);
+    }
+  };
+
   return (
     <HomeworkPageContainer>
       <AbsoluteContainer>
@@ -154,7 +202,7 @@ const HomeworkPage = () => {
         <WhiteBackground>
           <ScrollContainer>
             <TaskHeader>
-            <TaskHeaderItem style={{ width: '200px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
+              <TaskHeaderItem style={{ width: '200px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
               <TaskHeaderItem>06/23</TaskHeaderItem>
               <TaskHeaderItem>100</TaskHeaderItem>
               <div className="flex items-center">
@@ -164,7 +212,7 @@ const HomeworkPage = () => {
             </TaskHeader>
 
             <TaskLabels>
-                <TaskHeaderItem style={{ width: '200px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
+              <TaskHeaderItem style={{ width: '200px', justifyContent: 'center' }}>Decimal Practices #1</TaskHeaderItem>
               <TaskHeaderItem>06/23</TaskHeaderItem>
               <TaskHeaderItem>100</TaskHeaderItem>
               <div className="flex items-center">
@@ -185,6 +233,22 @@ const HomeworkPage = () => {
             <Label style={{ top: '-99px', left: '1040px', width: '220px' }}>
               Submission
             </Label>
+
+            {/* New Question Container */}
+            <QuestionContainer>
+              <QuestionText>{question}</QuestionText>
+              <AnswerInput
+                type="text"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+              />
+              <TaskButton onClick={checkAnswer}>Submit Answer</TaskButton>
+              {feedback && <FeedbackText correct={feedback === 'Correct! Well done.'}>{feedback}</FeedbackText>}
+              {hints.map((hint, index) => (
+                <HintText key={index}>{hint}</HintText>
+              ))}
+            </QuestionContainer>
+
           </ScrollContainer>
         </WhiteBackground>
       </AbsoluteContainer>
