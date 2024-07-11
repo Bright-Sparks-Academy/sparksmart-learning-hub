@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { setDiagnosticCompleted } from '../services/diagnosticService';
+import { setDiagnosticCompleted } from './diagnosticService.js';
 
 // Author: Tom Wang 
 // Design the Diagnostic Test page

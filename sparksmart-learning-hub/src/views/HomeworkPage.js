@@ -174,12 +174,33 @@ const HintText = styled.div`
   margin-top: 1rem;
 `;
 
-const HomeworkPage = () => {
+// New components for the teacher role
+const TeacherContainer = styled.div`
+  margin: 2rem;
+`;
+
+const TeacherInput = styled.input`
+  padding: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const TeacherButton = styled.button`
+  background-color: green;
+  color: white;
+  padding: 0.5rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  margin-left: 1rem;
+`;
+
+const HomeworkPage = ({ role }) => {
   // State to store the current question, user's answer, feedback, and hints
   const [question, setQuestion] = useState('What is 2 + 2?');
   const [userAnswer, setUserAnswer] = useState('');
   const [feedback, setFeedback] = useState('');
   const [hints, setHints] = useState([]);
+  const [teacherQuestion, setTeacherQuestion] = useState(question);
 
   // Function to check the answer and get feedback from the backend
   const checkAnswer = async () => {
@@ -193,6 +214,11 @@ const HomeworkPage = () => {
     } catch (error) {
       console.error('Error checking answer:', error);
     }
+  };
+
+  // Function for teacher to set a new question
+  const updateQuestion = () => {
+    setQuestion(teacherQuestion);
   };
 
   return (
@@ -249,6 +275,18 @@ const HomeworkPage = () => {
               ))}
             </QuestionContainer>
 
+            {/* Teacher's Question Setter, visible only to teachers */}
+            {role === 'teacher' && (
+              <TeacherContainer>
+                <TeacherInput
+                  type="text"
+                  value={teacherQuestion}
+                  onChange={(e) => setTeacherQuestion(e.target.value)}
+                />
+                <TeacherButton onClick={updateQuestion}>Set Question</TeacherButton>
+              </TeacherContainer>
+            )}
+            
           </ScrollContainer>
         </WhiteBackground>
       </AbsoluteContainer>
