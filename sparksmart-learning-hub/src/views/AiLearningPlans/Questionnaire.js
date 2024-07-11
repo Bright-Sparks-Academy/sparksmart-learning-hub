@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { fetchLearningPlan } from '../api/aiService'; // Assume an API service to interact with AI backend
+import { fetchLearningPlan } from '../../api/aiService.js'; // Assume an API service to interact with AI backend
 
 /**
  * Component for asking the user questions to generate a personalized learning plan.

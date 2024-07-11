@@ -10,11 +10,12 @@ import AdminDashboard from './views/AdminDashboard.js';
 import TeacherDashboard from './views/TeacherDashboard.js';
 import StudentDashboard from './views/StudentDashboard.js';
 import MessagingPage from './views/MessagingPage.js';
-import HomeworkPage from './views/HomeworkPage.js'; // Import HomeworkPage component
-import AiLearningPlansPage from './views/AiLearningPlans/AiLearningPlansPage.js'; // Import AiLearningPlansPage component
+import HomeworkPage from './views/HomeworkPage.js';
+import AiLearningPlansPage from './views/AiLearningPlans/AiLearningPlansPage.js';
 import { auth, mockUser } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
+import { listenForMessages } from './Firestore.js'; // Import listenForMessages function
 
 // Author: Tom Wang
 // This component serves as the main application wrapper, handling routing and user authentication state.
@@ -22,12 +23,8 @@ import GlobalStyle from './GlobalStyles.js';
 const App = () => {
   const [role, setRole] = useState(null); // State for managing the user's role
   const [user, setUser] = useState(null); // State for managing the authenticated user
+  const [messages, setMessages] = useState([]); // State for managing the messages
 
-  /**
-   * useEffect hook to monitor authentication state changes.
-   * It sets the user and role state based on authentication status and user role.
-   * Created by Tom Wang.
-   */
   useEffect(() => {
     console.log('useEffect called');
     if (mockUser) {
@@ -36,6 +33,9 @@ const App = () => {
       console.log('User role:', userRole);
       setUser(mockUser);
       setRole(userRole);
+
+      // Listen for messages if a mock user is used
+      setupMessageListener(mockUser.email);
     } else {
       const unsubscribe = auth.onAuthStateChanged((user) => {
         console.log('Auth state changed:', user);
@@ -47,6 +47,9 @@ const App = () => {
           } else {
             setUser(user);
             setRole(userRole);
+
+            // Listen for messages if a real user is authenticated
+            setupMessageListener(user.email);
           }
         } else {
           setUser(null);
@@ -58,16 +61,19 @@ const App = () => {
     }
   }, []);
 
-  /**
-   * Function to handle user login.
-   * It updates the user and role state based on the provided user role and user information.
-   * Created by Tom Wang.
-   * @param {string} userRole - The role of the authenticated user.
-   * @param {Object} user - The authenticated user object.
-   */
+  const setupMessageListener = (userEmail) => {
+    listenForMessages(userEmail, userEmail, (newMessages) => {
+      console.log('Received messages:', newMessages);
+      setMessages(newMessages);
+    }).catch((error) => {
+      console.error('Error setting up message listener:', error);
+    });
+  };
+
   const handleLogin = (userRole, user) => {
     setRole(userRole);
     setUser(user);
+    setupMessageListener(user.email); // Setup message listener after login
   };
 
   return (
@@ -87,9 +93,9 @@ const App = () => {
               {role === 'admin' && <Route path="/admin/dashboard" element={<AdminDashboard />} />}
               {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
               {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
-              <Route path="/messaging" element={<MessagingPage />} />
+              <Route path="/messaging" element={<MessagingPage messages={messages} />} />
               <Route path="/homework" element={<HomeworkPage />} /> {/* Add HomeworkPage route here */}
-              <Route path="/ai-learning-plans" element={<AiLearningPlansPage />} /> {/* Add AI Learning Plans route */}
+              <Route path="/ai-learning-plans" element={<AiLearningPlansPage />} /> {/* Add AI Learning Plans Page route */}
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />

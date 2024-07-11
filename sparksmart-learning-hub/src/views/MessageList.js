@@ -78,17 +78,27 @@ const formatTimestamp = (timestamp) => {
 const MessageList = ({ messages }) => {
   const defaultAvatarUrl = defaultAvatar;
 
+  console.log('Messages:', messages); // Add this line for debugging purposes
+
   return (
     <MessageListContainer>
-      {messages.map((msg, index) => (
-        <MessageItem key={index}>
-          <Avatar src={msg.avatarUrl || defaultAvatarUrl} alt="User Avatar" />
-          <MessageContent>
-            <p><strong>{msg.sender}</strong>: {msg.content.text}</p>
-            <p><em>{formatTimestamp(msg.timestamp)}</em></p>
-          </MessageContent>
-        </MessageItem>
-      ))}
+      {messages && messages.length > 0 ? (
+        messages.map((msg, index) => (
+          <MessageItem key={index}>
+            <Avatar src={msg.avatarUrl || defaultAvatarUrl} alt="User Avatar" />
+            <MessageContent>
+              <p>
+                <strong>{msg.sender || 'Unknown sender'}</strong>: {msg.content && msg.content.text ? msg.content.text : 'No content available'}
+              </p>
+              <p>
+                <em>{formatTimestamp(msg.timestamp)}</em>
+              </p>
+            </MessageContent>
+          </MessageItem>
+        ))
+      ) : (
+        <p>No messages available.</p>
+      )}
     </MessageListContainer>
   );
 };

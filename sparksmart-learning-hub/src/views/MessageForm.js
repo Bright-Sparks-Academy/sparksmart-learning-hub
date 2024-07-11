@@ -12,7 +12,8 @@ import italicIcon from '../assets/icons8-italic-32.png';
 import underlineIcon from '../assets/icons8-underline-50.png';
 import penIcon from '../assets/icons8-pen-48.png';
 
-// Styled components definitions...
+// Author: Tom Wang
+// This component renders a form for sending messages, handling various input types including text, emojis, images, and recordings.
 
 /**
  * Form is a styled-component for the message form container.
@@ -182,15 +183,21 @@ const MessageForm = ({ message, setMessage, onSend, user }) => {
    */
   const handleSubmit = (e) => {
     e.preventDefault();
-    const text = editableDivRef.current.innerHTML;
-    const timestamp = new Date(); // Add current timestamp
+    let text = editableDivRef.current.innerHTML;
+
+    // Sanitize the input by replacing <div><br></div> with newlines
+    text = text.replace(/<div><br><\/div>/g, '\n');
+    text = text.replace(/<div>/g, '\n').replace(/<\/div>/g, '');
+
     if (text.trim() || drawingData.current.length > 0) {
-      const message = {
-        text: text.trim() || '',
-        timestamp, // Include the timestamp in the message object
+      const content = {
+        text: text.trim(),
+        timestamp: new Date(),
         drawing: drawingData.current.length > 0 ? drawingData.current : null,
       };
-      onSend(message);
+
+      onSend(content);
+
       editableDivRef.current.innerHTML = '';
       drawingData.current = [];
       setShowCanvas(false);
