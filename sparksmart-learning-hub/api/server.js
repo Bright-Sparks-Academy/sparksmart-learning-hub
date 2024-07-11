@@ -19,26 +19,55 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Endpoint to check answers and provide hints
-app.post('/check-answer', async (req, res) => {
-  const { question, answer } = req.body;
+// Endpoint to fetch diagnostic questions
+app.get('/api/diagnostic-questions', (req, res) => {
+  const questions = [
+    { id: 1, question: 'What is 2 + 2?' },
+    { id: 2, question: 'What is the capital of France?' },
+  ];
+  res.json({ questions });
+});
 
-  // Check the answer (this is a simple example, you might need more complex logic)
-  const correctAnswer = 4; // Example correct answer
-  if (parseInt(answer) === correctAnswer) {
-    return res.json({ feedback: 'Correct! Well done.', hints: [] });
+// Endpoint to submit diagnostic answers and get analysis
+app.post('/api/submit-diagnostic', async (req, res) => {
+  const { answers } = req.body;
+
+  const prompt = `Analyze the following answers and provide feedback:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}`;
+  
+  try {
+    const response = await openai.createCompletion({
+      model: 'gpt-3.5-turbo',
+      prompt,
+      max_tokens: 200,
+    });
+
+    const analysis = response.data.choices[0].text.trim();
+    res.json({ analysis });
+  } catch (error) {
+    console.error('Error generating analysis:', error);
+    res.status(500).json({ error: 'Failed to generate analysis' });
   }
+});
 
-  // If the answer is incorrect, generate a hint
-  const prompt = `The student answered ${answer} for the question "${question}". Provide a hint to help the student solve it.`;
-  const response = await openai.createCompletion({
-    model: 'text-davinci-003',
-    prompt,
-    max_tokens: 50,
-  });
+// Endpoint to generate personalized learning plan based on diagnostic results
+app.post('/api/personalized-learning-plan', async (req, res) => {
+  const { answers } = req.body;
 
-  const hint = response.data.choices[0].text.trim();
-  res.json({ feedback: 'Incorrect. Try again.', hints: [hint] });
+  const prompt = `Based on the following answers, generate a personalized learning plan:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics and resources to help the student improve.`;
+
+  try {
+    const response = await openai.createCompletion({
+      model: 'gpt-3.5-turbo',
+      prompt,
+      max_tokens: 500,
+    });
+
+    const learningPlan = response.data.choices[0].text.trim();
+    res.json({ learningPlan });
+  } catch (error) {
+    console.error('Error generating learning plan:', error);
+    res.status(500).json({ error: 'Failed to generate learning plan' });
+  }
 });
 
 // Start the server
