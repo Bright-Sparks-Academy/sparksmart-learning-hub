@@ -1,4 +1,3 @@
-// src/components/NavBar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -106,6 +105,8 @@ const NavBar = ({ user }) => (
           <NavLink to="/profile">Profile</NavLink>
           <NavLink to="/messaging">Messaging</NavLink>
           <NavLink to="/homework">Homework</NavLink>
+          <NavLink to="/diagnostic-test">Diagnostic Test</NavLink> {/* Add Diagnostic Test link */}
+          <NavLink to="/ai-learning-plans">AI Learning Plans</NavLink> {/* Add AI Learning Plans link */}
         </>
       )}
     </NavLinks>

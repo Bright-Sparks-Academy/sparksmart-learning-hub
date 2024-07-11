@@ -1,16 +1,20 @@
 // api/server.js
 // Author: Tom Wang
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const { Configuration, OpenAIApi } = require('openai');
-require('dotenv').config();
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { OpenAIApi, Configuration } from 'openai';
+
+dotenv.config();
 
 const app = express();
 const port = 5000;
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
+app.use(cors()); // Enable CORS
 
 // Configuration for OpenAI API
 const configuration = new Configuration({
@@ -24,6 +28,8 @@ app.get('/api/diagnostic-questions', (req, res) => {
   const questions = [
     { id: 1, question: 'What is 2 + 2?' },
     { id: 2, question: 'What is the capital of France?' },
+    { id: 3, question: 'Solve for x in the equation 3x + 2 = 11.' },
+    { id: 4, question: 'What is the square root of 64?' },
   ];
   res.json({ questions });
 });
@@ -35,13 +41,13 @@ app.post('/api/submit-diagnostic', async (req, res) => {
   const prompt = `Analyze the following answers and provide feedback:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}`;
   
   try {
-    const response = await openai.createCompletion({
+    const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      prompt,
+      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
       max_tokens: 200,
     });
 
-    const analysis = response.data.choices[0].text.trim();
+    const analysis = response.data.choices[0].message.content.trim();
     res.json({ analysis });
   } catch (error) {
     console.error('Error generating analysis:', error);
@@ -56,13 +62,13 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
   const prompt = `Based on the following answers, generate a personalized learning plan:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics and resources to help the student improve.`;
 
   try {
-    const response = await openai.createCompletion({
+    const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      prompt,
+      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
       max_tokens: 500,
     });
 
-    const learningPlan = response.data.choices[0].text.trim();
+    const learningPlan = response.data.choices[0].message.content.trim();
     res.json({ learningPlan });
   } catch (error) {
     console.error('Error generating learning plan:', error);
