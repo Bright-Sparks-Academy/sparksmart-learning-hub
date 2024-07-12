@@ -5,23 +5,16 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { OpenAIApi, Configuration } from 'openai';
+import axios from 'axios';
 
 dotenv.config();
 
 const app = express();
-const port = 5000;
+const port = 3000;  // Change port to 3000
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 app.use(cors()); // Enable CORS
-
-// Configuration for OpenAI API
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
 
 // Endpoint to fetch diagnostic questions
 app.get('/api/diagnostic-questions', (req, res) => {
@@ -39,12 +32,20 @@ app.post('/api/submit-diagnostic', async (req, res) => {
   const { answers } = req.body;
 
   const prompt = `Analyze the following answers and provide feedback:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}`;
-  
+
   try {
-    const response = await openai.createChatCompletion({
+    const response = await axios.post('https://api.openai.com/v1/completions', {
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt }
+      ],
       max_tokens: 200,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
     });
 
     const analysis = response.data.choices[0].message.content.trim();
@@ -62,10 +63,18 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
   const prompt = `Based on the following answers, generate a personalized learning plan:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics and resources to help the student improve.`;
 
   try {
-    const response = await openai.createChatCompletion({
+    const response = await axios.post('https://api.openai.com/v1/completions', {
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt }
+      ],
       max_tokens: 500,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
     });
 
     const learningPlan = response.data.choices[0].message.content.trim();

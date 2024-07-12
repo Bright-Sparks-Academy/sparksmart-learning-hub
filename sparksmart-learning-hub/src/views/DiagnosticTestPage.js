@@ -47,7 +47,7 @@ const DiagnosticTestPage = () => {
 
   useEffect(() => {
     // Fetch diagnostic questions from the backend
-    axios.get('/api/diagnostic-questions')
+    axios.get('http://localhost:3000/api/diagnostic-questions')
       .then(response => {
         setQuestions(response.data.questions);
         setAnswers(response.data.questions.map(q => ({ question: q.question, answer: '' })));
@@ -67,12 +67,12 @@ const DiagnosticTestPage = () => {
 
   const submitDiagnosticTest = async () => {
     try {
-      const response = await axios.post('/api/submit-diagnostic', { answers });
+      const response = await axios.post('http://localhost:3000/api/submit-diagnostic', { answers });
       setAnalysis(response.data.analysis);
       setDiagnosticCompleted(); // Mark diagnostic as completed
 
       // Generate learning plan and navigate to the learning plan page
-      const learningPlanResponse = await axios.post('/api/personalized-learning-plan', { answers });
+      const learningPlanResponse = await axios.post('http://localhost:3000/api/personalized-learning-plan', { answers });
       navigate('/ai-learning-plan', { state: { learningPlan: learningPlanResponse.data.learningPlan } });
     } catch (error) {
       console.error('Error submitting diagnostic test:', error);
