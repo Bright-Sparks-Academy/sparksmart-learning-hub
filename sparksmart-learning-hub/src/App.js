@@ -15,7 +15,8 @@ import MessagingPage from './views/MessagingPage.js';
 import HomeworkPage from './views/HomeworkPage.js';
 import DiagnosticTestPage from './views/DiagnosticTestPage.js';
 import LearningPlanPage from './views/LearningPlanPage.js';
-import AddQuestionPage from './views/AddQuestionPage'; // Import the AddQuestionPage component
+import AddQuestionPage from './views/AddQuestionPage.js'; // Import the AddQuestionPage component
+import ProgressTrackingPage from './views/ProgressTrackingPage.js'; // Import the ProgressTrackingPage component
 import { auth, mockUser } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
@@ -99,6 +100,7 @@ const App = () => {
               <Route path="/homework" element={<HomeworkPage />} />
               <Route path="/diagnostic-test" element={<DiagnosticTestPage />} />
               <Route path="/ai-learning-plan" element={<LearningPlanPage />} />
+              <Route path="/progress-tracking" element={<ProgressTrackingPage />} /> {/* New route for Progress Tracking */}
               {role === 'admin' && <Route path="/add-question" element={<AddQuestionPage />} />} {/* Add AddQuestionPage route */}
             </>
           )}

@@ -112,6 +112,7 @@ const NavBar = ({ user }) => (
             <NavLink to="/homework">Homework</NavLink>
             <NavLink to="/diagnostic-test">Diagnostic Test</NavLink>
             <NavLink to="/ai-learning-plans">AI Learning Plans</NavLink>
+            <NavLink to="/progress-tracking">Progress Tracking</NavLink> {/* New link for Progress Tracking */}
             {user.role === 'admin' && <NavLink to="/add-question">Add Question</NavLink>} {/* Add Add Question link for admins */}
           </>
         )}

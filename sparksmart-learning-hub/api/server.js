@@ -22,6 +22,39 @@ const questions = [
   { id: 4, question: 'What is the square root of 64?', correctAnswer: '8' },
 ];
 
+// Mock data for progress and account
+const progressData = [
+  { date: '2023-07-01', score: 80 },
+  { date: '2023-07-02', score: 85 },
+  { date: '2023-07-03', score: 90 },
+  // Add more data as needed
+];
+
+const accountData = {
+  totalCredits: 20,
+  creditsEarned: 20,
+  creditsLeft: 0,
+  creditsLog: [
+    { date: '2023-01-15', creditsEarned: 3, course: 'Math 101', description: 'Completed Math 101' },
+    { date: '2023-02-20', creditsEarned: 3, course: 'History 201', description: 'Completed History 201' },
+    { date: '2023-03-10', creditsEarned: 3, course: 'Science 301', description: 'Completed Science 301' },
+    { date: '2023-04-15', creditsEarned: 3, course: 'Literature 401', description: 'Completed Literature 401' },
+    { date: '2023-05-20', creditsEarned: 4, course: 'Art 101', description: 'Completed Art 101' },
+    { date: '2023-06-25', creditsEarned: 4, course: 'Computer Science 101', description: 'Completed Computer Science 101' },
+  ],
+  grades: [
+    { course: 'Math 101', grade: 'A' },
+    { course: 'History 201', grade: 'B+' },
+    { course: 'Science 301', grade: 'A-' },
+    { course: 'Literature 401', grade: 'B' },
+    { course: 'Art 101', grade: 'A' },
+    { course: 'Computer Science 101', grade: 'A-' },
+    // Add more grades as needed
+  ],
+  notesHistory: ['2023-07-01: Note 1', '2023-07-02: Note 2'],
+  calendlyLink: 'https://calendly.com/your-link',
+};
+
 // Endpoint to fetch diagnostic questions
 app.get('/api/diagnostic-questions', (req, res) => {
   res.json({ questions });
@@ -90,6 +123,16 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
     console.error('Error generating learning plan:', error);
     res.status(500).json({ error: 'Failed to generate learning plan' });
   }
+});
+
+// Endpoint to fetch progress data
+app.get('/api/progress-data', (req, res) => {
+  res.json(progressData);
+});
+
+// Endpoint to fetch account data
+app.get('/api/account-data', (req, res) => {
+  res.json(accountData);
 });
 
 app.listen(port, () => {
