@@ -1,9 +1,12 @@
+// src/components/NavBar.js
+// Author: Tom Wang
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import lightbulbIcon from '../assets/lightbulb.png';
+import GlobalStyle from '../GlobalStyles.js'; // Import GlobalStyle
 
-// Author: Tom Wang
 // This component renders a navigation bar with links to different parts of the application.
 
 /**
@@ -95,29 +98,33 @@ const ProfileImage = styled.img`
  * Created by Tom Wang.
  */
 const NavBar = ({ user }) => (
-  <NavBarContainer>
-    <NavLinks>
-      <NavLink to="/">
-        <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
-      </NavLink>
-      {user && (
-        <>
-          <NavLink to="/profile">Profile</NavLink>
-          <NavLink to="/messaging">Messaging</NavLink>
-          <NavLink to="/homework">Homework</NavLink>
-          <NavLink to="/diagnostic-test">Diagnostic Test</NavLink> {/* Add Diagnostic Test link */}
-          <NavLink to="/ai-learning-plans">AI Learning Plans</NavLink> {/* Add AI Learning Plans link */}
-        </>
+  <>
+    <GlobalStyle /> {/* Apply GlobalStyle */}
+    <NavBarContainer>
+      <NavLinks>
+        <NavLink to="/">
+          <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
+        </NavLink>
+        {user && (
+          <>
+            <NavLink to="/profile">Profile</NavLink>
+            <NavLink to="/messaging">Messaging</NavLink>
+            <NavLink to="/homework">Homework</NavLink>
+            <NavLink to="/diagnostic-test">Diagnostic Test</NavLink>
+            <NavLink to="/ai-learning-plans">AI Learning Plans</NavLink>
+            {user.role === 'admin' && <NavLink to="/add-question">Add Question</NavLink>} {/* Add Add Question link for admins */}
+          </>
+        )}
+      </NavLinks>
+      {user ? (
+        <ProfileLink to="/profile">
+          <ProfileImage src={user.photoURL} alt={user.displayName} />
+        </ProfileLink>
+      ) : (
+        <LoginButton to="/login">Login</LoginButton>
       )}
-    </NavLinks>
-    {user ? (
-      <ProfileLink to="/profile">
-        <ProfileImage src={user.photoURL} alt={user.displayName} />
-      </ProfileLink>
-    ) : (
-      <LoginButton to="/login">Login</LoginButton>
-    )}
-  </NavBarContainer>
+    </NavBarContainer>
+  </>
 );
 
 export default NavBar;
