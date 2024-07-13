@@ -113,6 +113,7 @@ const NavBar = ({ user }) => (
             <NavLink to="/diagnostic-test">Diagnostic Test</NavLink>
             <NavLink to="/ai-learning-plans">AI Learning Plans</NavLink>
             <NavLink to="/progress-tracking">Progress Tracking</NavLink> {/* New link for Progress Tracking */}
+            <NavLink to="/study-plan">Study Plan</NavLink> {/* New link for Study Plan */}
             {user.role === 'admin' && <NavLink to="/add-question">Add Question</NavLink>} {/* Add Add Question link for admins */}
           </>
         )}

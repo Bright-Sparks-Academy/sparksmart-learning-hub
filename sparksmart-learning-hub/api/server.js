@@ -6,8 +6,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import { getFirestore, collection, addDoc } from 'firebase/firestore'; // Import Firestore functions
 
-dotenv.config();
+dotenv.config(); // Load environment variables from .env file
 
 const app = express();
 const port = 3000;
@@ -15,6 +16,33 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(cors());
 
+const db = getFirestore(); // Initialize Firestore
+
+/**
+ * Function to handle retries for Axios requests with exponential backoff.
+ * @param {Object} axiosConfig - The Axios request configuration.
+ * @param {number} retries - Number of retries before failing.
+ * @param {number} backoff - Initial backoff time in milliseconds.
+ * @returns {Promise<Object>} - The Axios response.
+ */
+const retryAxios = async (axiosConfig, retries = 3, backoff = 3000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await axios(axiosConfig);
+    } catch (error) {
+      if (error.response && error.response.status === 429) { // Handle rate limiting error
+        console.log(`Retry attempt ${i + 1} after ${backoff}ms due to 429 Too Many Requests error.`);
+        await new Promise(resolve => setTimeout(resolve, backoff)); // Wait for the backoff period
+        backoff *= 2; // Exponential backoff
+      } else {
+        throw error;
+      }
+    }
+  }
+  throw new Error('Exceeded maximum retries');
+};
+
+// Sample questions for diagnostic test
 const questions = [
   { id: 1, question: 'What is 2 + 2?', correctAnswer: '4' },
   { id: 2, question: 'What is the capital of France?', correctAnswer: 'Paris' },
@@ -49,7 +77,6 @@ const accountData = {
     { course: 'Literature 401', grade: 'B' },
     { course: 'Art 101', grade: 'A' },
     { course: 'Computer Science 101', grade: 'A-' },
-    // Add more grades as needed
   ],
   notesHistory: ['2023-07-01: Note 1', '2023-07-02: Note 2'],
   calendlyLink: 'https://calendly.com/your-link',
@@ -60,7 +87,9 @@ app.get('/api/diagnostic-questions', (req, res) => {
   res.json({ questions });
 });
 
-// Endpoint to submit diagnostic answers and generate analysis
+/**
+ * Endpoint to submit diagnostic answers and generate analysis using OpenAI API.
+ */
 app.post('/api/submit-diagnostic', async (req, res) => {
   const { answers } = req.body;
 
@@ -74,21 +103,21 @@ app.post('/api/submit-diagnostic', async (req, res) => {
   const prompt = `Analyze the following answers and provide feedback:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}`;
 
   try {
-    const response = await axios.post('https://api.openai.com/v1/completions', {
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: prompt }
-      ],
-      max_tokens: 200,
-    }, {
+    const response = await retryAxios({
+      method: 'post',
+      url: 'https://api.openai.com/v1/completions',
+      data: {
+        model: 'gpt-3.5-turbo',
+        prompt: prompt,
+        max_tokens: 200,
+      },
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
     });
 
-    const analysis = response.data.choices[0].message.content.trim();
+    const analysis = response.data.choices[0].text.trim();
     res.json({ analysis, correctCount, totalQuestions: questions.length });
   } catch (error) {
     console.error('Error generating analysis:', error);
@@ -96,28 +125,30 @@ app.post('/api/submit-diagnostic', async (req, res) => {
   }
 });
 
-// Endpoint to generate personalized learning plan based on diagnostic results
+/**
+ * Endpoint to generate personalized learning plan based on diagnostic results using OpenAI API.
+ */
 app.post('/api/personalized-learning-plan', async (req, res) => {
   const { answers, correctCount, totalQuestions } = req.body;
 
   const prompt = `Based on the following answers, generate a personalized learning plan. The student answered ${correctCount} out of ${totalQuestions} questions correctly.\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics and resources to help the student improve.`;
 
   try {
-    const response = await axios.post('https://api.openai.com/v1/completions', {
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: prompt }
-      ],
-      max_tokens: 500,
-    }, {
+    const response = await retryAxios({
+      method: 'post',
+      url: 'https://api.openai.com/v1/completions',
+      data: {
+        model: 'gpt-3.5-turbo',
+        prompt: prompt,
+        max_tokens: 500,
+      },
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
     });
 
-    const learningPlan = response.data.choices[0].message.content.trim();
+    const learningPlan = response.data.choices[0].text.trim();
     res.json({ learningPlan });
   } catch (error) {
     console.error('Error generating learning plan:', error);
@@ -133,6 +164,52 @@ app.get('/api/progress-data', (req, res) => {
 // Endpoint to fetch account data
 app.get('/api/account-data', (req, res) => {
   res.json(accountData);
+});
+
+/**
+ * Endpoint to generate personalized study plan based on problem type using OpenAI API.
+ */
+app.post('/api/study-plan', async (req, res) => {
+  const { problemType } = req.body;
+
+  const prompt = `Generate a personalized study plan for the following problem type: ${problemType}`;
+
+  try {
+    const response = await retryAxios({
+      method: 'post',
+      url: 'https://api.openai.com/v1/completions',
+      data: {
+        model: 'gpt-3.5-turbo',
+        prompt: prompt,
+        max_tokens: 500,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+    });
+
+    const studyPlan = response.data.choices[0].text.trim();
+    res.json({ studyPlan });
+  } catch (error) {
+    console.error('Error generating study plan:', error);
+    res.status(500).json({ error: 'Failed to generate study plan' });
+  }
+});
+
+/**
+ * Endpoint to save the generated study plan to Firestore.
+ */
+app.post('/api/save-study-plan', async (req, res) => {
+  const { studyPlan } = req.body;
+
+  try {
+    const docRef = await addDoc(collection(db, 'studyPlans'), { studyPlan });
+    res.json({ success: true, id: docRef.id });
+  } catch (error) {
+    console.error('Error saving study plan:', error);
+    res.status(500).json({ error: 'Failed to save study plan' });
+  }
 });
 
 app.listen(port, () => {
