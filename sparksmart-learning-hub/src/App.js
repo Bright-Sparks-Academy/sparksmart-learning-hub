@@ -11,6 +11,7 @@ import TeacherDashboard from './views/TeacherDashboard.js';
 import StudentDashboard from './views/StudentDashboard.js';
 import MessagingPage from './views/MessagingPage.js';
 import HomeworkPage from './views/HomeworkPage.js';
+import RecordingsPage from './views/RecordingsPage.js';
 import DiagnosticTestPage from './views/DiagnosticTestPage.js';
 import LearningPlanPage from './views/LearningPlanPage.js'; // Import the LearningPlanPage component
 import { auth, mockUser } from './firebaseConfig.js';
@@ -98,6 +99,7 @@ const App = () => {
               <Route path="/homework" element={<HomeworkPage />} /> {/* Add HomeworkPage route here */}
               <Route path="/diagnostic-test" element={<DiagnosticTestPage />} /> {/* Add DiagnosticTestPage route */}
               <Route path="/ai-learning-plan" element={<LearningPlanPage />} /> {/* Add LearningPlanPage route */}
+              <Route path="/recordings-page" element={<RecordingsPage />} /> {/* Add LearningPlanPage route */}
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />
