@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import GlobalStyle from '/Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/GlobalStyles.js'; // Import GlobalStyle
+import GlobalStyle from '../GlobalStyles.js'; // Import GlobalStyle
 
 // Component to provide a form for admins or teachers to add new diagnostic questions
 const AddQuestionContainer = styled.div`
