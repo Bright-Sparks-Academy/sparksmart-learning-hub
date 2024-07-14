@@ -6,7 +6,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { getFirestore, collection, addDoc } from 'firebase/firestore'; // Import Firestore functions
+import { collection, addDoc } from 'firebase/firestore'; // Import Firestore functions
+
+import { db } from '../src/firebaseConfig.js'; // Ensure correct path to firebaseConfig.js
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -15,8 +17,6 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(cors());
-
-const db = getFirestore(); // Initialize Firestore
 
 /**
  * Function to handle retries for Axios requests with exponential backoff.
@@ -140,7 +140,7 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
       data: {
         model: 'gpt-3.5-turbo',
         prompt: prompt,
-        max_tokens: 500,
+       	max_tokens: 500,
       },
       headers: {
         'Content-Type': 'application/json',
