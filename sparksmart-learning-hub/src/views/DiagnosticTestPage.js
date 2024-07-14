@@ -8,6 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { setDiagnosticCompleted } from './diagnosticService.js';
 import { initializeLockdownBrowser, checkLockdownBrowserActive } from '../mockLockdownBrowser.js'; // Adjust the import path as necessary
 
+const Wrapper = styled.div`
+  margin-top: 100px; // Adjust this value as needed to move the content down
+`;
+
 // Styled components for the page
 const DiagnosticTestPageContainer = styled.div`
   position: relative;
@@ -119,20 +123,22 @@ const DiagnosticTestPage = () => {
 
   // Render diagnostic questions and submit button
   return (
-    <DiagnosticTestPageContainer>
-      {questions.map((q, index) => (
-        <div key={index}>
-          <QuestionText>{q.question}</QuestionText>
-          <AnswerInput
-            type="text"
-            value={answers[index].answer}
-            onChange={(e) => handleAnswerChange(index, e.target.value)}
-          />
-        </div>
-      ))}
-      <SubmitButton onClick={submitDiagnosticTest}>Submit Diagnostic Test</SubmitButton>
-      {analysis && <AnalysisText>{analysis}</AnalysisText>}
-    </DiagnosticTestPageContainer>
+    <Wrapper>
+      <DiagnosticTestPageContainer>
+        {questions.map((q, index) => (
+          <div key={index}>
+            <QuestionText>{q.question}</QuestionText>
+            <AnswerInput
+              type="text"
+              value={answers[index].answer}
+              onChange={(e) => handleAnswerChange(index, e.target.value)}
+            />
+          </div>
+        ))}
+        <SubmitButton onClick={submitDiagnosticTest}>Submit Diagnostic Test</SubmitButton>
+        {analysis && <AnalysisText>{analysis}</AnalysisText>}
+      </DiagnosticTestPageContainer>
+    </Wrapper>
   );
 };
 

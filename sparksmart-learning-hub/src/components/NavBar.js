@@ -1,13 +1,8 @@
-// src/components/NavBar.js
-// Author: Tom Wang
-
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import lightbulbIcon from '../assets/lightbulb.png';
 import GlobalStyle from '../GlobalStyles.js'; // Import GlobalStyle
-
-// This component renders a navigation bar with links to different parts of the application.
 
 /**
  * NavBarContainer is the main container for the navigation bar.
@@ -40,7 +35,8 @@ const NavLinks = styled.div`
 /**
  * NavLink is a styled-component for individual navigation links.
  * It sets the display style, alignment, color, text decoration, and font weight.
- * It also changes the color on hover.
+ * It also changes the color on hover and conditionally applies bold font weight if the link is active.
+ * @param {boolean} isActive - Indicates if the link is the current active page.
  * Created by Tom Wang.
  */
 const NavLink = styled(Link)`
@@ -48,6 +44,7 @@ const NavLink = styled(Link)`
   align-items: center;
   color: #000;
   text-decoration: none;
+  font-weight: ${props => props.isActive ? 'bold' : 'normal'};
   &:hover {
     font-weight: bold;
   }
@@ -94,39 +91,44 @@ const ProfileImage = styled.img`
 /**
  * NavBar component renders the navigation bar.
  * It includes navigation links, login button, and profile image based on the user's authentication status.
+ * The current active page link is highlighted with a bold font.
  * @param {Object} user - The current authenticated user.
  * Created by Tom Wang.
  */
-const NavBar = ({ user }) => (
-  <>
-    <GlobalStyle /> {/* Apply GlobalStyle */}
-    <NavBarContainer>
-      <NavLinks>
-        <NavLink to="/">
-          <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
-        </NavLink>
-        {user && (
-          <>
-            <NavLink to="/profile">Profile</NavLink>
-            <NavLink to="/messaging">Messaging</NavLink>
-            <NavLink to="/homework">Homework</NavLink>
-            <NavLink to="/diagnostic-test">Diagnostic Test</NavLink>
-            <NavLink to="/ai-learning-plans">AI Learning Plans</NavLink>
-            <NavLink to="/progress-tracking">Progress Tracking</NavLink> {/* New link for Progress Tracking */}
-            <NavLink to="/study-plan">Study Plan</NavLink> {/* New link for Study Plan */}
-            {user.role === 'admin' && <NavLink to="/add-question">Add Question</NavLink>} {/* Add Add Question link for admins */}
-          </>
+const NavBar = ({ user }) => {
+  const location = useLocation(); // Hook to get the current path
+
+  return (
+    <>
+      <GlobalStyle /> {/* Apply GlobalStyle */}
+      <NavBarContainer>
+        <NavLinks>
+          <NavLink to="/" isActive={location.pathname === '/'}>
+            <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
+          </NavLink>
+          {user && (
+            <>
+              <NavLink to="/profile" isActive={location.pathname === '/profile'}>Profile</NavLink>
+              <NavLink to="/messaging" isActive={location.pathname === '/messaging'}>Messaging</NavLink>
+              <NavLink to="/homework" isActive={location.pathname === '/homework'}>Homework</NavLink>
+              <NavLink to="/diagnostic-test" isActive={location.pathname === '/diagnostic-test'}>Diagnostic Test</NavLink>
+              <NavLink to="/ai-learning-plans" isActive={location.pathname === '/ai-learning-plans'}>AI Learning Plans</NavLink>
+              <NavLink to="/progress-tracking" isActive={location.pathname === '/progress-tracking'}>Progress Tracking</NavLink> {/* New link for Progress Tracking */}
+              <NavLink to="/study-plan" isActive={location.pathname === '/study-plan'}>Study Plan</NavLink> {/* New link for Study Plan */}
+              {user.role === 'admin' && <NavLink to="/add-question" isActive={location.pathname === '/add-question'}>Add Question</NavLink>} {/* Add Add Question link for admins */}
+            </>
+          )}
+        </NavLinks>
+        {user ? (
+          <ProfileLink to="/profile">
+            <ProfileImage src={user.photoURL} alt={user.displayName} />
+          </ProfileLink>
+        ) : (
+          <LoginButton to="/login">Login</LoginButton>
         )}
-      </NavLinks>
-      {user ? (
-        <ProfileLink to="/profile">
-          <ProfileImage src={user.photoURL} alt={user.displayName} />
-        </ProfileLink>
-      ) : (
-        <LoginButton to="/login">Login</LoginButton>
-      )}
-    </NavBarContainer>
-  </>
-);
+      </NavBarContainer>
+    </>
+  );
+};
 
 export default NavBar;

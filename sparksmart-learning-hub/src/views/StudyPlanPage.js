@@ -1,9 +1,13 @@
-// StudyPlanPage.js
+// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/StudyPlanPage.js
 
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import GlobalStyle from '../GlobalStyles.js'; // Import GlobalStyle
+
+const Wrapper = styled.div`
+  margin-top: 80px; // Adjust this value as needed to move the content down
+`;
 
 const StudyPlanContainer = styled.div`
   padding: 40px;
@@ -99,31 +103,33 @@ const StudyPlanPage = () => {
   return (
     <>
       <GlobalStyle /> {/* Apply global styles */}
-      <StudyPlanContainer>
-        <h1>Personalized Study Plan</h1>
-        <Form onSubmit={handleSubmit}>
-          <label>
-            Enter Problem Type:
-            <Input
-              type="text"
-              value={problemType}
-              onChange={(e) => setProblemType(e.target.value)}
-              required
-            />
-          </label>
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Generating...' : 'Generate Study Plan'}
-          </Button>
-        </Form>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-        {studyPlan && (
-          <StudyPlanDisplay>
-            <h2>Study Plan</h2>
-            <pre>{studyPlan}</pre>
-            <Button onClick={handleSave}>Save Study Plan</Button>
-          </StudyPlanDisplay>
-        )}
-      </StudyPlanContainer>
+      <Wrapper>
+        <StudyPlanContainer>
+          <h1>Personalized Study Plan</h1>
+          <Form onSubmit={handleSubmit}>
+            <label>
+              Enter Problem Type:
+              <Input
+                type="text"
+                value={problemType}
+                onChange={(e) => setProblemType(e.target.value)}
+                required
+              />
+            </label>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Generating...' : 'Generate Study Plan'}
+            </Button>
+          </Form>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {studyPlan && (
+            <StudyPlanDisplay>
+              <h2>Study Plan</h2>
+              <pre>{studyPlan}</pre>
+              <Button onClick={handleSave}>Save Study Plan</Button>
+            </StudyPlanDisplay>
+          )}
+        </StudyPlanContainer>
+      </Wrapper>
     </>
   );
 };
