@@ -259,7 +259,7 @@ const MessagingPage = () => {
     }
   };
 
-  const getRecipientOptions = () => {
+  const getRecipientOptions = () => {   // Function to get the list of recipients based on the user's role
     if (userRole === 'teacher') {
       return roles.students;
     } else {
@@ -267,7 +267,7 @@ const MessagingPage = () => {
     }
   };
 
-  return (
+  return ( // all ui based
     <PageContainer>
       <MessagingBox>
         <LightBulbContainer>
