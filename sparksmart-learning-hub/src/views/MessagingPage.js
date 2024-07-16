@@ -1,33 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { addMessage, listenForMessages } from '../Firestore.js';
-import { mockUser } from '../firebaseConfig.js'; // Ensure the correct import path
-import MessageForm from './MessageForm.js';
-import MessageList from './MessageList.js';
+import { auth, db, storage } from '../firebaseConfig.js';
+import { collection, query, where, orderBy, onSnapshot, addDoc, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { roles, getRole } from '../roles.js';
 import LightBulbAnimation from '../components/LightBulbAnimation.js';
 
-// Mock data for instructors
-const mockInstructors = [
-  { name: "Instructor 1", email: "instructor1@example.com" },
-  { name: "Instructor 2", email: "instructor2@example.com" },
-];
-
-// Styled component for the page container
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  padding-top: 70px;
   font-family: 'Quicksand', sans-serif;
   background-color: #f9f9f9;
   color: #000000;
 `;
 
-// Styled component for the messaging box
 const MessagingBox = styled.div`
   width: 80%;
   max-width: 1000px;
-  height: 80%;
+  height: 80vh;
   border: 12px solid #FFD900;
   border-radius: 30px;
   background-color: #EDEDED;
@@ -37,7 +30,6 @@ const MessagingBox = styled.div`
   position: relative;
 `;
 
-// Styled component for the header
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
@@ -48,7 +40,6 @@ const Header = styled.div`
   margin-bottom: 10px;
 `;
 
-// Styled component for the centered title
 const CenteredTitle = styled.div`
   display: flex;
   justify-content: center;
@@ -56,7 +47,6 @@ const CenteredTitle = styled.div`
   text-align: center;
 `;
 
-// Styled component for the heading
 const Heading = styled.h1`
   font-size: 1.5rem;
   font-weight: bold;
@@ -64,7 +54,6 @@ const Heading = styled.h1`
   margin: 0;
 `;
 
-// Styled component for the dropdown
 const Dropdown = styled.select`
   padding: 0.5rem;
   border: 1px solid #ddd;
@@ -72,7 +61,6 @@ const Dropdown = styled.select`
   font-size: 1rem;
 `;
 
-// Styled component for the light bulb container
 const LightBulbContainer = styled.div`
   position: absolute;
   top: 10px;
@@ -81,7 +69,6 @@ const LightBulbContainer = styled.div`
   height: 30px;
 `;
 
-// Styled component for the content wrapper
 const ContentWrapper = styled.div`
   display: flex;
   flex: 1;
@@ -91,7 +78,6 @@ const ContentWrapper = styled.div`
   padding: 10px;
 `;
 
-// Styled component for the content area
 const ContentArea = styled.div`
   flex: 1;
   display: flex;
@@ -101,7 +87,6 @@ const ContentArea = styled.div`
   padding: 10px;
 `;
 
-// Styled component for the subheading
 const Subheading = styled.h2`
   font-size: 1.2rem;
   color: #000000;
@@ -110,7 +95,6 @@ const Subheading = styled.h2`
   font-family: 'Quicksand', sans-serif;
 `;
 
-// Styled component for the conversation area
 const ConversationArea = styled.div`
   flex: 1;
   display: flex;
@@ -123,74 +107,156 @@ const ConversationArea = styled.div`
   font-family: 'Quicksand', sans-serif;
 `;
 
-// Styled component for the footer
-const Footer = styled.div`
+const MessageContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  background-color: #E0E0E0;
-  border-radius: 8px;
+  justify-content: ${props => props.isCurrentUser ? 'flex-end' : 'flex-start'};
+  margin-bottom: 10px;
 `;
 
-/**
- * MessagingPage component handles the messaging interface.
- * Function created by Tom Wang.
- */
+const MessageBubble = styled.div`
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: ${props => props.isCurrentUser ? '#DCF8C6' : '#FFFFFF'};
+  position: relative;
+`;
+
+const MessageOptions = styled.div`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  ${MessageBubble}:hover & {
+    opacity: 1;
+  }
+`;
+
+const MessageForm = styled.form`
+  display: flex;
+  margin-top: 10px;
+`;
+
+const MessageInput = styled.input`
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+`;
+
+const SendButton = styled.button`
+  background-color: #FFD900;
+  color: #000000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 10px;
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
+const FileLabel = styled.label`
+  background-color: #FFD900;
+  color: #000000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 10px;
+`;
+
 const MessagingPage = () => {
-  // State for storing messages
+  const [user, setUser] = useState(null);
   const [messages, setMessages] = useState([]);
-  // State for storing the current message input by the user
-  const [message, setMessage] = useState("");
-  // State for storing the selected recipient
-  const [recipient, setRecipient] = useState("");
+  const [newMessage, setNewMessage] = useState('');
+  const [selectedRecipient, setSelectedRecipient] = useState('');
+  const [userRole, setUserRole] = useState('');
+  const fileInputRef = useRef(null);
 
-  // Mock user object for demonstration
-  const user = mockUser;
-
-  /**
-   * useEffect hook to listen for messages between the current user and the selected recipient.
-   * Function created by Tom Wang.
-   * It sets up a Firestore snapshot listener that updates the state with new messages in real-time.
-   */
   useEffect(() => {
-    let unsubscribe;
-    if (user && recipient) {
-      console.log('Listening for messages:', { userEmail: user.email, recipient });
-      listenForMessages(user.email, recipient, (msgs) => {
-        setMessages(msgs);
-      }).then((unsub) => {
-        unsubscribe = unsub;
-      }).catch((error) => {
-        console.error('Error setting up listener:', error);
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        const role = getRole(currentUser.email);
+        setUserRole(role);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user && selectedRecipient) {
+      const q = query(
+        collection(db, 'messages'),
+        where('participants', 'array-contains', user.email),
+        orderBy('timestamp', 'asc')
+      );
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const newMessages = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(msg => msg.participants.includes(selectedRecipient));
+        setMessages(newMessages);
+      });
+
+      return () => unsubscribe();
+    }
+  }, [user, selectedRecipient]);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (newMessage.trim() && user && selectedRecipient) {
+      await addDoc(collection(db, 'messages'), {
+        text: newMessage,
+        sender: user.email,
+        recipient: selectedRecipient,
+        participants: [user.email, selectedRecipient],
+        timestamp: serverTimestamp(),
+      });
+      setNewMessage('');
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file && user && selectedRecipient) {
+      const storageRef = ref(storage, `chat_files/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      await addDoc(collection(db, 'messages'), {
+        text: `File: ${file.name}`,
+        fileURL: downloadURL,
+        sender: user.email,
+        recipient: selectedRecipient,
+        participants: [user.email, selectedRecipient],
+        timestamp: serverTimestamp(),
       });
     }
-    // Clean up the snapshot listener on component unmount or when dependencies change
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user, recipient]);
+  };
 
-  /**
-   * Adds a message to the Firestore messages collection.
-   * Function created by Tom Wang.
-   * @param {string} text - The text content of the message.
-   * @returns {Promise<void>}
-   * @throws Will throw an error if the message cannot be added.
-   */
-  const handleSendMessage = async (text) => {
-    if (user && recipient) {
-      try {
-        const content = { text, timestamp: new Date() }; // Ensure content is structured properly
-        console.log('Sending message:', { sender: user.email, recipient, content });
-        await addMessage(user.email, recipient, content);
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
+  const handleDeleteMessage = async (messageId) => {
+    if (window.confirm('Are you sure you want to delete this message?')) {
+      await deleteDoc(doc(db, 'messages', messageId));
+    }
+  };
+
+  const getRecipientOptions = () => {
+    if (userRole === 'teacher') {
+      return roles.students;
     } else {
-      console.error('Sender or recipient email is missing.', { sender: user.email, recipient });
+      return roles.teachers;
     }
   };
 
@@ -201,10 +267,13 @@ const MessagingPage = () => {
           <LightBulbAnimation />
         </LightBulbContainer>
         <Header>
-          <Dropdown onChange={(e) => setRecipient(e.target.value)} value={recipient}>
-            <option value="">Select Instructor</option>
-            {mockInstructors.map((instructor, index) => (
-              <option key={index} value={instructor.email}>{instructor.name}</option>
+          <Dropdown 
+            onChange={(e) => setSelectedRecipient(e.target.value)} 
+            value={selectedRecipient}
+          >
+            <option value="">Select Recipient</option>
+            {getRecipientOptions().map((recipient, index) => (
+              <option key={index} value={recipient}>{recipient}</option>
             ))}
           </Dropdown>
           <CenteredTitle>
@@ -213,18 +282,37 @@ const MessagingPage = () => {
         </Header>
         <ContentWrapper>
           <ContentArea>
-            <Subheading>Your conversation with {recipient ? `Instructor ${mockInstructors.find(inst => inst.email === recipient)?.name || "Unknown"}` : "Instructor"}:</Subheading>
+            <Subheading>Your conversation with {selectedRecipient || "Recipient"}</Subheading>
             <ConversationArea>
-              <MessageList messages={messages} />
+              {messages.map((msg) => (
+                <MessageContainer key={msg.id} isCurrentUser={msg.sender === user?.email}>
+                  <MessageBubble isCurrentUser={msg.sender === user?.email}>
+                    <strong>{msg.sender === user?.email ? 'You' : msg.sender}:</strong> 
+                    {msg.text}
+                    {msg.fileURL && <a href={msg.fileURL} target="_blank" rel="noopener noreferrer">View File</a>}
+                    {msg.sender === user?.email && (
+                      <MessageOptions onClick={() => handleDeleteMessage(msg.id)}>...</MessageOptions>
+                    )}
+                  </MessageBubble>
+                </MessageContainer>
+              ))}
             </ConversationArea>
-            <Footer>
-              <MessageForm
-                message={message}
-                setMessage={setMessage}
-                onSend={handleSendMessage}
-                user={user}
+            <MessageForm onSubmit={handleSendMessage}>
+              <MessageInput
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
               />
-            </Footer>
+              <SendButton type="submit">Send</SendButton>
+              <FileLabel htmlFor="file-upload">Upload File</FileLabel>
+              <FileInput
+                id="file-upload"
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+              />
+            </MessageForm>
           </ContentArea>
         </ContentWrapper>
       </MessagingBox>

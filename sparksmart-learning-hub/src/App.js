@@ -1,6 +1,3 @@
-// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/App.js
-// Author: Tom Wang
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -16,71 +13,40 @@ import HomeworkPage from './views/HomeworkPage.js';
 import RecordingsPage from './views/RecordingsPage.js';
 import DiagnosticTestPage from './views/DiagnosticTestPage.js';
 import LearningPlanPage from './views/LearningPlanPage.js';
-import AddQuestionPage from './views/AddQuestionPage.js'; // Import the AddQuestionPage component
-import ProgressTrackingPage from './views/ProgressTrackingPage.js'; // Import the ProgressTrackingPage component
-import Mastery from './views/Mastery.js'; // Import the Mastery component
+import AddQuestionPage from './views/AddQuestionPage.js';
+import ProgressTrackingPage from './views/ProgressTrackingPage.js';
+import Mastery from './views/Mastery.js';
 import DashboardPage from './views/DashboardPage.js';
-import { auth, mockUser } from './firebaseConfig.js';
+import { auth } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
-import { listenForMessages } from './Firestore.js';
+import { onAuthStateChanged } from 'firebase/auth';
+import PrivateRoute from './components/PrivateRoute.js';
 
-// This component serves as the main application wrapper, handling routing and user authentication state.
 const App = () => {
-  const [role, setRole] = useState(null); // State for managing the user's role
-  const [user, setUser] = useState(null); // State for managing the authenticated user
-  const [messages, setMessages] = useState([]); // State for managing the messages
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('useEffect called');
-    if (mockUser) {
-      console.log('Using mock user:', mockUser);
-      const userRole = getRole(mockUser.email);
-      console.log('User role:', userRole);
-      setUser(mockUser);
-      setRole(userRole);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        const userRole = getRole(currentUser.email);
+        setRole(userRole);
+      } else {
+        setUser(null);
+        setRole(null);
+      }
+      setLoading(false);
+    });
 
-      // Listen for messages if a mock user is used
-      setupMessageListener(mockUser.email);
-    } else {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        console.log('Auth state changed:', user);
-        if (user) {
-          const userRole = getRole(user.email);
-          console.log('User role:', userRole);
-          if (userRole === 'member') {
-            window.location.href = 'https://www.brightsparks.academy';
-          } else {
-            setUser(user);
-            setRole(userRole);
-
-            // Listen for messages if a real user is authenticated
-            setupMessageListener(user.email);
-          }
-        } else {
-          setUser(null);
-          setRole(null);
-        }
-      });
-
-      return () => unsubscribe(); // Clean up the subscription on unmount
-    }
+    return () => unsubscribe();
   }, []);
 
-  const setupMessageListener = (userEmail) => {
-    listenForMessages(userEmail, userEmail, (newMessages) => {
-      console.log('Received messages:', newMessages);
-      setMessages(newMessages);
-    }).catch((error) => {
-      console.error('Error setting up message listener:', error);
-    });
-  };
-
-  const handleLogin = (userRole, user) => {
-    setRole(userRole);
-    setUser(user);
-    setupMessageListener(user.email); // Setup message listener after login
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -92,24 +58,20 @@ const App = () => {
         <NavBar user={user} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          {user && (
-            <>
-              <Route path="/profile" element={<Profile user={user} role={role} />} />
-              {role === 'admin' && <Route path="/admin/dashboard" element={<AdminDashboard />} />}
-              {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
-              {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
-              <Route path="/messaging" element={<MessagingPage messages={messages} />} />
-              <Route path="/homework" element={<HomeworkPage />} />
-              <Route path="/diagnostic-test" element={<DiagnosticTestPage />} />
-              <Route path="/ai-learning-plan" element={<LearningPlanPage />} />
-              <Route path="/progress-tracking" element={<ProgressTrackingPage />} /> {/* New route for Progress Tracking */}
-              <Route path="/mastery" element={<Mastery />} /> {/* New route for Mastery */}
-              {role === 'admin' && <Route path="/add-question" element={<AddQuestionPage />} />} {/* Add AddQuestionPage route */}
-              <Route path="/dashboard" element={<DashboardPage />}/>
-              <Route path="/recordings-page" element={<RecordingsPage />}/>
-            </>
-          )}
+          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
+          <Route path="/admin/dashboard" element={<PrivateRoute>{role === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+          <Route path="/teacher/dashboard" element={<PrivateRoute>{role === 'teacher' ? <TeacherDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+          <Route path="/student/dashboard" element={<PrivateRoute>{role === 'student' ? <StudentDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+          <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
+          <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />
+          <Route path="/diagnostic-test" element={<PrivateRoute><DiagnosticTestPage /></PrivateRoute>} />
+          <Route path="/ai-learning-plan" element={<PrivateRoute><LearningPlanPage /></PrivateRoute>} />
+          <Route path="/progress-tracking" element={<PrivateRoute><ProgressTrackingPage /></PrivateRoute>} />
+          <Route path="/mastery" element={<PrivateRoute><Mastery /></PrivateRoute>} />
+          <Route path="/add-question" element={<PrivateRoute>{role === 'admin' ? <AddQuestionPage /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+          <Route path="/recordings-page" element={<PrivateRoute><RecordingsPage /></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
