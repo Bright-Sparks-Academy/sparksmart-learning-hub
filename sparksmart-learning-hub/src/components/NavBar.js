@@ -1,3 +1,4 @@
+// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/components/NavBar.js
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -95,31 +96,37 @@ const ProfileImage = styled.img`
  * @param {Object} user - The current authenticated user.
  * Created by Tom Wang.
  */
-const NavBar = ({ user }) => (
-  <NavBarContainer>
-    <NavLinks>
-      <NavLink to="/">
-        <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
-      </NavLink>
-      {user && (
-        <>
-          <NavLink to="/profile">Profile</NavLink>
-          <NavLink to="/messaging">Messaging</NavLink>
-          <NavLink to="/homework">Homework</NavLink>
-          <NavLink to="/diagnostic-test">Diagnostic Test</NavLink> {/* Add Diagnostic Test link */}
-          <NavLink to="/ai-learning-plans">AI Learning Plans</NavLink> {/* Add AI Learning Plans link */}
-          <NavLink to="/recordings-page">Recordings</NavLink> {/* Add AI Learning Plans link */}
-        </>
-      )}
-    </NavLinks>
-    {user ? (
-      <ProfileLink to="/profile">
-        <ProfileImage src={user.photoURL} alt={user.displayName} />
-      </ProfileLink>
-    ) : (
-      <LoginButton to="/login">Login</LoginButton>
-    )}
-  </NavBarContainer>
-);
+const NavBar = ({ user }) => {
+  const location = useLocation();
+
+  return (
+    <>
+      <GlobalStyle /> {/* Apply global styles */}
+      <NavBarContainer>
+        <NavLinks>
+          <NavLink to="/" isActive={location.pathname === '/'}>
+            <img src={lightbulbIcon} alt="Home" style={{ width: '50px', height: '50px' }} />
+          </NavLink>
+          {user && (
+            <>
+              <NavLink to="/profile" isActive={location.pathname === '/profile'}>Profile</NavLink>
+              <NavLink to="/messaging" isActive={location.pathname === '/messaging'}>Messaging</NavLink>
+              <NavLink to="/homework" isActive={location.pathname === '/homework'}>Homework</NavLink>
+              <NavLink to="/recordings-page" isActive={location.pathname === '/recordings-page'}>Recordings</NavLink>
+              <NavLink to="/mastery" isActive={location.pathname === '/mastery'}>Mastery</NavLink> {/* Add Mastery link */}
+            </>
+          )}
+        </NavLinks>
+        {user ? (
+          <ProfileLink to="/profile">
+            <ProfileImage src={user.photoURL} alt={user.displayName} />
+          </ProfileLink>
+        ) : (
+          <LoginButton to="/login">Login</LoginButton>
+        )}
+      </NavBarContainer>
+    </>
+  );
+};
 
 export default NavBar;

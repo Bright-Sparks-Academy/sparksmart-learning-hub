@@ -22,17 +22,27 @@ app.use(cors());
  * Function to handle retries for Axios requests with exponential backoff.
  * @param {Object} axiosConfig - The Axios request configuration.
  * @param {number} retries - Number of retries before failing.
- * @param {number} backoff - Initial backoff time in milliseconds.
+ * @param {number} initialBackoff - Initial backoff time in milliseconds.
  * @returns {Promise<Object>} - The Axios response.
  */
-const retryAxios = async (axiosConfig, retries = 3, backoff = 3000) => {
+const retryAxios = async (axiosConfig, retries = 3, initialBackoff = 3000) => {
+  let backoff = initialBackoff;
+
   for (let i = 0; i < retries; i++) {
     try {
       return await axios(axiosConfig);
     } catch (error) {
       if (error.response && error.response.status === 429) { // Handle rate limiting error
         console.log(`Retry attempt ${i + 1} after ${backoff}ms due to 429 Too Many Requests error.`);
-        await new Promise(resolve => setTimeout(resolve, backoff)); // Wait for the backoff period
+        
+        // Create a new scope for setTimeout using a block-scoped variable
+        await new Promise(resolve => {
+          const currentBackoff = backoff;
+          setTimeout(() => {
+            resolve();
+          }, currentBackoff);
+        });
+
         backoff *= 2; // Exponential backoff
       } else {
         throw error;
@@ -140,7 +150,7 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
       data: {
         model: 'gpt-3.5-turbo',
         prompt: prompt,
-       	max_tokens: 500,
+        max_tokens: 500,
       },
       headers: {
         'Content-Type': 'application/json',

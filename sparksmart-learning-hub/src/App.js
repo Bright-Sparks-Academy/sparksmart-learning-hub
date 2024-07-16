@@ -1,4 +1,4 @@
-// src/App.js
+// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/App.js
 // Author: Tom Wang
 
 import React, { useState, useEffect } from 'react';
@@ -18,7 +18,7 @@ import DiagnosticTestPage from './views/DiagnosticTestPage.js';
 import LearningPlanPage from './views/LearningPlanPage.js';
 import AddQuestionPage from './views/AddQuestionPage.js'; // Import the AddQuestionPage component
 import ProgressTrackingPage from './views/ProgressTrackingPage.js'; // Import the ProgressTrackingPage component
-import StudyPlanPage from './views/StudyPlanPage.js'; // Import the StudyPlanPage component
+import Mastery from './views/Mastery.js'; // Import the Mastery component
 import DashboardPage from './views/DashboardPage.js';
 import { auth, mockUser } from './firebaseConfig.js';
 import { getRole } from './roles.js';
@@ -104,7 +104,7 @@ const App = () => {
               <Route path="/diagnostic-test" element={<DiagnosticTestPage />} />
               <Route path="/ai-learning-plan" element={<LearningPlanPage />} />
               <Route path="/progress-tracking" element={<ProgressTrackingPage />} /> {/* New route for Progress Tracking */}
-              <Route path="/study-plan" element={<StudyPlanPage />} /> {/* New route for Study Plan */}
+              <Route path="/mastery" element={<Mastery />} /> {/* New route for Mastery */}
               {role === 'admin' && <Route path="/add-question" element={<AddQuestionPage />} />} {/* Add AddQuestionPage route */}
               <Route path="/dashboard" element={<DashboardPage />}/>
               <Route path="/recordings-page" element={<RecordingsPage />}/>

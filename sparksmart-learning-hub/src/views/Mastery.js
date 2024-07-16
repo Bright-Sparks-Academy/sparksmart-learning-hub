@@ -1,4 +1,4 @@
-// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/StudyPlanPage.js
+// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/Mastery.js
 
 import React, { useState } from 'react';
 import styled from 'styled-components';
@@ -62,7 +62,7 @@ const ErrorMessage = styled.p`
   font-weight: bold;
 `;
 
-const StudyPlanPage = () => {
+const Mastery = () => {
   const [problemType, setProblemType] = useState('');
   const [studyPlan, setStudyPlan] = useState('');
   const [loading, setLoading] = useState(false);
@@ -134,4 +134,4 @@ const StudyPlanPage = () => {
   );
 };
 
-export default StudyPlanPage;
+export default Mastery;
