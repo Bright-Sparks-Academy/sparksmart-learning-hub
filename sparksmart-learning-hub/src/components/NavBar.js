@@ -116,7 +116,6 @@ const NavBar = ({ user }) => {
               <NavLink to="/progress-tracking" isActive={location.pathname === '/progress-tracking'}>Progress Tracking</NavLink> {/* New link for Progress Tracking */}
               <NavLink to="/study-plan" isActive={location.pathname === '/study-plan'}>Study Plan</NavLink> {/* New link for Study Plan */}
               {user.role === 'admin' && <NavLink to="/add-question" isActive={location.pathname === '/add-question'}>Add Question</NavLink>} {/* Add Add Question link for admins */}
-              <NavLink to="/dashboard" isActive={location.pathname === '/dashboard'}>Dashboard</NavLink>
             </>
           )}
         </NavLinks>
