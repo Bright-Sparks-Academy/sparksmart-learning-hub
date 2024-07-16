@@ -235,14 +235,14 @@ const MessagingPage = () => {
     }
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e) => {  // Function to handle file uploads
     const file = e.target.files[0];
     if (file && user && selectedRecipient) {
-      const storageRef = ref(storage, `chat_files/${file.name}`);
+      const storageRef = ref(storage, `chat_files/${file.name}`);   // Upload the file to Firebase Storage (RN DOES NOT WORK)
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
 
-      await addDoc(collection(db, 'messages'), {
+      await addDoc(collection(db, 'messages'), {  // Add a new message with the file information
         text: `File: ${file.name}`,
         fileURL: downloadURL,
         sender: user.email,
