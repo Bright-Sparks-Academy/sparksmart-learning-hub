@@ -6,6 +6,8 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { roles, getRole } from '../roles.js';
 import LightBulbAnimation from '../components/LightBulbAnimation.js';
 
+// Styled components for the UI elements
+
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
