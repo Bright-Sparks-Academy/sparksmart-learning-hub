@@ -253,8 +253,8 @@ const MessagingPage = () => {
     }
   };
 
-  const handleDeleteMessage = async (messageId) => {
-    if (window.confirm('Are you sure you want to delete this message?')) {
+  const handleDeleteMessage = async (messageId) => {  // Function to handle message deletion
+    if (window.confirm('Are you sure you want to delete this message?')) {   // Delete the message from the Firestore database
       await deleteDoc(doc(db, 'messages', messageId));
     }
   };
