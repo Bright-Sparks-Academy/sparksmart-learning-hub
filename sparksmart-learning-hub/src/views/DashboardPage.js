@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Todolist from './Todolist.js';
-import { db } from './firebase'; // Import Firestore database
-import { getUpcomingClasses, getToDoList } from './api'; // Functions to fetch data
+//import { db } from './firebase'; // Import Firestore database
+import { getUpcomingClasses, getToDoList,} from '../api/aiService.js'; // Functions to fetch data
 
 const DashboardContainer = styled.div`
   /* Add your styles here */
@@ -22,10 +23,10 @@ const DashboardPage = () => {
 
   useEffect(() => {
     // Fetch upcoming classes from Firestore
-    getUpcomingClasses().then(classes => setUpcomingClasses(classes));
+   // getUpcomingClasses().then(classes => setUpcomingClasses(classes));
 
     // Fetch To-Do list from Firestore
-    getToDoList().then(list => setToDoList(list));
+   // getToDoList().then(list => setToDoList(list));
   }, []);
   
   return (
@@ -44,3 +45,4 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+

@@ -107,6 +107,7 @@ const App = () => {
               <Route path="/study-plan" element={<StudyPlanPage />} /> {/* New route for Study Plan */}
               {role === 'admin' && <Route path="/add-question" element={<AddQuestionPage />} />} {/* Add AddQuestionPage route */}
               <Route path="/dashboard" element={<DashboardPage />}/>
+              <Route path="/recordings-page" element={<RecordingsPage />}/>
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />

@@ -11,6 +11,8 @@ const RecordingsContainer = styled.div`
   color: black;
   min-height: 100vh;
   font-family: Arial, sans-serif;
+  position: relative;
+  top: 100px
 `;
 
 //CSS for the header (Recordings)
@@ -52,14 +54,16 @@ const MainSection = styled.main`
 //CSS for the video player
 const VideoPlayer = styled.div`
   background-color: #ccc;
-  width: 60%;
+  width: 40%;
   height: 300px;
-  border: 5px solid #FFD900;
+  border: 20px solid #FFD900;
+  border-radius: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
+  bottom:65px;
 `;
 
 //CSS for the play button 
@@ -75,6 +79,9 @@ const VideoTitle = styled.div`
   margin-top: 10px;
   font-size: 18px;
   font-weight: bold;
+  position: relative;
+  top: 150px;
+  right: 145px
 `;
 
 //CSS for the recordings list that contains the recordings
@@ -104,10 +111,13 @@ const PlayIcon = styled.div`
 
 //CSS for the box around about and transcript
 const InfoSection = styled.div`
-  width: 60%;
+  width: 30%;
   margin-top: 20px;
   background-color: #FFD900;
   padding: 10px;
+  position: relative;
+  right: 391px;
+  bottom: 30px;
 `;
 
 //CSS the tabs for about and transcript
@@ -145,9 +155,7 @@ const RecordingsPage = () => {
 
   return (
     <RecordingsContainer>
-      <div>...</div>
       
-      <Header>Recordings</Header>
       <Header>Recordings</Header>
       <CourseSelector>
         
@@ -161,7 +169,7 @@ const RecordingsPage = () => {
       <MainSection>
         <VideoPlayer>
           <VideoIcon />
-          <VideoTitle>Intro to Java</VideoTitle>
+          <VideoTitle>Lesson 1: Intro to Java</VideoTitle>
         </VideoPlayer>
         <RecordingsList>
           {recordings.map((rec, index) => (
@@ -177,7 +185,7 @@ const RecordingsPage = () => {
         </RecordingsList>
       </MainSection>
       <InfoSection>
-        <div>Lesson 1: Intro to Java</div>
+        
         <Tabs>
           <Tab onClick={() => setTab('About')} style={{ color: tab === 'About' ? 'black' : 'grey' }}>About</Tab>
           <Tab onClick={() => setTab('Transcript')} style={{ color: tab === 'Transcript' ? 'black' : 'grey' }}>Transcript</Tab>

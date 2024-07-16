@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import defaultAvatar from '../assets/icons8-avatar-50.png';
-import { format } from 'date-fns';
+//import { format } from 'date-fns';
 
 // Author: Tom Wang
 // This component renders a list of messages in a styled container.
@@ -63,10 +63,10 @@ const MessageContent = styled.div`
  * @returns {string} - The formatted timestamp.
  */
 const formatTimestamp = (timestamp) => {
-  if (timestamp && timestamp.seconds) {
-    const date = new Date(timestamp.seconds * 1000);
-    return format(date, 'yyyy-MM-dd hh:mm:ss a');
-  }
+  //if (timestamp && timestamp.seconds) {
+    //const date = new Date(timestamp.seconds * 1000);
+    //return format(date, 'yyyy-MM-dd hh:mm:ss a');
+  //}
   return 'Invalid date';
 };
 
