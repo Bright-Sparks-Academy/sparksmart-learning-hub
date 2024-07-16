@@ -196,9 +196,11 @@ const MessagingPage = () => {
         setUser(null);
       }
     });
-
+ // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, []);
+// Effect to fetch and update messages in real-time
+// Create a query to fetch messages for the current conversation
 
   useEffect(() => {
     if (user && selectedRecipient) {
