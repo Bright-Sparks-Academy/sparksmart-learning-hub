@@ -1,4 +1,6 @@
 // src/App.js
+// Author: Tom Wang
+
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -13,15 +15,17 @@ import MessagingPage from './views/MessagingPage.js';
 import HomeworkPage from './views/HomeworkPage.js';
 import RecordingsPage from './views/RecordingsPage.js';
 import DiagnosticTestPage from './views/DiagnosticTestPage.js';
-import LearningPlanPage from './views/LearningPlanPage.js'; // Import the LearningPlanPage component
+import LearningPlanPage from './views/LearningPlanPage.js';
+import AddQuestionPage from './views/AddQuestionPage.js'; // Import the AddQuestionPage component
+import ProgressTrackingPage from './views/ProgressTrackingPage.js'; // Import the ProgressTrackingPage component
+import StudyPlanPage from './views/StudyPlanPage.js'; // Import the StudyPlanPage component
+import DashboardPage from './views/DashboardPage.js';
 import { auth, mockUser } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
-import { listenForMessages } from './Firestore.js'; // Import listenForMessages function
+import { listenForMessages } from './Firestore.js';
 
-// Author: Tom Wang
 // This component serves as the main application wrapper, handling routing and user authentication state.
-
 const App = () => {
   const [role, setRole] = useState(null); // State for managing the user's role
   const [user, setUser] = useState(null); // State for managing the authenticated user
@@ -96,10 +100,13 @@ const App = () => {
               {role === 'teacher' && <Route path="/teacher/dashboard" element={<TeacherDashboard />} />}
               {role === 'student' && <Route path="/student/dashboard" element={<StudentDashboard />} />}
               <Route path="/messaging" element={<MessagingPage messages={messages} />} />
-              <Route path="/homework" element={<HomeworkPage />} /> {/* Add HomeworkPage route here */}
-              <Route path="/diagnostic-test" element={<DiagnosticTestPage />} /> {/* Add DiagnosticTestPage route */}
-              <Route path="/ai-learning-plan" element={<LearningPlanPage />} /> {/* Add LearningPlanPage route */}
-              <Route path="/recordings-page" element={<RecordingsPage />} /> {/* Add LearningPlanPage route */}
+              <Route path="/homework" element={<HomeworkPage />} />
+              <Route path="/diagnostic-test" element={<DiagnosticTestPage />} />
+              <Route path="/ai-learning-plan" element={<LearningPlanPage />} />
+              <Route path="/progress-tracking" element={<ProgressTrackingPage />} /> {/* New route for Progress Tracking */}
+              <Route path="/study-plan" element={<StudyPlanPage />} /> {/* New route for Study Plan */}
+              {role === 'admin' && <Route path="/add-question" element={<AddQuestionPage />} />} {/* Add AddQuestionPage route */}
+              <Route path="/dashboard" element={<DashboardPage />}/>
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />
