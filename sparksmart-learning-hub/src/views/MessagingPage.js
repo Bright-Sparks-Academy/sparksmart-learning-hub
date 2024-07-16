@@ -209,7 +209,7 @@ const MessagingPage = () => {
         where('participants', 'array-contains', user.email),
         orderBy('timestamp', 'asc')
       );
-
+   // Set up a real-time listener for messages
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const newMessages = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
@@ -219,11 +219,11 @@ const MessagingPage = () => {
 
       return () => unsubscribe();
     }
-  }, [user, selectedRecipient]);
-
+  }, [user, selectedRecipient]);     // Clean up the listener when the component unmounts or the user/recipient changes
+  // Function to handle sending a new message
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (newMessage.trim() && user && selectedRecipient) {
+    if (newMessage.trim() && user && selectedRecipient) {   // Add the new message to the Firestore database
       await addDoc(collection(db, 'messages'), {
         text: newMessage,
         sender: user.email,
@@ -231,7 +231,7 @@ const MessagingPage = () => {
         participants: [user.email, selectedRecipient],
         timestamp: serverTimestamp(),
       });
-      setNewMessage('');
+      setNewMessage('');     // Clear the message input after sending
     }
   };
 
