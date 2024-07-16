@@ -176,6 +176,7 @@ const FileLabel = styled.label`
 `;
 
 const MessagingPage = () => {
+  // State variables to manage the component's data
   const [user, setUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
