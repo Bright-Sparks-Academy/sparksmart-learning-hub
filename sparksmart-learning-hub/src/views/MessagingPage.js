@@ -183,14 +183,16 @@ const MessagingPage = () => {
   const [selectedRecipient, setSelectedRecipient] = useState('');
   const [userRole, setUserRole] = useState('');
   const fileInputRef = useRef(null);
-
+// Effect to handle user authentication
   useEffect(() => {
+    // If a user is logged in, set the user and their role
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         const role = getRole(currentUser.email);
         setUserRole(role);
       } else {
+        // If no user is logged in, set user to null
         setUser(null);
       }
     });
