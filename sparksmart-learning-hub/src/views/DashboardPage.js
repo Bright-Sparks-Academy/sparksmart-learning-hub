@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import Todolist from './Todolist.js';
 import { db } from './firebase'; // Import Firestore database
 import { getUpcomingClasses, getToDoList } from './api'; // Functions to fetch data
 
@@ -36,20 +37,10 @@ const DashboardPage = () => {
       <MainSection>
         {/* Display upcoming classes with date and time */}
         {/* Add a button linking to the meeting link */}
-        {/* Display To-Do list for homework */}
+        <Todolist /> {/* Display To-Do list for homework */}
       </MainSection>
     </DashboardContainer>
   );
 };
 
 export default DashboardPage;
-
-/**
- * Steps to code:
- * 1. Set up the basic structure with React.
- * 2. Implement navigation links to other pages.
- * 3. Integrate Firestore to fetch and display dates and times of upcoming classes.
- * 4. Add a button linking to the meeting link.
- * 5. Implement a To-Do list feature for homework using Firestore.
- * 6. Style the page using Styled Components and Tailwind CSS.
- */
