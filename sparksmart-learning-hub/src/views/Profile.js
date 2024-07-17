@@ -1,108 +1,229 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { updateUserProfile, uploadAvatar, auth } from '../firebaseConfig.js';
+import { auth, storage, db } from '../firebaseConfig.js';
+import { updateProfile } from 'firebase/auth';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
-const ProfileContainer = styled.div`
+const PageContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  font-family: 'Gotham', 'Quicksand', sans-serif;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  margin: 2rem auto;
+  padding: 20px;
   font-family: 'Quicksand', sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
-const ProfileImage = styled.img`
-  width: 120px;
-  height: 120px;
+const SidePanel = styled.div`
+  width: 200px;
+  margin-right: 20px;
+`;
+
+const SideButton = styled.button`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #D3D3D3;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+`;
+
+const Icon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  display: flex;
+`;
+
+const ProfileSection = styled.div`
+  flex: 2;
+  background-color: #FFD900;
+  padding: 20px;
+  border-radius: 10px;
+  margin-right: 20px;
+`;
+
+const PerformanceSection = styled.div`
+  flex: 1;
+  background-color: #FFD900;
+  padding: 20px;
+  border-radius: 10px;
+`;
+
+const AvatarContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+`;
+
+const Avatar = styled.img`
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  margin-bottom: 1rem;
-  font-family: 'Quicksand', sans-serif;
+  object-fit: cover;
 `;
 
 const Input = styled.input`
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  margin-bottom: 1rem;
   width: 100%;
-  font-family: 'Quicksand', sans-serif;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #FFFFFF;
 `;
 
 const Button = styled.button`
-  background-color: #FFD900;
+  background-color: #000;
+  color: #FFD900;
   border: none;
-  padding: 0.75rem 1rem;
-  font-weight: bold;
-  margin: 0.5rem;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  width: 100%;
-  &:hover {
-    background-color: #FFC300;
-  }
-  font-family: 'Quicksand', sans-serif;
-  border-radius: 10px;
+  margin-top: 10px;
 `;
 
-const ErrorMessage = styled.p`
-  color: red;
-  margin-top: 1rem;
+const PerformanceBox = styled.div`
+  background-color: #FFF;
+  height: 50px;
+  margin-bottom: 10px;
+  border-radius: 5px;
 `;
 
-const Profile = ({ user, role }) => {
-  const [displayName, setDisplayName] = useState(user.displayName);
-  const [avatar, setAvatar] = useState(user.photoURL);
-  const [error, setError] = useState(null);
+const Profile = () => {
+  const [user, setUser] = useState(null);
+  const [fullName, setFullName] = useState('');
+  const [bio, setBio] = useState('');
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
-  const handleNameChange = async () => {
-    try {
-      await updateUserProfile(user.uid, { displayName });
-      await auth.currentUser.updateProfile({ displayName });
-      setError(null);
-    } catch (error) {
-      setError("Failed to update profile");
-    }
-  };
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        setFullName(currentUser.displayName || '');
+        // Fetch bio from Firestore if needed
+      } else {
+        navigate('/login');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (file && user) {
       try {
-        const avatarURL = await uploadAvatar(file, user.uid);
-        await updateUserProfile(user.uid, { photoURL: avatarURL });
-        await auth.currentUser.updateProfile({ photoURL: avatarURL });
-        setAvatar(avatarURL);
-        setError(null);
+        const storageRef = ref(storage, `avatars/${user.uid}`);
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        await updateProfile(user, { photoURL: downloadURL });
+        setUser({ ...user, photoURL: downloadURL });
       } catch (error) {
-        setError("Failed to update avatar");
+        console.error("Error uploading avatar:", error);
+        alert("Failed to upload avatar. Please try again.");
       }
     }
   };
 
+  const handleSave = async () => {
+    if (user) {
+      try {
+        await updateProfile(user, { displayName: fullName });
+        const userRef = doc(db, 'users', user.uid);
+        await updateDoc(userRef, { bio: bio });
+        setUser({ ...user, displayName: fullName });
+        alert("Profile updated successfully!");
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("Failed to update profile. Please try again.");
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error("Error signing out:", error);
+      alert("Failed to sign out. Please try again.");
+    }
+  };
+
+  if (!user) return <div>Loading...</div>;
+
   return (
-    <ProfileContainer>
-
-      <ProfileImage src={avatar} alt={displayName} />
-      <h2>{displayName}</h2>
-      <p>Your Role: {role}</p>
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-      
-      <Input
-        type="text"
-        value={displayName}
-        onChange={(e) => setDisplayName(e.target.value)}
-        placeholder="Enter new display name"
-      />
-
-      <Button onClick={handleNameChange}>Save Name</Button>
-      <Input type="file" accept="image/*" onChange={handleAvatarChange} />
-      <Button onClick={() => auth.signOut()}>Log Out</Button>
-
-    </ProfileContainer>
+    <PageContainer>
+      <SidePanel>
+        <SideButton>
+          <Icon src="/path/to/courses-icon.png" alt="Courses" />
+          Courses
+        </SideButton>
+        <SideButton>
+          <Icon src="/path/to/settings-icon.png" alt="Settings" />
+          Settings
+        </SideButton>
+        <SideButton onClick={() => window.open('https://www.google.com', '_blank')}>
+          <Icon src="/path/to/support-icon.png" alt="Support" />
+          Support
+        </SideButton>
+      </SidePanel>
+      <MainContent>
+        <ProfileSection>
+          <h2>User Profile</h2>
+          <AvatarContainer>
+            <Avatar src={user.photoURL || '/path/to/default-avatar.png'} alt="User Avatar" />
+          </AvatarContainer>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleAvatarChange}
+          />
+          <Button onClick={() => fileInputRef.current.click()}>Change Avatar</Button>
+          <Input
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Full Name"
+          />
+          <Input type="text" value={user.uid} readOnly placeholder="User ID" />
+          <TextArea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            placeholder="Bio..."
+          />
+          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleLogout}>Log Out</Button>
+        </ProfileSection>
+        <PerformanceSection>
+          <h2>Performance</h2>
+          <PerformanceBox />
+          <PerformanceBox />
+          <PerformanceBox />
+          <PerformanceBox />
+        </PerformanceSection>
+      </MainContent>
+    </PageContainer>
   );
 };
 

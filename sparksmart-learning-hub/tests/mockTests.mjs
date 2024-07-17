@@ -66,11 +66,25 @@ const testListenForMessages = () => {
         ...msg,
         timestamp: formatTimestamp(msg.timestamp)
       }));
+
+      // Sort messages by timestamp to find the most recent contact
+      formattedMessages.sort((a, b) => b.timestamp - a.timestamp);
+      const mostRecentContact = formattedMessages.length > 0 ? formattedMessages[0].sender : null;
+
       console.log('Real-time messages:', formattedMessages);
+      console.log('Most recent contact:', mostRecentContact);
+      
+      // Call a function to set the default contact in the messaging page
+      setDefaultContact(mostRecentContact);
     });
   } catch (error) {
     console.error('Error listening for messages:', error);
   }
+};
+
+// Dummy function to simulate setting the default contact
+const setDefaultContact = (contact) => {
+  console.log('Setting default contact to:', contact);
 };
 
 // Run the test functions to add and listen for messages

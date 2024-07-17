@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { signInWithGoogle } from '../firebaseConfig.js';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '../firebaseConfig.js';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/lightbulb.png';
 
@@ -50,15 +51,23 @@ const Button = styled.button`
   }
 `;
 
+const ErrorMessage = styled.p`
+  color: red;
+  margin-top: 1rem;
+`;
+
 const Login = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
-  const handleLogin = async () => {
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
     try {
-      await signInWithGoogle();
-      navigate('/');
+      await signInWithPopup(auth, provider);
+      navigate('/dashboard');
     } catch (error) {
       console.error("Error signing in with Google:", error);
+      setError("Failed to sign in with Google. Please try again.");
     }
   };
 
@@ -71,8 +80,9 @@ const Login = () => {
       <Card>
         <Logo src={logo} alt="Lightbulb Logo" />
         <Heading>SparkSmart Learning Hub</Heading>
-        <Button onClick={handleLogin}>Login</Button>
+        <Button onClick={handleGoogleSignIn}>Sign in with Google</Button>
         <Button onClick={handleSignupRedirect}>Sign up</Button>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </Card>
     </PageContainer>
   );
