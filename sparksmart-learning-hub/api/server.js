@@ -6,15 +6,16 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { collection, addDoc } from 'firebase/firestore'; // Import Firestore functions
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../src/firebaseConfig.js';
 
-import { db } from '../src/firebaseConfig.js'; // Ensure correct path to firebaseConfig.js
-
-dotenv.config(); // Load environment variables from .env file
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
 const port = 3000;
 
+// Middleware to parse JSON bodies and enable CORS
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -25,34 +26,28 @@ app.use(cors());
  * @param {number} initialBackoff - Initial backoff time in milliseconds.
  * @returns {Promise<Object>} - The Axios response.
  */
-const retryAxios = async (axiosConfig, retries = 3, initialBackoff = 3000) => {
+const retryAxios = async (axiosConfig, retries = 5, initialBackoff = 3000) => {
   let backoff = initialBackoff;
 
   for (let i = 0; i < retries; i++) {
     try {
       return await axios(axiosConfig);
     } catch (error) {
-      if (error.response && error.response.status === 429) { // Handle rate limiting error
+      // Handle 429 Too Many Requests error with backoff
+      if (error.response && error.response.status === 429) {
         console.log(`Retry attempt ${i + 1} after ${backoff}ms due to 429 Too Many Requests error.`);
-        
-        // Create a new scope for setTimeout using a block-scoped variable
-        await new Promise(resolve => {
-          const currentBackoff = backoff;
-          setTimeout(() => {
-            resolve();
-          }, currentBackoff);
-        });
-
+        await new Promise(resolve => setTimeout(resolve, backoff));
         backoff *= 2; // Exponential backoff
       } else {
+        console.error('Axios request failed:', error.message);
         throw error;
       }
     }
   }
-  throw new Error('Exceeded maximum retries');
+  throw new Error('Exceeded maximum retries due to 429 Too Many Requests error.');
 };
 
-// Sample questions for diagnostic test
+// Sample diagnostic questions
 const questions = [
   { id: 1, question: 'What is 2 + 2?', correctAnswer: '4' },
   { id: 2, question: 'What is the capital of France?', correctAnswer: 'Paris' },
@@ -65,7 +60,6 @@ const progressData = [
   { date: '2023-07-01', score: 80 },
   { date: '2023-07-02', score: 85 },
   { date: '2023-07-03', score: 90 },
-  // Add more data as needed
 ];
 
 const accountData = {
@@ -110,15 +104,18 @@ app.post('/api/submit-diagnostic', async (req, res) => {
     }
   });
 
-  const prompt = `Analyze the following answers and provide feedback:\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}`;
+  const prompt = `Analyze the following answers and provide feedback:\n\n${answers.map((a, i) => `Q${i + 1}: ${a.question}\nA${i + 1}: ${a.answer}`).join('\n\n')}`;
 
   try {
     const response = await retryAxios({
       method: 'post',
-      url: 'https://api.openai.com/v1/completions',
+      url: 'https://api.openai.com/v1/chat/completions',
       data: {
         model: 'gpt-3.5-turbo',
-        prompt: prompt,
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant.' },
+          { role: 'user', content: prompt }
+        ],
         max_tokens: 200,
       },
       headers: {
@@ -127,7 +124,7 @@ app.post('/api/submit-diagnostic', async (req, res) => {
       },
     });
 
-    const analysis = response.data.choices[0].text.trim();
+    const analysis = response.data.choices[0].message.content.trim();
     res.json({ analysis, correctCount, totalQuestions: questions.length });
   } catch (error) {
     console.error('Error generating analysis:', error);
@@ -141,15 +138,18 @@ app.post('/api/submit-diagnostic', async (req, res) => {
 app.post('/api/personalized-learning-plan', async (req, res) => {
   const { answers, correctCount, totalQuestions } = req.body;
 
-  const prompt = `Based on the following answers, generate a personalized learning plan. The student answered ${correctCount} out of ${totalQuestions} questions correctly.\n\n${answers.map((a, i) => `Q${i+1}: ${a.question}\nA${i+1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics and resources to help the student improve.`;
+  const prompt = `Based on the following answers, generate a personalized learning plan. The student answered ${correctCount} out of ${totalQuestions} questions correctly.\n\n${answers.map((a, i) => `Q${i + 1}: ${a.question}\nA${i + 1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics and resources to help the student improve.`;
 
   try {
     const response = await retryAxios({
       method: 'post',
-      url: 'https://api.openai.com/v1/completions',
+      url: 'https://api.openai.com/v1/chat/completions',
       data: {
         model: 'gpt-3.5-turbo',
-        prompt: prompt,
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant.' },
+          { role: 'user', content: prompt }
+        ],
         max_tokens: 500,
       },
       headers: {
@@ -158,7 +158,7 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
       },
     });
 
-    const learningPlan = response.data.choices[0].text.trim();
+    const learningPlan = response.data.choices[0].message.content.trim();
     res.json({ learningPlan });
   } catch (error) {
     console.error('Error generating learning plan:', error);
@@ -187,10 +187,13 @@ app.post('/api/study-plan', async (req, res) => {
   try {
     const response = await retryAxios({
       method: 'post',
-      url: 'https://api.openai.com/v1/completions',
+      url: 'https://api.openai.com/v1/chat/completions',
       data: {
         model: 'gpt-3.5-turbo',
-        prompt: prompt,
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant.' },
+          { role: 'user', content: prompt }
+        ],
         max_tokens: 500,
       },
       headers: {
@@ -199,7 +202,7 @@ app.post('/api/study-plan', async (req, res) => {
       },
     });
 
-    const studyPlan = response.data.choices[0].text.trim();
+    const studyPlan = response.data.choices[0].message.content.trim();
     res.json({ studyPlan });
   } catch (error) {
     console.error('Error generating study plan:', error);
@@ -222,6 +225,7 @@ app.post('/api/save-study-plan', async (req, res) => {
   }
 });
 
+// Start the server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
