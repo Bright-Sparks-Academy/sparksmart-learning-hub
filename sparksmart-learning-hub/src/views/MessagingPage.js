@@ -267,7 +267,7 @@ const MessagingPage = () => {
     }
   };
 
-  return ( // all ui based
+  return ( // all ui base
     <PageContainer>
       <MessagingBox>
         <LightBulbContainer>
