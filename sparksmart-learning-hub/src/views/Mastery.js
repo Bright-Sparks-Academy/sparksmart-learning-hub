@@ -1,12 +1,13 @@
-// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/Mastery.js
-
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import GlobalStyle from '../GlobalStyles.js'; // Import GlobalStyle
+import GlobalStyle from '../GlobalStyles.js';
+import { marked } from 'marked';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const Wrapper = styled.div`
-  margin-top: 80px; // Adjust this value as needed to move the content down
+  margin-top: 80px;
 `;
 
 const StudyPlanContainer = styled.div`
@@ -55,6 +56,7 @@ const StudyPlanDisplay = styled.div`
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  white-space: pre-wrap;
 `;
 
 const ErrorMessage = styled.p`
@@ -68,13 +70,11 @@ const Mastery = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      // Make a POST request to generate a study plan
       const response = await axios.post('/api/study-plan', { problemType });
       setStudyPlan(response.data.studyPlan);
     } catch (err) {
@@ -85,24 +85,26 @@ const Mastery = () => {
     }
   };
 
-  // Function to handle saving the study plan
-  const handleSave = async () => {
+  const handleSaveAsPdf = async () => {
     try {
-      const response = await axios.post('/api/save-study-plan', { studyPlan });
-      if (response.data.success) {
-        alert('Study plan saved successfully!');
-      } else {
-        alert('Failed to save study plan.');
-      }
+      const input = document.getElementById('study-plan-display');
+      const canvas = await html2canvas(input);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('study-plan.pdf');
     } catch (err) {
-      console.error('Error saving study plan:', err);
-      alert('Error saving study plan. Please try again later.');
+      console.error('Error saving study plan as PDF:', err);
+      alert('Error saving study plan as PDF. Please try again later.');
     }
   };
 
   return (
     <>
-      <GlobalStyle /> {/* Apply global styles */}
+      <GlobalStyle />
       <Wrapper>
         <StudyPlanContainer>
           <h1>Personalized Study Plan</h1>
@@ -122,10 +124,10 @@ const Mastery = () => {
           </Form>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           {studyPlan && (
-            <StudyPlanDisplay>
+            <StudyPlanDisplay id="study-plan-display">
               <h2>Study Plan</h2>
-              <pre>{studyPlan}</pre>
-              <Button onClick={handleSave}>Save Study Plan</Button>
+              <div dangerouslySetInnerHTML={{ __html: marked(studyPlan) }} />
+              <Button onClick={handleSaveAsPdf}>Save Study Plan as PDF</Button>
             </StudyPlanDisplay>
           )}
         </StudyPlanContainer>

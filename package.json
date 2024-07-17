@@ -5,6 +5,9 @@
     "dotenv": "^16.4.5",
     "emoji-picker-react": "^4.11.1",
     "express": "^4.19.2",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "marked": "^13.0.2",
     "openai": "^4.52.7",
     "react-helmet": "^6.1.0"
   }
