@@ -18,6 +18,8 @@ const Header = styled.header`
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+  position: relative;
+  top: 75px;
 `;
 
 //CSS for the whole course selection navigation
@@ -47,6 +49,8 @@ const MainSection = styled.main`
   width: 100%;
   max-width: 1200px;
   justify-content: space-between;
+  position: relative;
+  top: 30px;
 `;
 
 //CSS for the video player
@@ -145,9 +149,7 @@ const RecordingsPage = () => {
 
   return (
     <RecordingsContainer>
-      <div>...</div>
       
-      <Header>Recordings</Header>
       <Header>Recordings</Header>
       <CourseSelector>
         
