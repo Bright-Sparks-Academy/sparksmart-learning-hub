@@ -15,7 +15,6 @@ import DiagnosticTestPage from './views/DiagnosticTestPage.js';
 import AddQuestionPage from './views/AddQuestionPage.js';
 import ProgressTrackingPage from './views/ProgressTrackingPage.js';
 import Mastery from './views/AiLearningPlan.js';
-import DashboardPage from './views/DashboardPage.js';
 import { auth } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
@@ -59,7 +58,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-          <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
           <Route path="/admin/dashboard" element={<PrivateRoute>{role === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
           <Route path="/teacher/dashboard" element={<PrivateRoute>{role === 'teacher' ? <TeacherDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
           <Route path="/student/dashboard" element={<PrivateRoute>{role === 'student' ? <StudentDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
