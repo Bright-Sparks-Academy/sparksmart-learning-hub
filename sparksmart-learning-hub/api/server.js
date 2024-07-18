@@ -182,7 +182,27 @@ app.get('/api/account-data', (req, res) => {
 app.post('/api/study-plan', async (req, res) => {
   const { problemType } = req.body;
 
-  const prompt = `Generate a personalized study plan for the following problem type: ${problemType}`;
+  // Extract number of problems and problem type from user input
+  const parseUserInput = (input) => {
+    const regex = /(\d+)\s+sample problems\s+for\s+(.+)/i;
+    const match = input.match(regex);
+
+    if (match) {
+      return {
+        numProblems: parseInt(match[1], 10),
+        problemType: match[2].trim(),
+      };
+    }
+
+    return {
+      numProblems: 1, // Default to 1 problem if not specified
+      problemType: input.trim(), // Use the whole input as the problem type
+    };
+  };
+
+  const { numProblems, problemType: parsedProblemType } = parseUserInput(problemType);
+
+  const prompt = `Generate ${numProblems} sample problems for ${parsedProblemType}. Provide detailed and specific problems suitable for the specified grade.`;
 
   try {
     const response = await retryAxios({
@@ -194,7 +214,7 @@ app.post('/api/study-plan', async (req, res) => {
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 500,
+        max_tokens: 1500,
       },
       headers: {
         'Content-Type': 'application/json',
@@ -223,6 +243,11 @@ app.post('/api/save-study-plan', async (req, res) => {
     console.error('Error saving study plan:', error);
     res.status(500).json({ error: 'Failed to save study plan' });
   }
+});
+
+// Test endpoint to ensure server is running
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Test endpoint working!' });
 });
 
 // Start the server

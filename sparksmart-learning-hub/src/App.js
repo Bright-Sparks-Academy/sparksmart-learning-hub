@@ -12,10 +12,9 @@ import MessagingPage from './views/MessagingPage.js';
 import HomeworkPage from './views/HomeworkPage.js';
 import RecordingsPage from './views/RecordingsPage.js';
 import DiagnosticTestPage from './views/DiagnosticTestPage.js';
-import LearningPlanPage from './views/LearningPlanPage.js';
 import AddQuestionPage from './views/AddQuestionPage.js';
 import ProgressTrackingPage from './views/ProgressTrackingPage.js';
-import Mastery from './views/Mastery.js';
+import Mastery from './views/AiLearningPlan.js';
 import DashboardPage from './views/DashboardPage.js';
 import { auth } from './firebaseConfig.js';
 import { getRole } from './roles.js';
@@ -67,7 +66,6 @@ const App = () => {
           <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
           <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />
           <Route path="/diagnostic-test" element={<PrivateRoute><DiagnosticTestPage /></PrivateRoute>} />
-          <Route path="/ai-learning-plan" element={<PrivateRoute><LearningPlanPage /></PrivateRoute>} />
           <Route path="/progress-tracking" element={<PrivateRoute><ProgressTrackingPage /></PrivateRoute>} />
           <Route path="/mastery" element={<PrivateRoute><Mastery /></PrivateRoute>} />
           <Route path="/add-question" element={<PrivateRoute>{role === 'admin' ? <AddQuestionPage /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
