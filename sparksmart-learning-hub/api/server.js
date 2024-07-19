@@ -138,7 +138,7 @@ app.post('/api/submit-diagnostic', async (req, res) => {
 app.post('/api/personalized-learning-plan', async (req, res) => {
   const { answers, correctCount, totalQuestions } = req.body;
 
-  const prompt = `Based on the following answers, generate a personalized learning plan. The student answered ${correctCount} out of ${totalQuestions} questions correctly.\n\n${answers.map((a, i) => `Q${i + 1}: ${a.question}\nA${i + 1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics and resources to help the student improve.`;
+  const prompt = `Based on the following answers, generate a personalized learning plan. The student answered ${correctCount} out of ${totalQuestions} questions correctly.\n\n${answers.map((a, i) => `Q${i + 1}: ${a.question}\nA${i + 1}: ${a.answer}`).join('\n\n')}\n\nProvide detailed topics, resources, and example problems to help the student improve. Format the response as a JSON object with "subject", "topics", "resources", and "exampleProblems".`;
 
   try {
     const response = await retryAxios({
@@ -150,7 +150,7 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 500,
+        max_tokens: 1500,
       },
       headers: {
         'Content-Type': 'application/json',
@@ -158,13 +158,23 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
       },
     });
 
-    const learningPlan = response.data.choices[0].message.content.trim();
+    let learningPlan = response.data.choices[0].message.content.trim();
+
+    // Attempt to parse the JSON response
+    try {
+      learningPlan = JSON.parse(learningPlan);
+    } catch (e) {
+      console.error('Error parsing JSON response:', e);
+      return res.status(500).json({ error: 'Failed to parse learning plan' });
+    }
+
     res.json({ learningPlan });
   } catch (error) {
     console.error('Error generating learning plan:', error);
     res.status(500).json({ error: 'Failed to generate learning plan' });
   }
 });
+
 
 // Endpoint to fetch progress data
 app.get('/api/progress-data', (req, res) => {

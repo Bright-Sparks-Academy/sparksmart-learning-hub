@@ -4,10 +4,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { setDiagnosticCompleted } from './diagnosticService.js';
-import { initializeLockdownBrowser, checkLockdownBrowserActive } from '../mockLockdownBrowser.js'; // Adjust the import path as necessary
 import { fetchLearningPlan } from '../api/aiService.js'; // Import the aiService
+import { marked } from 'marked'; // Import marked for Markdown rendering
 
 const Wrapper = styled.div`
   margin-top: 100px; // Adjust this value as needed to move the content down
@@ -58,37 +57,33 @@ const AnalysisText = styled.div`
   margin-top: 1rem;
 `;
 
+const LearningPlanText = styled.div`
+  font-size: 1.2rem;
+  color: blue;
+  margin-top: 1rem;
+  white-space: pre-wrap;
+`;
+
 const DiagnosticTestPage = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [analysis, setAnalysis] = useState('');
+  const [learningPlan, setLearningPlan] = useState('');
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    initializeLockdownBrowser()
-      .then(() => {
-        if (!checkLockdownBrowserActive()) {
-          alert('Please start the lockdown browser to proceed with the test.');
-          navigate('/lockdown-info');
-        } else {
-          axios.get('http://localhost:3000/api/diagnostic-questions')
-            .then(response => {
-              const initialAnswers = response.data.questions.map(q => ({ question: q.question, answer: '' }));
-              setQuestions(response.data.questions);
-              setAnswers(initialAnswers);
-              setLoading(false);
-            })
-            .catch(error => {
-              console.error('Error fetching questions:', error);
-              setLoading(false);
-            });
-        }
+    axios.get('http://localhost:3000/api/diagnostic-questions')
+      .then(response => {
+        const initialAnswers = response.data.questions.map(q => ({ question: q.question, answer: '' }));
+        setQuestions(response.data.questions);
+        setAnswers(initialAnswers);
+        setLoading(false);
       })
       .catch(error => {
-        console.error('Error initializing lockdown browser:', error);
+        console.error('Error fetching questions:', error);
+        setLoading(false);
       });
-  }, [navigate]);
+  }, []);
 
   const handleAnswerChange = (index, value) => {
     const newAnswers = [...answers];
@@ -97,6 +92,7 @@ const DiagnosticTestPage = () => {
   };
 
   const submitDiagnosticTest = async () => {
+    setLoading(true);
     try {
       const response = await axios.post('http://localhost:3000/api/submit-diagnostic', { answers });
       setAnalysis(response.data.analysis);
@@ -108,9 +104,25 @@ const DiagnosticTestPage = () => {
         totalQuestions: response.data.totalQuestions
       });
 
-      navigate('/ai-learning-plan', { state: { learningPlan: learningPlanResponse.learningPlan } });
+      // Convert the learning plan to Markdown format
+      const formattedLearningPlan = learningPlanResponse.learningPlan.map(plan => `
+### ${plan.subject}
+
+**Topics:**
+${plan.topics}
+
+**Resources:**
+${plan.resources.map(resource => `- ${resource}`).join('\n')}
+
+**Example Problems:**
+${plan.exampleProblems.map(problem => `- ${problem}`).join('\n')}
+      `).join('\n');
+
+      setLearningPlan(formattedLearningPlan);
     } catch (error) {
       console.error('Error submitting diagnostic test:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,6 +145,11 @@ const DiagnosticTestPage = () => {
         ))}
         <SubmitButton onClick={submitDiagnosticTest}>Submit Diagnostic Test</SubmitButton>
         {analysis && <AnalysisText>{analysis}</AnalysisText>}
+        {learningPlan && (
+          <LearningPlanText
+            dangerouslySetInnerHTML={{ __html: marked(learningPlan) }}
+          />
+        )}
       </DiagnosticTestPageContainer>
     </Wrapper>
   );
