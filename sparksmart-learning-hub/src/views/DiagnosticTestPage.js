@@ -7,12 +7,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { setDiagnosticCompleted } from './diagnosticService.js';
 import { initializeLockdownBrowser, checkLockdownBrowserActive } from '../mockLockdownBrowser.js'; // Adjust the import path as necessary
+import { fetchLearningPlan } from '../api/aiService.js'; // Import the aiService
 
 const Wrapper = styled.div`
   margin-top: 100px; // Adjust this value as needed to move the content down
 `;
 
-// Styled components for the page
 const DiagnosticTestPageContainer = styled.div`
   position: relative;
   margin: 2rem;
@@ -65,7 +65,6 @@ const DiagnosticTestPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Initialize lockdown browser and fetch questions on component mount
   useEffect(() => {
     initializeLockdownBrowser()
       .then(() => {
@@ -91,37 +90,34 @@ const DiagnosticTestPage = () => {
       });
   }, [navigate]);
 
-  // Handle input changes
   const handleAnswerChange = (index, value) => {
     const newAnswers = [...answers];
     newAnswers[index].answer = value;
     setAnswers(newAnswers);
   };
 
-  // Submit diagnostic test and navigate to the learning plan page
   const submitDiagnosticTest = async () => {
     try {
       const response = await axios.post('http://localhost:3000/api/submit-diagnostic', { answers });
       setAnalysis(response.data.analysis);
       setDiagnosticCompleted();
 
-      const learningPlanResponse = await axios.post('http://localhost:3000/api/personalized-learning-plan', {
+      const learningPlanResponse = await fetchLearningPlan({
         answers,
         correctCount: response.data.correctCount,
         totalQuestions: response.data.totalQuestions
       });
-      navigate('/ai-learning-plan', { state: { learningPlan: learningPlanResponse.data.learningPlan } });
+
+      navigate('/ai-learning-plan', { state: { learningPlan: learningPlanResponse.learningPlan } });
     } catch (error) {
       console.error('Error submitting diagnostic test:', error);
     }
   };
 
-  // Display loading state if data is being fetched
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // Render diagnostic questions and submit button
   return (
     <Wrapper>
       <DiagnosticTestPageContainer>

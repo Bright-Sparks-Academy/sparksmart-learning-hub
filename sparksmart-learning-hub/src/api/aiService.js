@@ -11,7 +11,7 @@ import axios from 'axios';
  */
 export const fetchLearningPlan = async (userInputs) => {
   try {
-    const response = await axios.post('https://api.yourbackend.com/generate-learning-plan', userInputs);
+    const response = await axios.post('http://localhost:3000/api/personalized-learning-plan', userInputs);
     return response.data;
   } catch (error) {
     console.error('Error fetching learning plan:', error);
