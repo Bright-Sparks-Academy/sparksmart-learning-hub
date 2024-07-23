@@ -56,15 +56,45 @@ const ErrorMessage = styled.p`
   margin-top: 1rem;
 `;
 
+const RoleButton = styled(Button)`
+  background-color: #FFD900;
+  margin: 0.5rem;
+`;
+
 const Login = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const [showRoleSelection, setShowRoleSelection] = useState(true);
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+    setShowRoleSelection(false);
+  };
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      navigate('/dashboard');
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      // Store the selected role in localStorage
+      localStorage.setItem('userRole', selectedRole);
+
+      // Navigate based on the selected role
+      switch (selectedRole) {
+        case 'teacher':
+          navigate('/teacher/dashboard');
+          break;
+        case 'student':
+          navigate('/student/dashboard');
+          break;
+        case 'admin':
+          navigate('/admin/dashboard');
+          break;
+        default:
+          navigate('/dashboard');
+      }
     } catch (error) {
       console.error("Error signing in with Google:", error);
       setError("Failed to sign in with Google. Please try again.");
@@ -75,13 +105,27 @@ const Login = () => {
     window.location.href = 'https://tally.so/r/mO4r8A';
   };
 
+  if (showRoleSelection) {
+    return (
+      <PageContainer>
+        <Card>
+          <Logo src={logo} alt="Lightbulb Logo" />
+          <Heading>Select Your Role</Heading>
+          <RoleButton onClick={() => handleRoleSelect('teacher')}>Teacher</RoleButton>
+          <RoleButton onClick={() => handleRoleSelect('student')}>Student</RoleButton>
+          <RoleButton onClick={() => handleRoleSelect('admin')}>Admin</RoleButton>
+          <RoleButton onClick={handleSignupRedirect}>Public</RoleButton>
+        </Card>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer>
       <Card>
         <Logo src={logo} alt="Lightbulb Logo" />
         <Heading>SparkSmart Learning Hub</Heading>
         <Button onClick={handleGoogleSignIn}>Sign in with Google</Button>
-        <Button onClick={handleSignupRedirect}>Sign up</Button>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </Card>
     </PageContainer>
