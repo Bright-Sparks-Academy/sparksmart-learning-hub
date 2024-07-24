@@ -111,7 +111,7 @@ app.post('/api/submit-diagnostic', async (req, res) => {
       method: 'post',
       url: 'https://api.openai.com/v1/chat/completions',
       data: {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini-2024-07-18',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: prompt }
@@ -145,7 +145,7 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
       method: 'post',
       url: 'https://api.openai.com/v1/chat/completions',
       data: {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini-2024-07-18',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: prompt }
@@ -174,7 +174,6 @@ app.post('/api/personalized-learning-plan', async (req, res) => {
     res.status(500).json({ error: 'Failed to generate learning plan' });
   }
 });
-
 
 // Endpoint to fetch progress data
 app.get('/api/progress-data', (req, res) => {
@@ -219,7 +218,7 @@ app.post('/api/study-plan', async (req, res) => {
       method: 'post',
       url: 'https://api.openai.com/v1/chat/completions',
       data: {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini-2024-07-18',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', content: prompt }
