@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { auth, storage, db } from '../firebaseConfig.js';
-import { updateProfile } from 'firebase/auth';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from "react";
+import styled from "styled-components";
+import { auth, storage, db } from "../firebaseConfig.js";
+import { updateProfile } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const PageContainer = styled.div`
   display: flex;
   padding: 20px;
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
   max-width: 1200px;
   margin: 0 auto;
 `;
@@ -25,7 +25,7 @@ const SideButton = styled.button`
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
-  background-color: #D3D3D3;
+  background-color: #d3d3d3;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -45,7 +45,7 @@ const MainContent = styled.div`
 
 const ProfileSection = styled.div`
   flex: 2;
-  background-color: #FFD900;
+  background-color: #ffd900;
   padding: 20px;
   border-radius: 10px;
   margin-right: 20px;
@@ -53,7 +53,7 @@ const ProfileSection = styled.div`
 
 const PerformanceSection = styled.div`
   flex: 1;
-  background-color: #FFD900;
+  background-color: #ffd900;
   padding: 20px;
   border-radius: 10px;
 `;
@@ -77,7 +77,7 @@ const Input = styled.input`
   margin-bottom: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 `;
 
 const TextArea = styled.textarea`
@@ -87,12 +87,12 @@ const TextArea = styled.textarea`
   margin-bottom: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 `;
 
 const Button = styled.button`
   background-color: #000;
-  color: #FFD900;
+  color: #ffd900;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
@@ -101,16 +101,28 @@ const Button = styled.button`
 `;
 
 const PerformanceBox = styled.div`
-  background-color: #FFF;
+  background-color: #fff;
   height: 50px;
   margin-bottom: 10px;
   border-radius: 5px;
 `;
 
+const EmailContainer = styled.div`
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 8px;
+`;
+
+const PhoneNumberContainer = styled.div`
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 8px;
+`;
+
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const [fullName, setFullName] = useState('');
-  const [bio, setBio] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [bio, setBio] = useState("");
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -118,10 +130,10 @@ const Profile = () => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        setFullName(currentUser.displayName || '');
+        setFullName(currentUser.displayName || "");
         // Fetch bio from Firestore if needed
       } else {
-        navigate('/login');
+        navigate("/login");
       }
     });
 
@@ -148,7 +160,7 @@ const Profile = () => {
     if (user) {
       try {
         await updateProfile(user, { displayName: fullName });
-        const userRef = doc(db, 'users', user.uid);
+        const userRef = doc(db, "users", user.uid);
         await updateDoc(userRef, { bio: bio });
         setUser({ ...user, displayName: fullName });
         alert("Profile updated successfully!");
@@ -162,7 +174,7 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
       alert("Failed to sign out. Please try again.");
@@ -182,7 +194,9 @@ const Profile = () => {
           <Icon src="/path/to/settings-icon.png" alt="Settings" />
           Settings
         </SideButton>
-        <SideButton onClick={() => window.open('https://www.google.com', '_blank')}>
+        <SideButton
+          onClick={() => window.open("https://www.google.com", "_blank")}
+        >
           <Icon src="/path/to/support-icon.png" alt="Support" />
           Support
         </SideButton>
@@ -191,15 +205,20 @@ const Profile = () => {
         <ProfileSection>
           <h2>User Profile</h2>
           <AvatarContainer>
-            <Avatar src={user.photoURL || '/path/to/default-avatar.png'} alt="User Avatar" />
+            <Avatar
+              src={user.photoURL || "/path/to/default-avatar.png"}
+              alt="User Avatar"
+            />
           </AvatarContainer>
           <input
             type="file"
             ref={fileInputRef}
-            style={{ display: 'none' }}
+            style={{ display: "none" }}
             onChange={handleAvatarChange}
           />
-          <Button onClick={() => fileInputRef.current.click()}>Change Avatar</Button>
+          <Button onClick={() => fileInputRef.current.click()}>
+            Change Avatar
+          </Button>
           <Input
             type="text"
             value={fullName}
@@ -212,6 +231,10 @@ const Profile = () => {
             onChange={(e) => setBio(e.target.value)}
             placeholder="Bio..."
           />
+          <EmailContainer>Email: {user?.email}</EmailContainer>
+          <PhoneNumberContainer>
+            Phone Number: {user?.phoneNumber}
+          </PhoneNumberContainer>
           <Button onClick={handleSave}>Save Changes</Button>
           <Button onClick={handleLogout}>Log Out</Button>
         </ProfileSection>
