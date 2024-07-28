@@ -8,6 +8,8 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../src/firebaseConfig.js';
+import { StudentPackage, NonStudentPackage } from '../src/packages.js';
+import { getCalendlyUser, listEventTypes, getSchedulingLink } from './calendlyConfig.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -18,6 +20,39 @@ const port = 3000;
 // Middleware to parse JSON bodies and enable CORS
 app.use(bodyParser.json());
 app.use(cors());
+
+
+app.get('/api/test-calendly', async (req, res) => {
+  try {
+    const userData = await getCalendlyUser();
+    res.json(userData);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch Calendly user' });
+  }
+});
+
+app.get('/api/list-event-types', async (req, res) => {
+  try {
+    const user = await getCalendlyUser();
+    const eventTypes = await listEventTypes(user.uri);
+    res.json(eventTypes);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to list event types' });
+  }
+});
+
+// Get scheduling link for a specific event type
+app.post('/api/schedule-consultation', async (req, res) => {
+  const { eventName } = req.body;
+  try {
+    const schedulingUrl = await getSchedulingLink(eventName);
+    res.json({ schedulingUrl });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get scheduling link' });
+  }
+});
+
+
 
 /**
  * Function to handle retries for Axios requests with exponential backoff.
@@ -86,10 +121,44 @@ const accountData = {
   calendlyLink: 'https://calendly.com/your-link',
 };
 
+/**
+ * Function to get package details based on user type
+ * @param {string} userType - The type of user ('student' or 'non-student')
+ * @returns {Object} - An instance of the corresponding package class
+ */
+const getPackageDetails = (userType) => {
+  if (userType === 'student') {
+    return new StudentPackage();
+  } else if (userType === 'non-student') {
+    return new NonStudentPackage();
+  } else {
+    throw new Error('Invalid user type');
+  }
+};
+
 // Endpoint to fetch diagnostic questions
 app.get('/api/diagnostic-questions', (req, res) => {
   res.json({ questions });
 });
+
+// Endpoint to fetch package details and schedule a consultation if applicable
+app.get('/api/package/:userType', async (req, res) => {
+  try {
+    const userType = req.params.userType;
+    const userPackage = getPackageDetails(userType);
+
+    // If the package includes a consultation, provide the scheduling link
+    if (userPackage.consultationCall === 'Included') {
+      const schedulingUrl = await getSchedulingLink('Consultation');
+      res.json({ ...userPackage, schedulingUrl });
+    } else {
+      res.json(userPackage);
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 
 /**
  * Endpoint to submit diagnostic answers and generate analysis using OpenAI API.
@@ -263,3 +332,4 @@ app.get('/api/test', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+export default app;
