@@ -4,142 +4,125 @@ import axios from 'axios';
 import lightbulbIcon from '../assets/lightbulb.png';
 
 const DashboardContainer = styled.div`
-  position: relative;
-`;
-
-const DashboardItemsContainer = styled.div`
   display: flex;
-  background-color: #FFFAED;
-  width: 99.5vw;
-  height: 140vh;
-  flex-wrap: wrap;
-`;
-
-const HeaderTitle = styled.div`
-  position: absolute;
-  width: 463px;
-  top: 125px;
-  left: 50px;
-  font-weight: bold;
-  font-size: 2rem;
-  color: black;
-`;
-
-const YellowBackground = styled.div`
-  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  position: absolute;
+  background-color: #FFFAED;
+  width: 99.4vw;
+  height: 150vh;
+`;
+
+const SectionHeader = styled.div`
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: black;
+  margin: 0.8rem;
+`;
+
+const DashboardItem = styled.div`
+  display: flex;
+  flex-direction: column;
   border-radius: 2rem;
   background-color: #FFD900;
 `;
 
 const WhiteBackground = styled.div`
-  position: absolute;
-  width: 90px;
-  height: 10px;
+  display: flex;
+  align-items: center;
   border-radius: 1rem;
   background-color: white;
-  margin-top: 20px;
+  margin-left: 0.5rem;
   padding-bottom: 20px;
 `;
 
-const DashboardContent = styled.div`
-  display: absolute;
+const DashboardItemsContainer = styled.div`
+  display: grid;
+  height: 760px;
+  width: 95%;
+  grid-template: 1.2fr 1fr 1fr / 1.2fr 1fr 1fr;
+  gap: 10px;
+`;
+
+const DashboardTitle = styled.header`
+  color: black;
+  height: 50px;
+  width: 380px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  padding-top: 95px;
+`;
+
+// PROFILE
+const ProfileHeaderTitle = styled.header`
+  width: 92%;
+  height: 40px;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 35px;
+  color: black;
+`;
+
+const ProfileContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%
 `;
 
 const ProfileContent = styled.div`
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   color: black;
-  padding-top: 1.5rem;
-  padding-bottom: 0;
+  padding-top: 1rem;
 `;
 
 const ProfileViewButton = styled.button`
   color: white;
   font-size: 1.25rem;
-  font-weight: bold;
   border-radius: 1rem;
-  height: 45px;
-  width: 200px;
+  height: 2.3rem;
+  width: 10rem;
   background-color: black;
-  margin-top: 295px;
-  margin-right: 15px;
-`;
+  margin-top: 14rem;
+  margin-right: 1.5rem;
+  cursor: pointer;
+`;  
 
-const ProgressHeader = styled.div`
-  font-weight: bold;
-  font-size: 1.75rem;
-  color: black;
-  margin: 20px;
-`;
-
-const ScheduleHeader = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: black;
-  color: white;
-  font-size: 1.3rem;
-  border-radius: 1.5rem;
-  height: 50px;
-  width: 200px;
-  margin: 20px;
-  padding-left: 20px;
-`;
-
-const ScheduleViewButton = styled.button`
-  color: black;
-  font-weight: bold;
-  font-size: 1.25rem;
-  border-radius: 1rem;
-  height: 45px;
-  width: 120px;
-  border-width: 0;
-  background-color: #FFD900;
-  margin-top: 490px;
-  margin-left: 320px;
-`;
-
-const MessageHeader = styled.div`
-  font-weight: bold;
-  font-size: 1.75rem;
-  color: black;
-  margin: 20px;
-`;
-
-const MessagesViewButton = styled.button`
-  color: white;
-  font-size: 1.25rem;
-  font-weight: bold;
-  border-radius: 1rem;
-  height: 45px;
-  width: 130px;
-  background-color: black;
-  margin-top: 170px;
-  margin-left: 350px;
-`;
-
-const ClassHeader = styled.div`
-  font-weight: bold;
-  font-size: 1.5rem;
-  color: black;
-  margin: 20px;
-`;
-
+// UPCOMING CLASSES
 const ClassContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0.5rem;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: black;
   background-color: lightgray;
   border-radius: 1.5rem;
-  width: 250px;
-  height: 185px;
+  width: 13rem;
+  height: 11.5rem;
   padding-left: 20px;
   padding-top: 5px;
-  margin-left: 20px;
+  margin-top: 1.3rem;
+`;
+
+const ClassInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  width: 6em;
+  height: 10rem;
+  margin-top: 1.3rem;
+  margin-left: 1rem;
+`;
+const ClassInfo = styled.span`
+  font-weight: bold;
+  font-size: 1.25rem;
+`;
+
+const ClassContentInfo = styled.span`
+  font-weight: bold;
+  font-size: 1.1rem;
 `;
 
 const JoinClassButton = styled.button`
@@ -147,23 +130,52 @@ const JoinClassButton = styled.button`
   font-weight: bold;
   border-radius: 1rem;
   font-size: 1.25rem;
-  height: 45px;
-  width: 120px;
+  cursor: pointer;
+  height: 2rem;
+  width: 8rem;
   border-width: 0;
+  margin-top: 1rem;
   background-color: #FFD900;
-  margin-left: 370px;
 `;
 
+// SCHEDULE
+const ScheduleContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  width: 100%;
+  height: 60%;
+  margin: 1rem;
+`;
+
+const ScheduleContent = styled.span`
+  font-weight: bold;
+  font-size: 1.1rem;
+`;
+const ScheduleInfoContainer = styled.div`
+  display: flex;
+`;
+
+const ScheduleInfo = styled.div`
+  display: flex;
+  align-items: center;
+  border-radius: 1rem;
+  background-color: lightgray;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-left: 0.35rem;
+  padding-left: 1rem;
+`;
+
+// TODO LIST
 const TodoListBody = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  position: absolute;
-  width: 90px;
-  height: 10px;
+  width: 30rem;
+  height: 23rem;
   border-radius: 1rem;
   background-color: white;
-  margin-top: 20px;
   padding-bottom: 20px;
 `;
 
@@ -171,7 +183,7 @@ const TodoListHeader = styled.div`
   font-weight: bold;
   font-size: 1.75rem;
   color: black;
-  margin: 20px;
+  margin: 0.7rem;
 `;
 
 const CurrentDateContainer = styled.div`
@@ -179,48 +191,50 @@ const CurrentDateContainer = styled.div`
   justify-content: space-around;
   align-items: center;
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: black;
-  width: 400px;
-  height: 50px;
+  width: 20rem;
+  height: 5rem;
 `;
 
 const NavButton = styled.button`
   background-color: black;
   color: white;
   border-radius: 0.5rem;
-  width: 4rem;
-  height: 2rem;
+  width: 3.5rem;
+  height: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;  
+  cursor: pointer;
   margin: 0 0.5rem;
 `;
 
-const ScrollContainer = styled.div`
+const TodoScrollContainer = styled.div`
   display: flex;
   gap: 15px;
   flex-direction: column;
+  align-items: center;
   overflow-y: scroll;
-  position: absolute;
-  width: 550px;
-  height: 400px;
-  margin-top: 160px;
+  direction: rtl;
+  width: 30rem;
+  height: 25rem;
 `;
 
 const TodoItem = styled.div`
   display: flex;
-  font-size: 1.3rem;
+  flex: none;
+  font-size: 1.1rem;
   color: black;
   font-weight: bold;
-  width: 500px;
-  height: 60px;
+  width: 95%;
+  height: 3.1rem;
+  direction: ltr;
   align-items: center;
   justify-content: space-around;
   border-radius: 1.5rem;
   background-color: lightgray;
-  margin-left: 15px;
-  padding-left: 5px;
+  padding-left: 5px
 `;
 
 const TaskButton = styled.button`
@@ -235,9 +249,135 @@ const TaskButton = styled.button`
   border-radius: 0.375rem;
 `;
 
+// PROGRESS
+const ProgressContainer = styled.div`
+  display: grid;
+  grid-template: 1fr 0.2fr / 1fr 1fr;
+  width: 100%;
+  height: 23rem;
+`;
+
+const ProgressItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: black;
+  background-color: lightgray;
+  border-radius: 1.5rem;
+  margin: 0.5rem;
+  padding-top: 1rem;
+`;
+
+const ProgressContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ProgressBar = styled.progress`
+  accent-color: lightgreen;
+`;
+
+const ProgressViewButton = styled.button`
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 1rem;
+  height: 2.3rem;
+  width: 7rem;
+  margin-left: 18rem;
+  background-color: black;
+  cursor: pointer;
+`;
+
+// COMMUNICATION
+const CommunicationScrollContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  width: 23rem;
+  height: 7.5rem;
+  margin-left: 1.3rem;
+  padding-bottom: 0.5rem;
+`;
+
+const Contact = styled.div`
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  width: 7rem;
+  height: 100%;
+  margin-bottom: 1rem;
+`;
+
+const ContactName = styled.span`
+  font-weight: bold;
+  font-size: 1rem;
+`;
+
+const ContactViewButton = styled.button`
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 1rem;
+  height: 2.3rem;
+  width: 7rem;
+  margin-left: 18rem;
+  margin-top: 0.25rem;
+  background-color: black;
+  cursor: pointer;
+`;
+
+// RECORDINGS
+const RecordingsScrollContainer = styled.div`
+  width: 14rem;
+  height: 8rem;
+  overflow-y: scroll;
+  border-radius: 1rem;
+  direction: rtl;
+  margin-top: 0.3rem;
+  margin-left: 1rem;
+`
+const InstructorDropdown = styled.select`
+  width: 9rem;
+  height: 2.5rem;
+  border-radius: 0.3rem;
+  margin-left: 0.5rem;
+  margin-top: 1rem;
+`
+
+const RecordingsViewButton = styled.button`
+  color: white;
+  font-size: 1.25rem;
+  border-radius: 1rem;
+  height: 2.3rem;
+  width: 7rem;
+  margin-left: 18rem;
+  background-color: black;
+  cursor: pointer;
+`;
+
+const Recording = styled.div`
+  display: flex;
+  align-items: center;
+  border-radius: 1rem;
+  direction: ltr;
+  background-color: lightgray;
+  font-weight: bold;
+  font-size: 1.1rem;
+  width: 12rem;
+  margin-right: 0.5rem;
+  padding-left: 0.5rem;
+  margin-top: 0.5rem;
+`
+
 const StudentDashboard = () => {
   const [toDoList, setToDoList] = useState([]);
-  const [progressData, setProgressData] = useState({});
+  const [progressData, setProgressData] = useState([]);
   const [userData, setUserData] = useState({});
   const [error, setError] = useState(null);
 
@@ -268,61 +408,63 @@ const StudentDashboard = () => {
 
   return (
     <DashboardContainer>
+      <DashboardTitle>Student Dashboard</DashboardTitle>
+      <ProfileHeaderTitle>{userData.fullName ? `${userData.fullName.split(' ')[0]}'s Profile` : 'Profile'}</ProfileHeaderTitle>
       <DashboardItemsContainer>
-        <HeaderTitle>{userData.fullName ? `${userData.fullName.split(' ')[0]}'s Profile` : 'Profile'}</HeaderTitle>
-        <YellowBackground style={{ width: '600px', height: '350px', top: '200px', left: '45px' }}>
-          <img src={lightbulbIcon} alt="Profile" style={{ width: '125px', height: '125px' }} />
-          <DashboardContent style={{ width: '600px', height: '350px', top: '200px', left: '45px' }}>
-            <ProfileContent>Student: {userData.fullName || 'N/A'}</ProfileContent>
-            <ProfileContent>User ID: {userData.userId || 'N/A'}</ProfileContent>
-          </DashboardContent>
+        {/* Profile Section */}
+        <DashboardItem style={{ flexDirection: "row", alignItems: "flex-start" }}>
+          <img src={lightbulbIcon} alt="Profile" style={{ width: '100px', height: '100px'}} />
+          <ProfileContentContainer>
+            <ProfileContent>Student: FirstName</ProfileContent>
+            <ProfileContent>User ID: UserID</ProfileContent>
+            <ProfileContent>Class: Java</ProfileContent>
+            <ProfileContent>Last Joined: 5/24/24</ProfileContent>
+            <ProfileContent>Email: example@site.com</ProfileContent>
+          </ProfileContentContainer>
           <ProfileViewButton>View</ProfileViewButton>
-        </YellowBackground>
-        <YellowBackground style={{ width: '550px', height: '350px', top: '200px', left: '670px' }}>
-          <WhiteBackground style={{ width: '510px', height: '290px' }}>
-            <ClassHeader>Upcoming class</ClassHeader>
-            <ClassContent>
-              <span>July 14th</span>
-              <span>6:30 PM - 7:30 PM</span>
-              <span>Fractions</span>
-              <span>Teacher Name</span>
+        </DashboardItem>
+        {/* Upcoming Classes Section */}
+        <DashboardItem>
+          <SectionHeader>Upcoming class</SectionHeader>
+          <WhiteBackground style={{ width: '25rem', height: '11.5rem'}}>
+            <ClassInfoContainer>
+              <ClassInfo>Class: Math 3</ClassInfo>
+              <ClassInfo>Meeting: 9</ClassInfo>
+            </ClassInfoContainer>
+            <ClassContent> 
+              <ClassContentInfo>July 14th</ClassContentInfo>
+              <ClassContentInfo>6:30 PM - 7:30 PM</ClassContentInfo>
+              <ClassContentInfo>Fractions</ClassContentInfo>
+              <ClassContentInfo>Teacher Name</ClassContentInfo>
+              <JoinClassButton >Join Class</JoinClassButton>
             </ClassContent>
-            <JoinClassButton>Join Class</JoinClassButton>
           </WhiteBackground>
-        </YellowBackground>
-        <YellowBackground style={{ width: '550px', height: '620px', top: '570px', left: '670px' }}>
-          <DashboardContent style={{ width: '550px', height: '620px', top: '570px', left: '670px' }}>
-            <ProgressHeader>Progress</ProgressHeader>
-            {/* Progress content goes here */}
-          </DashboardContent>
-        </YellowBackground>
-        <YellowBackground style={{ width: '500px', height: '340px', top: '200px', left: '1250px' }}>
-          <WhiteBackground style={{ width: '460px', height: '280px' }}>
-            <ScheduleHeader>Schedule</ScheduleHeader>
-            <ScheduleViewButton>View</ScheduleViewButton>
+        </DashboardItem>
+        {/* Schedule Section */}
+        <DashboardItem>
+          <SectionHeader>Schedule</SectionHeader>
+          <WhiteBackground style={{ width: '25rem', height: '11.5rem', flexDirection: "column", alignItems: "flex-start"}}>
+            <ScheduleContentContainer>
+              <ScheduleContent>Class: Math 3</ScheduleContent>
+              <ScheduleContent>Instructor: Instructor A</ScheduleContent>
+              <ScheduleContent>Class Term: 6/1/24 - 7/21/24</ScheduleContent>
+            </ScheduleContentContainer>
+            <ScheduleInfoContainer>
+              <ScheduleInfo style={{ width: '10rem', height: '4rem'}}>Next Session: 7/14/24</ScheduleInfo>
+              <ScheduleInfo style={{ width: '12rem', height: '4rem' }}>Next Assignment Due: 6/18/24</ScheduleInfo>
+            </ScheduleInfoContainer>
           </WhiteBackground>
-        </YellowBackground>
-        <YellowBackground style={{ width: '500px', height: '310px', top: '555px', left: '1250px' }}>
-          <DashboardContent style={{ width: '500px', height: '310px', top: '560px', left: '1250px' }}>
-            <MessageHeader>Communication</MessageHeader>
-            <MessagesViewButton>View</MessagesViewButton>
-          </DashboardContent>
-        </YellowBackground>
-        <YellowBackground style={{ width: '500px', height: '310px', top: '880px', left: '1250px' }}>
-          <DashboardContent style={{ width: '500px', height: '310px', top: '880px', left: '1250px' }}>
-            <MessageHeader>Recordings</MessageHeader>
-            <MessagesViewButton>View</MessagesViewButton>
-          </DashboardContent>
-        </YellowBackground>
-        <YellowBackground style={{ width: '600px', height: '620px', top: '575px', left: '45px' }}>
-          <TodoListBody style={{ width: '560px', height: '560px' }}>
-            <TodoListHeader>To-Do List</TodoListHeader>
+        </DashboardItem>
+        {/* Todo List Section */}
+        <DashboardItem style={{ gridRow: "span 2", alignItems: "center" }}>
+          <SectionHeader>To-Do List</SectionHeader>
+          <TodoListBody >
             <CurrentDateContainer>
               <NavButton>{'<'}</NavButton>
               June 2024
               <NavButton>{'>'}</NavButton>
             </CurrentDateContainer>
-            <ScrollContainer>
+            <TodoScrollContainer >
               {toDoList.map((item) => (
                 <TodoItem key={item.id}>
                   <span>{item.task}</span>
@@ -330,9 +472,58 @@ const StudentDashboard = () => {
                   <TaskButton>View</TaskButton>
                 </TodoItem>
               ))}
-            </ScrollContainer>
+            </TodoScrollContainer>
           </TodoListBody>
-        </YellowBackground>
+        </DashboardItem>
+        {/* Progress Section */}
+        <DashboardItem style={{ gridRow: "span 2" }}>
+          <SectionHeader>Progress</SectionHeader>
+          <ProgressContainer>
+            <ProgressItem>
+              <ProgressContent style={{ fontSize: "2rem" }}>10</ProgressContent>
+              <ProgressContent>Assignments Done</ProgressContent>
+              <ProgressContent style={{ marginTop:'5rem' }}>Assignment Progress</ProgressContent>
+              <ProgressBar max="100" value="84" />
+              <ProgressContent>84%</ProgressContent>
+              <ProgressContent style={{ marginTop:'1rem', fontSize: '1rem' }}>Assignments in Progress:</ProgressContent>
+              <ProgressContent style={{ fontSize: '1rem' }}>2</ProgressContent>
+            </ProgressItem>
+            <ProgressItem>Teacher's Comments</ProgressItem>
+            <ProgressItem style={{gridColumn: "span 2"}}>A - 99.28%</ProgressItem>
+          </ProgressContainer>
+          <ProgressViewButton>View</ProgressViewButton>
+        </DashboardItem>
+        {/* Communication Section  */}
+        <DashboardItem>
+          <SectionHeader>Communication</SectionHeader>
+          <CommunicationScrollContainer>
+            <Contact>
+              <img src={lightbulbIcon} alt="Profile" style={{ width: '100px', height: '100px'}} />
+              <ContactName>Instructor A</ContactName>
+            </Contact>
+            <Contact>
+              <img src={lightbulbIcon} alt="Profile" style={{ width: '100px', height: '100px'}} />
+              <ContactName>Student B</ContactName>
+            </Contact>
+          </CommunicationScrollContainer>
+          <ContactViewButton>View</ContactViewButton>
+        </DashboardItem>
+        {/* Recordings Section */}
+        <DashboardItem>
+          <SectionHeader>Recordings</SectionHeader>
+          <WhiteBackground style={{ height: '7.5rem', width: '25rem', alignItems: 'flex-start' }}>
+            <RecordingsScrollContainer>
+              <Recording>Recording 1: TITLE 6/22/24</Recording>
+              <Recording>Recording 1: TITLE 6/22/24</Recording>
+            </RecordingsScrollContainer>
+            <InstructorDropdown>
+              <option value="">Select Instructor</option>
+              <option value="Instructor A">Instructor A</option>
+              <option value="Instructor B">Instructor B</option>
+            </InstructorDropdown>
+          </WhiteBackground>
+          <RecordingsViewButton>View</RecordingsViewButton>
+        </DashboardItem>
       </DashboardItemsContainer>
       {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
     </DashboardContainer>
