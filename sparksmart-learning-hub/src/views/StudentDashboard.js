@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import Todolist from './Todolist.js';
-//import { db } from './firebase'; // Import Firestore database
-import { getUpcomingClasses, getToDoList,} from '../api/aiService.js'; // Functions to fetch data
+import axios from 'axios';
 import lightbulbIcon from '../assets/lightbulb.png';
 
 const DashboardContainer = styled.div`
@@ -14,6 +12,7 @@ const DashboardItemsContainer = styled.div`
   background-color: #FFFAED;
   width: 99.5vw;
   height: 140vh;
+  flex-wrap: wrap;
 `;
 
 const HeaderTitle = styled.div`
@@ -66,7 +65,7 @@ const ProfileViewButton = styled.button`
   background-color: black;
   margin-top: 295px;
   margin-right: 15px;
-`;  
+`;
 
 const ProgressHeader = styled.div`
   font-weight: bold;
@@ -88,7 +87,7 @@ const ScheduleHeader = styled.div`
   padding-left: 20px;
 `;
 
-const ScheduleViewButton = styled.button `
+const ScheduleViewButton = styled.button`
   color: black;
   font-weight: bold;
   font-size: 1.25rem;
@@ -221,7 +220,7 @@ const TodoItem = styled.div`
   border-radius: 1.5rem;
   background-color: lightgray;
   margin-left: 15px;
-  padding-left: 5px
+  padding-left: 5px;
 `;
 
 const TaskButton = styled.button`
@@ -236,89 +235,106 @@ const TaskButton = styled.button`
   border-radius: 0.375rem;
 `;
 
-
 const StudentDashboard = () => {
-  const [upcomingClasses, setUpcomingClasses] = useState([]);
   const [toDoList, setToDoList] = useState([]);
+  const [progressData, setProgressData] = useState({});
+  const [userData, setUserData] = useState({});
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch upcoming classes from Firestore
-   // getUpcomingClasses().then(classes => setUpcomingClasses(classes));
+    const fetchData = async () => {
+      try {
+        const [toDoListResponse, progressResponse, userResponse] = await Promise.all([
+          axios.get('http://localhost:5003/api/todo-list'),
+          axios.get('http://localhost:5003/api/progress-data'),
+          axios.get('http://localhost:5003/api/account-data'),
+        ]);
 
-    // Fetch To-Do list from Firestore
-   // getToDoList().then(list => setToDoList(list));
+        console.log('ToDo List Data:', toDoListResponse.data);
+        console.log('Progress Data:', progressResponse.data);
+        console.log('User Data:', userResponse.data);
+
+        setToDoList(toDoListResponse.data);
+        setProgressData(progressResponse.data);
+        setUserData(userResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error);
+      }
+    };
+
+    fetchData();
   }, []);
-  
+
   return (
     <DashboardContainer>
       <DashboardItemsContainer>
-        <HeaderTitle>First Name's Profile</HeaderTitle>
-        {/* Profile Section */}
-        <YellowBackground style={{ width: '600px', height: '350px', top: '200px', left: '45px'}}>
-          <img src={lightbulbIcon /* Place holder for user profile picture */} style={{ width: '125px', height: '125px'}} />
-          <DashboardContent style={{ width: '600px', height: '350px', top: '200px', left: '45px'}}>
-            <ProfileContent>Student: FirstName</ProfileContent>
-            <ProfileContent>User ID: UserID</ProfileContent>
+        <HeaderTitle>{userData.fullName ? `${userData.fullName.split(' ')[0]}'s Profile` : 'Profile'}</HeaderTitle>
+        <YellowBackground style={{ width: '600px', height: '350px', top: '200px', left: '45px' }}>
+          <img src={lightbulbIcon} alt="Profile" style={{ width: '125px', height: '125px' }} />
+          <DashboardContent style={{ width: '600px', height: '350px', top: '200px', left: '45px' }}>
+            <ProfileContent>Student: {userData.fullName || 'N/A'}</ProfileContent>
+            <ProfileContent>User ID: {userData.userId || 'N/A'}</ProfileContent>
           </DashboardContent>
           <ProfileViewButton>View</ProfileViewButton>
         </YellowBackground>
-        {/* Progress Section */}
-        <YellowBackground style={{ width: '550px', height: '350px', top: '200px', left: '670px'}}>
-          <DashboardContent style={{ width: '550px', height: '350px', top: '200px', left: '670px'}}>
-            <ProgressHeader>Progress</ProgressHeader>
-          </DashboardContent>
-        </YellowBackground>
-        {/* Schedule Section */}
-        <YellowBackground style={{ width: '500px', height: '680px', top: '200px', left: '1250px'}}>
-          <WhiteBackground style={{ width: '460px', height: '620px'}}>
-            <ScheduleHeader>Schedule</ScheduleHeader>
-            <ScheduleViewButton>View</ScheduleViewButton>
-          </WhiteBackground>
-        </YellowBackground>
-        {/* Messages Section */}
-        <YellowBackground style={{ width: '500px', height: '300px', top: '895px', left: '1250px'}}>
-          <DashboardContent style={{ width: '500px', height: '300px', top: '895px', left: '1250px'}}>
-            <MessageHeader>Messages</MessageHeader>
-            <MessagesViewButton>View</MessagesViewButton>
-          </DashboardContent>
-        </YellowBackground>
-        {/* Upcoming Classes Section */}
-        <YellowBackground style={{ width: '550px', height: '350px', top: '570px', left: '670px'}}>
-          <WhiteBackground style={{ width: '510px', height: '290px'}}>
+        <YellowBackground style={{ width: '550px', height: '350px', top: '200px', left: '670px' }}>
+          <WhiteBackground style={{ width: '510px', height: '290px' }}>
             <ClassHeader>Upcoming class</ClassHeader>
-            <ClassContent> 
+            <ClassContent>
               <span>July 14th</span>
               <span>6:30 PM - 7:30 PM</span>
               <span>Fractions</span>
               <span>Teacher Name</span>
             </ClassContent>
-            <JoinClassButton >Join Class</JoinClassButton>
+            <JoinClassButton>Join Class</JoinClassButton>
           </WhiteBackground>
         </YellowBackground>
-        {/* Todo List Section */}
-        <YellowBackground style={{ width: '600px', height: '620px', top: '575px', left: '45px'}}>
-          <TodoListBody style={{ width: '560px', height: '560px'}}>
+        <YellowBackground style={{ width: '550px', height: '620px', top: '570px', left: '670px' }}>
+          <DashboardContent style={{ width: '550px', height: '620px', top: '570px', left: '670px' }}>
+            <ProgressHeader>Progress</ProgressHeader>
+            {/* Progress content goes here */}
+          </DashboardContent>
+        </YellowBackground>
+        <YellowBackground style={{ width: '500px', height: '340px', top: '200px', left: '1250px' }}>
+          <WhiteBackground style={{ width: '460px', height: '280px' }}>
+            <ScheduleHeader>Schedule</ScheduleHeader>
+            <ScheduleViewButton>View</ScheduleViewButton>
+          </WhiteBackground>
+        </YellowBackground>
+        <YellowBackground style={{ width: '500px', height: '310px', top: '555px', left: '1250px' }}>
+          <DashboardContent style={{ width: '500px', height: '310px', top: '560px', left: '1250px' }}>
+            <MessageHeader>Communication</MessageHeader>
+            <MessagesViewButton>View</MessagesViewButton>
+          </DashboardContent>
+        </YellowBackground>
+        <YellowBackground style={{ width: '500px', height: '310px', top: '880px', left: '1250px' }}>
+          <DashboardContent style={{ width: '500px', height: '310px', top: '880px', left: '1250px' }}>
+            <MessageHeader>Recordings</MessageHeader>
+            <MessagesViewButton>View</MessagesViewButton>
+          </DashboardContent>
+        </YellowBackground>
+        <YellowBackground style={{ width: '600px', height: '620px', top: '575px', left: '45px' }}>
+          <TodoListBody style={{ width: '560px', height: '560px' }}>
             <TodoListHeader>To-Do List</TodoListHeader>
             <CurrentDateContainer>
               <NavButton>{'<'}</NavButton>
               June 2024
               <NavButton>{'>'}</NavButton>
             </CurrentDateContainer>
-            <ScrollContainer >
-              <TodoItem>
-                <span>Decimal Practices #1-3</span>
-                <span>06/18</span>
-                <TaskButton>View</TaskButton>
-              </TodoItem>
-              <TodoItem>
-                <span>Fraction Multiplication</span>
-                <span>06/22</span>
-                <TaskButton>View</TaskButton>
-              </TodoItem>
+            <ScrollContainer>
+              {toDoList.map((item) => (
+                <TodoItem key={item.id}>
+                  <span>{item.task}</span>
+                  <span>{item.dueDate}</span>
+                  <TaskButton>View</TaskButton>
+                </TodoItem>
+              ))}
             </ScrollContainer>
           </TodoListBody>
         </YellowBackground>
       </DashboardItemsContainer>
+      {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
     </DashboardContainer>
   );
 };
