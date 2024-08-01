@@ -1,10 +1,9 @@
-// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/StudentDashboard.js
-
 import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import lightbulbIcon from "../assets/lightbulb.png";
 import { UserContext } from "../context/UserContext.js";
+import { RecordingsContext } from "../context/RecordingsContext.js";
 
 const DashboardContainer = styled.div`
   display: flex;
@@ -380,8 +379,10 @@ const Recording = styled.div`
 
 const StudentDashboard = () => {
   const { user } = useContext(UserContext);
+  const { recordings } = useContext(RecordingsContext); // Access recordings from context
   const [toDoList, setToDoList] = useState([]);
   const [progressData, setProgressData] = useState([]);
+  const [selectedInstructor, setSelectedInstructor] = useState('Instructor A'); // State for instructor filter
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -391,9 +392,6 @@ const StudentDashboard = () => {
           axios.get("http://localhost:5003/api/todo-list"),
           axios.get("http://localhost:5003/api/progress-data"),
         ]);
-
-        console.log("ToDo List Data:", toDoListResponse.data);
-        console.log("Progress Data:", progressResponse.data);
 
         setToDoList(toDoListResponse.data);
         setProgressData(progressResponse.data);
@@ -406,24 +404,19 @@ const StudentDashboard = () => {
     fetchData();
   }, []);
 
+  // Filter recordings based on selected instructor
+  const filteredRecordings = recordings.filter(recording => recording.instructor === selectedInstructor);
+
   return (
     <DashboardContainer>
       <DashboardTitle>Student Dashboard</DashboardTitle>
       <ProfileHeaderTitle>
-        {user?.displayName
-          ? `${user.displayName.split(" ")[0]}'s Profile`
-          : "Profile"}
+        {user?.displayName ? `${user.displayName.split(" ")[0]}'s Profile` : "Profile"}
       </ProfileHeaderTitle>
       <DashboardItemsContainer>
         {/* Profile Section */}
-        <DashboardItem
-          style={{ flexDirection: "row", alignItems: "flex-start" }}
-        >
-          <img
-            src={lightbulbIcon}
-            alt="Profile"
-            style={{ width: "100px", height: "100px" }}
-          />
+        <DashboardItem style={{ flexDirection: "row", alignItems: "flex-start" }}>
+          <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
           <ProfileContentContainer>
             <ProfileContent>Student: {user?.displayName}</ProfileContent>
             <ProfileContent>User ID: {user?.uid}</ProfileContent>
@@ -431,6 +424,7 @@ const StudentDashboard = () => {
           </ProfileContentContainer>
           <ProfileViewButton>View</ProfileViewButton>
         </DashboardItem>
+        
         {/* Upcoming Classes Section */}
         <DashboardItem>
           <SectionHeader>Upcoming class</SectionHeader>
@@ -448,17 +442,11 @@ const StudentDashboard = () => {
             </ClassContent>
           </WhiteBackground>
         </DashboardItem>
+
         {/* Schedule Section */}
         <DashboardItem>
           <SectionHeader>Schedule</SectionHeader>
-          <WhiteBackground
-            style={{
-              width: "25rem",
-              height: "11.5rem",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
+          <WhiteBackground style={{ width: "25rem", height: "11.5rem", flexDirection: "column", alignItems: "flex-start" }}>
             <ScheduleContentContainer>
               <ScheduleContent>Class: Math 3</ScheduleContent>
               <ScheduleContent>Instructor: Instructor A</ScheduleContent>
@@ -474,6 +462,7 @@ const StudentDashboard = () => {
             </ScheduleInfoContainer>
           </WhiteBackground>
         </DashboardItem>
+        
         {/* Todo List Section */}
         <DashboardItem style={{ gridRow: "span 2", alignItems: "center" }}>
           <SectionHeader>To-Do List</SectionHeader>
@@ -494,6 +483,7 @@ const StudentDashboard = () => {
             </TodoScrollContainer>
           </TodoListBody>
         </DashboardItem>
+        
         {/* Progress Section */}
         <DashboardItem style={{ gridRow: "span 2" }}>
           <SectionHeader>Progress</SectionHeader>
@@ -523,40 +513,27 @@ const StudentDashboard = () => {
           <SectionHeader>Communication</SectionHeader>
           <CommunicationScrollContainer>
             <Contact>
-              <img
-                src={lightbulbIcon}
-                alt="Profile"
-                style={{ width: "100px", height: "100px" }}
-              />
+              <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
               <ContactName>Instructor A</ContactName>
             </Contact>
             <Contact>
-              <img
-                src={lightbulbIcon}
-                alt="Profile"
-                style={{ width: "100px", height: "100px" }}
-              />
+              <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
               <ContactName>Student B</ContactName>
             </Contact>
           </CommunicationScrollContainer>
           <ContactViewButton>View</ContactViewButton>
         </DashboardItem>
+        
         {/* Recordings Section */}
         <DashboardItem>
           <SectionHeader>Recordings</SectionHeader>
-          <WhiteBackground
-            style={{
-              height: "7.5rem",
-              width: "25rem",
-              alignItems: "flex-start",
-            }}
-          >
+          <WhiteBackground style={{ height: "7.5rem", width: "25rem", alignItems: "flex-start" }}>
             <RecordingsScrollContainer>
-              <Recording>Recording 1: TITLE 6/22/24</Recording>
-              <Recording>Recording 1: TITLE 6/22/24</Recording>
+              {filteredRecordings.map(recording => (
+                <Recording key={recording.id}>{recording.title}</Recording>
+              ))}
             </RecordingsScrollContainer>
-            <InstructorDropdown>
-              <option value="">Select Instructor</option>
+            <InstructorDropdown value={selectedInstructor} onChange={(e) => setSelectedInstructor(e.target.value)}>
               <option value="Instructor A">Instructor A</option>
               <option value="Instructor B">Instructor B</option>
             </InstructorDropdown>

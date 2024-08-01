@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
@@ -21,6 +22,7 @@ import GlobalStyle from './GlobalStyles.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import PrivateRoute from './components/PrivateRoute.js';
 import { UserProvider } from './context/UserContext.js';
+import { RecordingsProvider } from './context/RecordingsContext.js';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -54,25 +56,27 @@ const App = () => {
       </Helmet>
       <GlobalStyle />
       <UserProvider>
-      <Router>
-        <NavBar user={user} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
-          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-          <Route path="/admin/dashboard" element={<PrivateRoute>{role === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
-          <Route path="/teacher/dashboard" element={<PrivateRoute>{role === 'teacher' ? <TeacherDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
-          <Route path="/student/dashboard" element={<PrivateRoute>{role === 'student' ? <StudentDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
-          <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
-          <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />
-          <Route path="/diagnostic-test" element={<PrivateRoute><DiagnosticTestPage /></PrivateRoute>} />
-          <Route path="/progress-tracking" element={<PrivateRoute><ProgressTrackingPage /></PrivateRoute>} />
-          <Route path="/mastery" element={<PrivateRoute><Mastery /></PrivateRoute>} />
-          <Route path="/add-question" element={<PrivateRoute>{role === 'admin' ? <AddQuestionPage /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
-          <Route path="/recordings-page" element={<PrivateRoute><RecordingsPage /></PrivateRoute>} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
+        <RecordingsProvider>
+          <Router>
+            <NavBar user={user} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+              <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+              <Route path="/admin/dashboard" element={<PrivateRoute>{role === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+              <Route path="/teacher/dashboard" element={<PrivateRoute>{role === 'teacher' ? <TeacherDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+              <Route path="/student/dashboard" element={<PrivateRoute>{role === 'student' ? <StudentDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+              <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
+              <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />
+              <Route path="/diagnostic-test" element={<PrivateRoute><DiagnosticTestPage /></PrivateRoute>} />
+              <Route path="/progress-tracking" element={<PrivateRoute><ProgressTrackingPage /></PrivateRoute>} />
+              <Route path="/mastery" element={<PrivateRoute><Mastery /></PrivateRoute>} />
+              <Route path="/add-question" element={<PrivateRoute>{role === 'admin' ? <AddQuestionPage /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+              <Route path="/recordings-page" element={<PrivateRoute><RecordingsPage /></PrivateRoute>} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </Router>
+        </RecordingsProvider>
       </UserProvider>
     </div>
   );
