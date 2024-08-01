@@ -15,20 +15,22 @@ const GlobalStyle = createGlobalStyle`
     color: #000000; // Set the text color to black
   }
 
-  ::-webkit-scrollbar {
-    width: 8px; // Set the width of the scrollbar
+::-webkit-scrollbar {
+    width: 8px; /* Adjust the width of the scrollbar */
   }
 
   ::-webkit-scrollbar-track {
-    background: #000000; // Set the background color of the scrollbar track to black
+    background: #f1f1f1; /* Light gray background for the scrollbar track */
+    border-radius: 10px; /* Rounded corners */
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #FFD900; // Set the color of the scrollbar thumb to yellow
+    background: #888; /* Gray color for the scrollbar thumb */
+    border-radius: 10px; /* Rounded corners */
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #FFD900; // Keep the color of the scrollbar thumb yellow on hover
+    background: #555; /* Darker gray when hovering over the scrollbar thumb */
   }
 `;
 
