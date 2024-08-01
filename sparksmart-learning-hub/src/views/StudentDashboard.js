@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import lightbulbIcon from '../assets/lightbulb.png';
+// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/StudentDashboard.js
+
+import React, { useState, useEffect, useContext } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import lightbulbIcon from "../assets/lightbulb.png";
+import { UserContext } from "../context/UserContext.js";
 
 const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #FFFAED;
+  background-color: #fffaed;
   width: 99.4vw;
   height: 150vh;
 `;
@@ -24,7 +27,7 @@ const DashboardItem = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 2rem;
-  background-color: #FFD900;
+  background-color: #ffd900;
 `;
 
 const WhiteBackground = styled.div`
@@ -66,7 +69,7 @@ const ProfileHeaderTitle = styled.header`
 const ProfileContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%
+  width: 100%;
 `;
 
 const ProfileContent = styled.div`
@@ -86,7 +89,7 @@ const ProfileViewButton = styled.button`
   margin-top: 14rem;
   margin-right: 1.5rem;
   cursor: pointer;
-`;  
+`;
 
 // UPCOMING CLASSES
 const ClassContent = styled.div`
@@ -135,7 +138,7 @@ const JoinClassButton = styled.button`
   width: 8rem;
   border-width: 0;
   margin-top: 1rem;
-  background-color: #FFD900;
+  background-color: #ffd900;
 `;
 
 // SCHEDULE
@@ -205,7 +208,7 @@ const NavButton = styled.button`
   height: 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: center;  
+  justify-content: center;
   cursor: pointer;
   margin: 0 0.5rem;
 `;
@@ -234,7 +237,7 @@ const TodoItem = styled.div`
   justify-content: space-around;
   border-radius: 1.5rem;
   background-color: lightgray;
-  padding-left: 5px
+  padding-left: 5px;
 `;
 
 const TaskButton = styled.button`
@@ -341,14 +344,14 @@ const RecordingsScrollContainer = styled.div`
   direction: rtl;
   margin-top: 0.3rem;
   margin-left: 1rem;
-`
+`;
 const InstructorDropdown = styled.select`
   width: 9rem;
   height: 2.5rem;
   border-radius: 0.3rem;
   margin-left: 0.5rem;
   margin-top: 1rem;
-`
+`;
 
 const RecordingsViewButton = styled.button`
   color: white;
@@ -373,32 +376,29 @@ const Recording = styled.div`
   margin-right: 0.5rem;
   padding-left: 0.5rem;
   margin-top: 0.5rem;
-`
+`;
 
 const StudentDashboard = () => {
+  const { user } = useContext(UserContext);
   const [toDoList, setToDoList] = useState([]);
   const [progressData, setProgressData] = useState([]);
-  const [userData, setUserData] = useState({});
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [toDoListResponse, progressResponse, userResponse] = await Promise.all([
-          axios.get('http://localhost:5003/api/todo-list'),
-          axios.get('http://localhost:5003/api/progress-data'),
-          axios.get('http://localhost:5003/api/account-data'),
+        const [toDoListResponse, progressResponse] = await Promise.all([
+          axios.get("http://localhost:5003/api/todo-list"),
+          axios.get("http://localhost:5003/api/progress-data"),
         ]);
 
-        console.log('ToDo List Data:', toDoListResponse.data);
-        console.log('Progress Data:', progressResponse.data);
-        console.log('User Data:', userResponse.data);
+        console.log("ToDo List Data:", toDoListResponse.data);
+        console.log("Progress Data:", progressResponse.data);
 
         setToDoList(toDoListResponse.data);
         setProgressData(progressResponse.data);
-        setUserData(userResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
         setError(error);
       }
     };
@@ -409,62 +409,81 @@ const StudentDashboard = () => {
   return (
     <DashboardContainer>
       <DashboardTitle>Student Dashboard</DashboardTitle>
-      <ProfileHeaderTitle>{userData.fullName ? `${userData.fullName.split(' ')[0]}'s Profile` : 'Profile'}</ProfileHeaderTitle>
+      <ProfileHeaderTitle>
+        {user?.displayName
+          ? `${user.displayName.split(" ")[0]}'s Profile`
+          : "Profile"}
+      </ProfileHeaderTitle>
       <DashboardItemsContainer>
         {/* Profile Section */}
-        <DashboardItem style={{ flexDirection: "row", alignItems: "flex-start" }}>
-          <img src={lightbulbIcon} alt="Profile" style={{ width: '100px', height: '100px'}} />
+        <DashboardItem
+          style={{ flexDirection: "row", alignItems: "flex-start" }}
+        >
+          <img
+            src={lightbulbIcon}
+            alt="Profile"
+            style={{ width: "100px", height: "100px" }}
+          />
           <ProfileContentContainer>
-            <ProfileContent>Student: FirstName</ProfileContent>
-            <ProfileContent>User ID: UserID</ProfileContent>
-            <ProfileContent>Class: Java</ProfileContent>
-            <ProfileContent>Last Joined: 5/24/24</ProfileContent>
-            <ProfileContent>Email: example@site.com</ProfileContent>
+            <ProfileContent>Student: {user?.displayName}</ProfileContent>
+            <ProfileContent>User ID: {user?.uid}</ProfileContent>
+            <ProfileContent>Email: {user?.email}</ProfileContent>
           </ProfileContentContainer>
           <ProfileViewButton>View</ProfileViewButton>
         </DashboardItem>
         {/* Upcoming Classes Section */}
         <DashboardItem>
           <SectionHeader>Upcoming class</SectionHeader>
-          <WhiteBackground style={{ width: '25rem', height: '11.5rem'}}>
+          <WhiteBackground style={{ width: "25rem", height: "11.5rem" }}>
             <ClassInfoContainer>
               <ClassInfo>Class: Math 3</ClassInfo>
               <ClassInfo>Meeting: 9</ClassInfo>
             </ClassInfoContainer>
-            <ClassContent> 
+            <ClassContent>
               <ClassContentInfo>July 14th</ClassContentInfo>
               <ClassContentInfo>6:30 PM - 7:30 PM</ClassContentInfo>
               <ClassContentInfo>Fractions</ClassContentInfo>
               <ClassContentInfo>Teacher Name</ClassContentInfo>
-              <JoinClassButton >Join Class</JoinClassButton>
+              <JoinClassButton>Join Class</JoinClassButton>
             </ClassContent>
           </WhiteBackground>
         </DashboardItem>
         {/* Schedule Section */}
         <DashboardItem>
           <SectionHeader>Schedule</SectionHeader>
-          <WhiteBackground style={{ width: '25rem', height: '11.5rem', flexDirection: "column", alignItems: "flex-start"}}>
+          <WhiteBackground
+            style={{
+              width: "25rem",
+              height: "11.5rem",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
             <ScheduleContentContainer>
               <ScheduleContent>Class: Math 3</ScheduleContent>
               <ScheduleContent>Instructor: Instructor A</ScheduleContent>
               <ScheduleContent>Class Term: 6/1/24 - 7/21/24</ScheduleContent>
             </ScheduleContentContainer>
             <ScheduleInfoContainer>
-              <ScheduleInfo style={{ width: '10rem', height: '4rem'}}>Next Session: 7/14/24</ScheduleInfo>
-              <ScheduleInfo style={{ width: '12rem', height: '4rem' }}>Next Assignment Due: 6/18/24</ScheduleInfo>
+              <ScheduleInfo style={{ width: "10rem", height: "4rem" }}>
+                Next Session: 7/14/24
+              </ScheduleInfo>
+              <ScheduleInfo style={{ width: "12rem", height: "4rem" }}>
+                Next Assignment Due: 6/18/24
+              </ScheduleInfo>
             </ScheduleInfoContainer>
           </WhiteBackground>
         </DashboardItem>
         {/* Todo List Section */}
         <DashboardItem style={{ gridRow: "span 2", alignItems: "center" }}>
           <SectionHeader>To-Do List</SectionHeader>
-          <TodoListBody >
+          <TodoListBody>
             <CurrentDateContainer>
-              <NavButton>{'<'}</NavButton>
+              <NavButton>{"<"}</NavButton>
               June 2024
-              <NavButton>{'>'}</NavButton>
+              <NavButton>{">"}</NavButton>
             </CurrentDateContainer>
-            <TodoScrollContainer >
+            <TodoScrollContainer>
               {toDoList.map((item) => (
                 <TodoItem key={item.id}>
                   <span>{item.task}</span>
@@ -480,29 +499,43 @@ const StudentDashboard = () => {
           <SectionHeader>Progress</SectionHeader>
           <ProgressContainer>
             <ProgressItem>
-              <ProgressContent style={{ fontSize: "2rem" }}>10</ProgressContent>
+              <ProgressContent style={{ fontSize: "2rem" }}>{progressData.assignmentsDone}</ProgressContent>
               <ProgressContent>Assignments Done</ProgressContent>
               <ProgressContent style={{ marginTop:'5rem' }}>Assignment Progress</ProgressContent>
-              <ProgressBar max="100" value="84" />
-              <ProgressContent>84%</ProgressContent>
+              <ProgressBar max="100" value={progressData.averageProgress} />
+              <ProgressContent>{progressData.averageProgress}%</ProgressContent>
               <ProgressContent style={{ marginTop:'1rem', fontSize: '1rem' }}>Assignments in Progress:</ProgressContent>
-              <ProgressContent style={{ fontSize: '1rem' }}>2</ProgressContent>
+              <ProgressContent style={{ fontSize: '1rem' }}>{progressData.assignmentsInProgress}</ProgressContent>
             </ProgressItem>
-            <ProgressItem>Teacher's Comments</ProgressItem>
-            <ProgressItem style={{gridColumn: "span 2"}}>A - 99.28%</ProgressItem>
+            <ProgressItem>
+              <ProgressContent>Teacher's Comments</ProgressContent>
+              <ProgressContent>{progressData.comments}</ProgressContent>
+            </ProgressItem>
+            <ProgressItem style={{ gridColumn: "span 2" }}>
+              <ProgressContent>{progressData.grades} - 99.28%</ProgressContent>
+            </ProgressItem>
           </ProgressContainer>
           <ProgressViewButton>View</ProgressViewButton>
         </DashboardItem>
+
         {/* Communication Section  */}
         <DashboardItem>
           <SectionHeader>Communication</SectionHeader>
           <CommunicationScrollContainer>
             <Contact>
-              <img src={lightbulbIcon} alt="Profile" style={{ width: '100px', height: '100px'}} />
+              <img
+                src={lightbulbIcon}
+                alt="Profile"
+                style={{ width: "100px", height: "100px" }}
+              />
               <ContactName>Instructor A</ContactName>
             </Contact>
             <Contact>
-              <img src={lightbulbIcon} alt="Profile" style={{ width: '100px', height: '100px'}} />
+              <img
+                src={lightbulbIcon}
+                alt="Profile"
+                style={{ width: "100px", height: "100px" }}
+              />
               <ContactName>Student B</ContactName>
             </Contact>
           </CommunicationScrollContainer>
@@ -511,7 +544,13 @@ const StudentDashboard = () => {
         {/* Recordings Section */}
         <DashboardItem>
           <SectionHeader>Recordings</SectionHeader>
-          <WhiteBackground style={{ height: '7.5rem', width: '25rem', alignItems: 'flex-start' }}>
+          <WhiteBackground
+            style={{
+              height: "7.5rem",
+              width: "25rem",
+              alignItems: "flex-start",
+            }}
+          >
             <RecordingsScrollContainer>
               <Recording>Recording 1: TITLE 6/22/24</Recording>
               <Recording>Recording 1: TITLE 6/22/24</Recording>
@@ -525,7 +564,7 @@ const StudentDashboard = () => {
           <RecordingsViewButton>View</RecordingsViewButton>
         </DashboardItem>
       </DashboardItemsContainer>
-      {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
+      {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
     </DashboardContainer>
   );
 };

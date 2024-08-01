@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc  } from 'firebase/firestore';
 import { db } from '../src/firebaseConfig.js';
 import { StudentPackage, NonStudentPackage } from '../src/packages.js';
 import { getCalendlyUser, listEventTypes, getSchedulingLink } from './calendlyConfig.js';
@@ -21,10 +21,11 @@ const port = process.env.PORT || 5003; // Use 5000 or a different port number
 app.use(bodyParser.json());
 // Configure CORS
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your frontend URL
+  origin: '*', // Replace with your frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // Allow cookies to be sent with requests
 }));
+
 
 
 app.get('/api/test-calendly', async (req, res) => {
@@ -60,12 +61,23 @@ app.post('/api/schedule-consultation', async (req, res) => {
 const toDoListData = [
   { id: 1, task: 'Decimal Practices #1-3', dueDate: '2023-06-18' },
   { id: 2, task: 'Fraction Multiplication', dueDate: '2023-06-22' },
+  { id: 2, task: 'Textbook chapter 1 -3', dueDate: '2023-06-30' },
 ];
 
 const recordingsData = [
   { id: 1, title: 'Recording 1: TITLE', date: '2023-06-22', url: 'https://example.com/recording1' },
   { id: 2, title: 'Recording 2: TITLE', date: '2023-06-25', url: 'https://example.com/recording2' },
 ];
+
+// Mock data for progress and account
+const progressData = {
+  assignmentsDone: 10,
+  assignmentsInProgress: 2,
+  averageProgress: 84,
+  grades: 'A',
+  comments: 'Great work! Keep it up!'
+};
+
 
 // Endpoint to fetch progress data
 app.get('/api/progress-data', (req, res) => {
@@ -86,6 +98,12 @@ app.get('/api/todo-list', (req, res) => {
 app.get('/api/recordings', (req, res) => {
   res.json(recordingsData);
 });
+
+app.get('/api/progress-data', (req, res) => {
+  res.json(progressData);
+});
+ 
+
 
 /**
  * Function to handle retries for Axios requests with exponential backoff.
@@ -124,11 +142,7 @@ const questions = [
 ];
 
 // Mock data for progress and account
-const progressData = [
-  { date: '2023-07-01', score: 80 },
-  { date: '2023-07-02', score: 85 },
-  { date: '2023-07-03', score: 90 },
-];
+
 
 const accountData = {
   totalCredits: 20,

@@ -20,6 +20,7 @@ import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import PrivateRoute from './components/PrivateRoute.js';
+import { UserProvider } from './context/UserContext.js';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -52,6 +53,7 @@ const App = () => {
         <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet" />
       </Helmet>
       <GlobalStyle />
+      <UserProvider>
       <Router>
         <NavBar user={user} />
         <Routes>
@@ -71,6 +73,7 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
+      </UserProvider>
     </div>
   );
 };

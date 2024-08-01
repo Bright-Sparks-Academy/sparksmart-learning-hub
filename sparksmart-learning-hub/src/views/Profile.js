@@ -1,10 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/Profile.js
+
+import React, { useState, useRef, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { auth, storage, db } from "../firebaseConfig.js";
 import { updateProfile } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext.js";
 
 const PageContainer = styled.div`
   display: flex;
@@ -120,25 +123,17 @@ const PhoneNumberContainer = styled.div`
 `;
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { user, setUser } = useContext(UserContext);
   const [fullName, setFullName] = useState("");
   const [bio, setBio] = useState("");
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        setFullName(currentUser.displayName || "");
-        // Fetch bio from Firestore if needed
-      } else {
-        navigate("/login");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
+    if (user) {
+      setFullName(user.displayName || "");
+    }
+  }, [user]);
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
