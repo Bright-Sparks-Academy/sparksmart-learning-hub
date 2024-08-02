@@ -16,6 +16,7 @@ import DiagnosticTestPage from './views/DiagnosticTestPage.js';
 import AddQuestionPage from './views/AddQuestionPage.js';
 import ProgressTrackingPage from './views/ProgressTrackingPage.js';
 import Mastery from './views/AiLearningPlan.js';
+import SchedulingPage from './views/SchedulingPage.js'; // Import the new SchedulingPage
 import { auth } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
@@ -73,6 +74,7 @@ const App = () => {
               <Route path="/mastery" element={<PrivateRoute><Mastery /></PrivateRoute>} />
               <Route path="/add-question" element={<PrivateRoute>{role === 'admin' ? <AddQuestionPage /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
               <Route path="/recordings-page" element={<PrivateRoute><RecordingsPage /></PrivateRoute>} />
+              <Route path="/scheduling" element={<PrivateRoute><SchedulingPage /></PrivateRoute>} /> {/* Add this line */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>

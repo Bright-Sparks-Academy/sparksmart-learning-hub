@@ -15,7 +15,7 @@ import { getCalendlyUser, listEventTypes, getSchedulingLink } from './calendlyCo
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5003; // Use 5000 or a different port number
+const port = process.env.PORT || 3000; // Use 5000 or a different port number
 
 // Middleware to parse JSON bodies and enable CORS
 app.use(bodyParser.json());
