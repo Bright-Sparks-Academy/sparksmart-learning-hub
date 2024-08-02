@@ -42,7 +42,7 @@ const DashboardItemsContainer = styled.div`
   display: grid;
   height: 760px;
   width: 95%;
-  grid-template: 1.2fr 1fr 1fr / 1.2fr 1fr 1fr;
+  grid-template: 1.2fr 1fr 1.05fr / 1.2fr 1fr 1fr;
   gap: 10px;
 `;
 
@@ -65,6 +65,11 @@ const ProfileHeaderTitle = styled.header`
   color: black;
 `;
 
+const ProfileContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
 const ProfileContentContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -83,10 +88,10 @@ const ProfileViewButton = styled.button`
   font-size: 1.25rem;
   border-radius: 1rem;
   height: 2.3rem;
-  width: 10rem;
+  width: 7.5rem;
   background-color: black;
-  margin-top: 14rem;
-  margin-right: 1.5rem;
+  margin-top: 7.2rem;
+  margin-left: 23rem;
   cursor: pointer;
 `;
 
@@ -288,6 +293,7 @@ const ProgressViewButton = styled.button`
   border-radius: 1rem;
   height: 2.3rem;
   width: 7rem;
+  margin-top: 0.5rem;
   margin-left: 18rem;
   background-color: black;
   cursor: pointer;
@@ -359,6 +365,7 @@ const RecordingsViewButton = styled.button`
   height: 2.3rem;
   width: 7rem;
   margin-left: 18rem;
+  margin-top: 0.2rem;
   background-color: black;
   cursor: pointer;
 `;
@@ -415,13 +422,15 @@ const StudentDashboard = () => {
       </ProfileHeaderTitle>
       <DashboardItemsContainer>
         {/* Profile Section */}
-        <DashboardItem style={{ flexDirection: "row", alignItems: "flex-start" }}>
-          <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
-          <ProfileContentContainer>
-            <ProfileContent>Student: {user?.displayName}</ProfileContent>
-            <ProfileContent>User ID: {user?.uid}</ProfileContent>
-            <ProfileContent>Email: {user?.email}</ProfileContent>
-          </ProfileContentContainer>
+        <DashboardItem style={{ alignItems: "flex-start" }}>
+          <ProfileContainer>
+            <img src={lightbulbIcon} alt="Profile" style={{ width: "100px", height: "100px" }} />
+            <ProfileContentContainer>
+              <ProfileContent>Student: {user?.displayName}</ProfileContent>
+              <ProfileContent>User ID: {user?.uid}</ProfileContent>
+              <ProfileContent>Email: {user?.email}</ProfileContent>
+            </ProfileContentContainer>
+          </ProfileContainer>
           <ProfileViewButton>View</ProfileViewButton>
         </DashboardItem>
         
