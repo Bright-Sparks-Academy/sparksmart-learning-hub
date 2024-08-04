@@ -200,6 +200,7 @@ const Comment = styled.div`
 const TeacherH = styled.h2`
   text-align: center;
 `;
+
 // Main component for the progress tracking page
 const ProgressTrackingPage = () => {
   return (
