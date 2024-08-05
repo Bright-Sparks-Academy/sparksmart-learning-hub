@@ -6,10 +6,10 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { collection, addDoc, doc, getDoc  } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc,  getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../src/firebaseConfig.js';
 import { StudentPackage, NonStudentPackage } from '../src/packages.js';
-import { getCalendlyUser, listEventTypes, getSchedulingLink } from './calendlyConfig.js';
+import { getCalendlyUser, listEventTypes, getSchedulingLink, setCalendlyAvailability} from './calendlyConfig.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -25,6 +25,58 @@ app.use(cors({
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // Allow cookies to be sent with requests
 }));
+
+// Fetch all students' data
+app.get('/api/students', async (req, res) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'students'));
+    const students = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch students data' });
+  }
+});
+
+// Fetch specific student's data
+app.get('/api/students/:id', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+    const studentDoc = await getDoc(doc(db, 'students', studentId));
+    if (studentDoc.exists()) {
+      res.json(studentDoc.data());
+    } else {
+      res.status(404).json({ error: 'Student not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch student data' });
+  }
+});
+
+// Update specific student's grade and comment
+app.put('/api/students/:id', async (req, res) => {
+  const studentId = req.params.id;
+  const { grade, comment } = req.body;
+  try {
+    await updateDoc(doc(db, 'students', studentId), { grade, comment });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update student data' });
+  }
+});
+
+// Endpoint to set teacher availability on Calendly
+app.post('/api/set-availability', async (req, res) => {
+  const { eventName, startDate, endDate } = req.body;
+  try {
+    const schedulingUrl = await getSchedulingLink(eventName);
+    // Assume we have a function to set availability on Calendly
+    await setCalendlyAvailability(schedulingUrl, startDate, endDate);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to set availability on Calendly' });
+  }
+});
+
 
 
 

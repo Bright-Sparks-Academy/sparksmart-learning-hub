@@ -22,6 +22,29 @@ export const getCalendlyUser = async () => {
   }
 };
 
+export const setCalendlyAvailability = async (schedulingUrl, startDate, endDate) => {
+  try {
+    const response = await axios.post(
+      `${CALENDLY_API_URL}/availability`,
+      {
+        scheduling_url: schedulingUrl,
+        start_date: startDate,
+        end_date: endDate,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${CALENDLY_API_KEY}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error setting Calendly availability:', error);
+    throw error;
+  }
+};
+
 // List all event types available to the user
 export const listEventTypes = async (userUri) => {
   try {
