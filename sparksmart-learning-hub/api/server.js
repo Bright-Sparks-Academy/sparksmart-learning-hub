@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { collection, addDoc, doc, getDoc,  getDocs, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc,  getDocs, updateDoc, setDoc} from 'firebase/firestore';
 import { db } from '../src/firebaseConfig.js';
 import { StudentPackage, NonStudentPackage } from '../src/packages.js';
 import { getCalendlyUser, listEventTypes, getSchedulingLink, setCalendlyAvailability} from './calendlyConfig.js';
@@ -154,6 +154,154 @@ app.get('/api/recordings', (req, res) => {
 app.get('/api/progress-data', (req, res) => {
   res.json(progressData);
 });
+
+// Endpoint to assign homework with answer key
+app.post('/api/homework', async (req, res) => {
+  const { title, dueDate, points, questions } = req.body; // 'questions' includes the answer key
+  try {
+    const docRef = await addDoc(collection(db, 'homework'), { title, dueDate, points, questions });
+    res.json({ success: true, id: docRef.id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to assign homework' });
+  }
+});
+
+// Endpoint to submit homework answers
+app.post('/api/homework/:id/submit', async (req, res) => {
+  const homeworkId = req.params.id;
+  const { studentId, answers } = req.body;
+  try {
+    // Fetch the homework with answer key
+    const homeworkDoc = await getDoc(doc(db, 'homework', homeworkId));
+    if (!homeworkDoc.exists()) {
+      return res.status(404).json({ error: 'Homework not found' });
+    }
+    const homework = homeworkDoc.data();
+
+    // Compare student answers with the answer key
+    const feedback = answers.map((answer, index) => {
+      const correctAnswer = homework.questions[index].answer;
+      return {
+        question: homework.questions[index].question,
+        studentAnswer: answer,
+        correctAnswer,
+        correct: answer.trim().toLowerCase() === correctAnswer.trim().toLowerCase(),
+      };
+    });
+
+    // Store the student's submission and feedback
+    await setDoc(doc(db, 'homework_submissions', `${homeworkId}_${studentId}`), { homeworkId, studentId, answers, feedback });
+
+    res.json({ success: true, feedback });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to submit homework' });
+  }
+});
+
+// Update specific student's grade and comment
+app.put('/api/students/:id', async (req, res) => {
+  const studentId = req.params.id;
+  const { grade, comment } = req.body;
+  try {
+    await updateDoc(doc(db, 'students', studentId), { grade, comment });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update student data' });
+  }
+});
+
+// Endpoint to fetch all homework
+app.get('/api/homework', async (req, res) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'homework'));
+    const homework = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(homework);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch homework data' });
+  }
+});
+
+// Endpoint to fetch specific student's homework
+app.get('/api/homework/:id', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+    const homeworkDoc = await getDoc(doc(db, 'homework', studentId));
+    if (homeworkDoc.exists()) {
+      res.json(homeworkDoc.data());
+    } else {
+      res.status(404).json({ error: 'Homework not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch homework data' });
+  }
+});
+
+// Endpoint to update specific student's homework
+app.put('/api/homework/:id', async (req, res) => {
+  const studentId = req.params.id;
+  const { assignments } = req.body;
+  try {
+    await updateDoc(doc(db, 'homework', studentId), { assignments });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update homework data' });
+  }
+});
+
+// Endpoint to fetch progress data
+app.get('/api/progress/:id', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+    const progressDoc = await getDoc(doc(db, 'progress', studentId));
+    if (progressDoc.exists()) {
+      res.json(progressDoc.data());
+    } else {
+      res.status(404).json({ error: 'Progress data not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch progress data' });
+  }
+});
+
+// Endpoint to update progress data
+app.put('/api/progress/:id', async (req, res) => {
+  const studentId = req.params.id;
+  const { assignmentsDone, assignmentsInProgress, averageProgress } = req.body;
+  try {
+    await updateDoc(doc(db, 'progress', studentId), { assignmentsDone, assignmentsInProgress, averageProgress });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update progress data' });
+  }
+});
+
+// Endpoint to fetch grades data
+app.get('/api/grades/:id', async (req, res) => {
+  const studentId = req.params.id;
+  try {
+    const gradesDoc = await getDoc(doc(db, 'grades', studentId));
+    if (gradesDoc.exists()) {
+      res.json(gradesDoc.data());
+    } else {
+      res.status(404).json({ error: 'Grades data not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch grades data' });
+  }
+});
+
+// Endpoint to update grades data
+app.put('/api/grades/:id', async (req, res) => {
+  const studentId = req.params.id;
+  const { grade } = req.body;
+  try {
+    await updateDoc(doc(db, 'grades', studentId), { grade });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update grades data' });
+  }
+});
+
  
 
 
