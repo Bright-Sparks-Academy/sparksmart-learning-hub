@@ -1,156 +1,262 @@
 // ProgressTrackingPage.js
 
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'; // Import chart components
-import GlobalStyles from '../GlobalStyles.js'; // Import GlobalStyles
 
-// Styled component for the main container
-const ProgressTrackingContainer = styled.div`
-  padding: 20px;
-  background-color: #FFFFFF; /* White background */
-`;
-
-// Styled component for the header
-const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background-color: #FFD900; /* Yellow background */
-  color: #000000; /* Black text */
-`;
-
-// Styled component for the main section
-const MainSection = styled.main`
-  padding: 20px;
-  background-color: #FFFFFF;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-`;
-
-// Styled component for each section
-const Section = styled.section`
-  margin-bottom: 20px;
-`;
-
-// Styled component for the link button
-const LinkButton = styled.a`
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #FFD900; /* Yellow background */
-  color: #000000; /* Black text */
-  text-decoration: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #e6c200; /* Darker yellow on hover */
+const GlobalStyle = createGlobalStyle`
+  html {
+    color: #222;
+    font-size: 1.5em;
+    line-height: 1.4;
   }
+
+  ::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+  }
+
+  ::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+  }
+
+  hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+  }
+
+  audio,
+  canvas,
+  iframe,
+  img,
+  svg,
+  video {
+    vertical-align: middle;
+  }
+
+  fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  @media only screen and (min-width: 35em) {
+  }
+
+  @media print,
+  (-webkit-min-device-pixel-ratio: 1.25),
+  (min-resolution: 1.25dppx),
+  (min-resolution: 120dpi) {
+  }
+
+  @media print {
+    *,
+    *::before,
+    *::after {
+      background: #fff !important;
+      color: #000 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+      text-decoration: underline;
+    }
+
+    a[href]::after {
+      content: " (" attr(href) ")";
+    }
+
+    abbr[title]::after {
+      content: " (" attr(title) ")";
+    }
+
+    a[href^="#"]::after,
+    a[href^="javascript:"]::after {
+      content: "";
+    }
+
+    pre {
+      white-space: pre-wrap !important;
+    }
+
+    pre,
+    blockquote {
+      border: 1px solid #999;
+      page-break-inside: avoid;
+    }
+
+    tr,
+    img {
+      page-break-inside: avoid;
+    }
+
+    p,
+    h2,
+    h3 {
+      orphans: 3;
+      widows: 3;
+    }
+
+    h2,
+    h3 {
+      page-break-after: avoid;
+    }
+  }
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+`;
+
+const UpperPart = styled(FlexContainer)`
+  margin: 10px;
+`;
+
+const LowerPart = styled(FlexContainer)`
+  margin: 10px;
+`;
+
+const ReportCard = styled.div`
+  background-color: #ececec;
+  border-radius: 30px;
+  padding: 15px;
+  width: 36em;
+  text-align: justify;
+  margin: 10px;
+  font-family: 'Quicksand', sans-serif;
+`;
+
+const Grade = styled.div`
+  text-align: center;
+  background-color: #ececec;
+  border-radius: 30px;
+  padding: 15px;
+  line-height: 16px;
+  height: 120px;
+  width: 120px;
+  margin: 10px;
+  font-family: 'Quicksand', sans-serif;
+`;
+
+const Selector = styled.select`
+  height: 50px;
+  width: 390px;
+  padding-left: 15px;
+  text-align: left;
+  font-size: 1.2em;
+  border-radius: 10px;
+  border: solid gray;
+  color: gray;
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance: none; /* Safari and Chrome */
+  appearance: none;
+  background: url('/sparksmart-learning-hub/sparksmart-learning-hub/src/assets/dropdown_arrow.png') 100% / 15% no-repeat;
+  font-family: 'Quicksand', sans-serif;
+`;
+
+const Statistics = styled.div`
+  text-align: center;
+  background-color: #ececec;
+  border-radius: 30px;
+  padding: 0 30px;
+  line-height: 16px;
+  height: 10em;
+  width: auto;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.1em;
+`;
+
+const Stat = styled.div`
+  float: left;
+  width: 180px;
+  line-height: 1;
+`;
+
+const Info = styled.h2`
+  font-size: 1.3em;
+`;
+
+const Comment = styled.div`
+  background-color: #ffd900;
+  border-radius: 30px;
+  padding: 15px;
+  font-family: 'Quicksand', sans-serif;
+  width: 36em;
+  text-align: justify;
+`;
+
+const TeacherH = styled.h2`
+  text-align: center;
 `;
 
 // Main component for the progress tracking page
 const ProgressTrackingPage = () => {
-  const [progressData, setProgressData] = useState([]); // State for progress data
-  const [totalCredits, setTotalCredits] = useState(0); // State for total credits required
-  const [creditsEarned, setCreditsEarned] = useState(0); // State for credits earned
-  const [creditsLeft, setCreditsLeft] = useState(0); // State for credits left
-  const [creditsLog, setCreditsLog] = useState([]); // State for log of credits
-  const [grades, setGrades] = useState([]); // State for grades
-  const [notesHistory, setNotesHistory] = useState([]); // State for notes and history
-  const [calendlyLink, setCalendlyLink] = useState(''); // State for Calendly link
-
-  // Effect to fetch data from the server when component mounts
-  useEffect(() => {
-    // Function to fetch progress data from the server
-    const fetchProgressData = async () => {
-      try {
-        const response = await axios.get('/api/progress-data');
-        setProgressData(response.data);
-      } catch (error) {
-        console.error('Error fetching progress data:', error);
-      }
-    };
-
-    // Function to fetch account data from the server
-    const fetchAccountData = async () => {
-      try {
-        const response = await axios.get('/api/account-data');
-        const data = response.data;
-        setTotalCredits(data.totalCredits || 0); // Set total credits required
-        setCreditsEarned(data.creditsEarned || 0); // Set credits earned
-        setCreditsLeft(data.creditsLeft || 0); // Set credits left
-        setCreditsLog(data.creditsLog || []); // Set log of credits
-        setGrades(data.grades || []); // Set grades
-        setNotesHistory(data.notesHistory || []); // Set notes and history
-        setCalendlyLink(data.calendlyLink || ''); // Set Calendly link
-      } catch (error) {
-        console.error('Error fetching account data:', error);
-      }
-    };
-
-    fetchProgressData();
-    fetchAccountData();
-  }, []);
-
   return (
     <>
-      <GlobalStyles /> {/* Apply global styles */}
-      <ProgressTrackingContainer>
-        <Header>
-          <div>Logo</div> {/* Placeholder for logo */}
-          <nav>
-            {/* Placeholder for navigation links */}
-          </nav>
-        </Header>
-        <MainSection>
-          <Section>
-            <h2>Credits Overview</h2> {/* Display credits overview */}
-            <p>Total Credits Required: {totalCredits}</p>
-            <p>Credits Earned: {creditsEarned}</p>
-            <p>Credits Left: {creditsLeft}</p>
-          </Section>
-          <Section>
-            <h2>Credits Log</h2> {/* Display log of credits */}
-            <ul>
-              {creditsLog.map((log, index) => (
-                <li key={index}>{log.date}: {log.creditsEarned} credits - {log.course} ({log.description})</li> // Display each log of credits
-              ))}
-            </ul>
-          </Section>
-          <Section>
-            <h2>Grades</h2> {/* Display grades */}
-            <ul>
-              {grades.map((grade, index) => (
-                <li key={index}>{grade.course}: {grade.grade}</li> // Display each grade
-              ))}
-            </ul>
-          </Section>
-          <Section>
-            <h2>Notes and History</h2> {/* Display notes and history */}
-            <ul>
-              {notesHistory.map((note, index) => (
-                <li key={index}>{note}</li> // Display each note
-              ))}
-            </ul>
-          </Section>
-          <Section>
-            <h2>Schedule a Meeting</h2> {/* Display Calendly link */}
-            <LinkButton href={calendlyLink} target="_blank" rel="noopener noreferrer">Book a slot on Calendly</LinkButton>
-          </Section>
-          <ResponsiveContainer width="100%" height={400}> {/* Container for the chart */}
-            <LineChart data={progressData}> {/* Line chart to display progress data */}
-              <CartesianGrid strokeDasharray="3 3" /> {/* Grid lines */}
-              <XAxis dataKey="date" xAxisId="x-axis-0" /> {/* X-axis with id */}
-              <YAxis yAxisId="y-axis-0" /> {/* Y-axis with id */}
-              <Tooltip /> {/* Tooltip */}
-              <Legend /> {/* Legend */}
-              <Line type="monotone" dataKey="score" stroke="#000000" activeDot={{ r: 8 }} xAxisId="x-axis-0" yAxisId="y-axis-0" /> {/* Line representing scores with axis ids */}
-            </LineChart>
-          </ResponsiveContainer>
-        </MainSection>
-      </ProgressTrackingContainer>
+      <GlobalStyle />
+      <UpperPart>
+        <ReportCard>
+          <h2>[Student Name]'s Report Card</h2>
+          <p>
+            This is [Student Name]'s report card which gives you an
+            overview of their learning. The report card shows how
+            [Student First Name] has done over the last few classes
+            and areas for growth and improvement.
+          </p>
+        </ReportCard>
+        <FlexContainer id="right">
+          <Grade>
+            <h2>A</h2>
+            <h2>95.65</h2>
+          </Grade>
+          <div>
+            <Selector>
+              <option>Select Instructor</option>
+            </Selector>
+            <Selector>
+              <option>Current Report</option>
+            </Selector>
+          </div>
+        </FlexContainer>
+        <h2>Student ID: Bright_Sparks_001</h2>
+      </UpperPart>
+      <LowerPart>
+        <Statistics>
+          <Stat>
+            <h2>17</h2>
+            <Info>Classes Done</Info>
+          </Stat>
+          <Stat>
+            <h2>15</h2>
+            <Info>Homework Completed</Info>
+          </Stat>
+          <Stat>
+            <h2>12</h2>
+            <Info>Quizzes Taken</Info>
+          </Stat>
+        </Statistics>
+        <Comment>
+          <TeacherH>Teacher Overall Comment</TeacherH>
+          <p>
+            [Student Name]'s patient approach to
+            learning is highly commendable. He carefully grasps concepts.
+            There is room for further growth in actively incorporating
+            it into his learning process.
+          </p>
+        </Comment>
+      </LowerPart>
     </>
   );
 };

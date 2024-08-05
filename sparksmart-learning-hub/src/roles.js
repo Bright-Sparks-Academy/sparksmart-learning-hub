@@ -1,7 +1,7 @@
 const roles = {
   members: ["dannywchen1@gmail.com", "member2@example.com"],
   students: ["dannywchen3@gmail.com", "student2@example.com", "tomwang04312@gmail.com"],
-  teachers: ["dragosmasterz03@gmail.com", "teacher2@example.com"],
+  teachers: ["dragosmasterz03@gmail.com", "teacher2@example.com", "tomwang22@yahoo.com"],
   admins: ["admin1@example.com", "admin2@example.com"]
 };
 
