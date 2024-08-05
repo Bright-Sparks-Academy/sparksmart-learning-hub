@@ -302,7 +302,27 @@ app.put('/api/grades/:id', async (req, res) => {
   }
 });
 
- 
+// Endpoint to post new recordings
+app.post('/api/recordings', async (req, res) => {
+  const { title, date, url } = req.body;
+  try {
+    const docRef = await addDoc(collection(db, 'recordings'), { title, date, url });
+    res.json({ success: true, id: docRef.id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add recording' });
+  }
+});
+
+// Endpoint to fetch recordings data
+app.get('/api/recordings', async (req, res) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'recordings'));
+    const recordings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(recordings);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch recordings data' });
+  }
+});
 
 
 /**
