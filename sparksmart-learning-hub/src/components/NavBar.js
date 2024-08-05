@@ -7,7 +7,7 @@ import { auth } from '../firebaseConfig.js';
 const NavBarContainer = styled.nav`
   position: fixed;
   top: 0;
-  width: 100%;
+  width: 98%;
   background-color: #fff;
   color: #FFD900;
   display: flex;
@@ -66,9 +66,11 @@ const DropdownItem = styled(Link)`
 `;
 
 const LoginButton = styled(Link)`
+  display: flex;
+  align-items: center;
   background-color: #FFD900;
   color: #000;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
   border-radius: 5px;
   text-decoration: none;
   font-weight: bold;
