@@ -26,6 +26,73 @@ app.use(cors({
   credentials: true, // Allow cookies to be sent with requests
 }));
 
+//admin endpoints 
+// Endpoint to fetch admin info
+app.get('/api/admin-info', async (req, res) => {
+  try {
+    const adminInfo = {
+      name: 'Admin Name',
+      role: 'Administrator',
+      // Add more admin info as needed
+    };
+    res.json(adminInfo);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch admin info' });
+  }
+});
+
+// Endpoint to fetch instructors data
+app.get('/api/instructors', async (req, res) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'instructors'));
+    const instructors = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(instructors);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch instructors data' });
+  }
+});
+
+// Endpoint to fetch communication data
+app.get('/api/communication', async (req, res) => {
+  try {
+    const communicationData = {
+      adminA: 'Admin A Info',
+      adminB: 'Admin B Info',
+      // Add more communication info as needed
+    };
+    res.json(communicationData);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch communication data' });
+  }
+});
+
+// Endpoint to fetch course materials
+app.get('/api/course-materials', async (req, res) => {
+  try {
+    const courseMaterials = [
+      { id: 1, title: 'Course Material 1', description: 'Description of course material 1' },
+      // Add more course materials as needed
+    ];
+    res.json(courseMaterials);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch course materials' });
+  }
+});
+
+// Endpoint to fetch chatroom monitor data
+app.get('/api/chatroom-monitor', async (req, res) => {
+  try {
+    const chatroomMonitor = {
+      monitorA: 'Chatroom Monitor A Info',
+      monitorB: 'Chatroom Monitor B Info',
+      // Add more chatroom monitor info as needed
+    };
+    res.json(chatroomMonitor);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch chatroom monitor data' });
+  }
+});
+
 // Fetch all students' data
 app.get('/api/students', async (req, res) => {
   try {
