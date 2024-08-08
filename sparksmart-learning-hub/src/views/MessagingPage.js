@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { auth, db, storage } from '../firebaseConfig.js';
-import { collection, query, where, orderBy, onSnapshot, addDoc, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, addDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { roles, getRole } from '../roles.js';
 import LightBulbAnimation from '../components/LightBulbAnimation.js';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 
 // Styled components for the UI elements
-
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -138,15 +139,28 @@ const MessageOptions = styled.div`
 
 const MessageForm = styled.form`
   display: flex;
+  flex-direction: column;
   margin-top: 10px;
 `;
 
-const MessageInput = styled.input`
+const QuillEditorWrapper = styled.div`
   flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
+  margin-bottom: 10px;
+
+  .ql-container {
+    background-color: #FFFFFF; /* Set background color to white */
+  }
+
+  .ql-editor {
+    min-height: 100px;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
 `;
 
 const SendButton = styled.button`
@@ -157,7 +171,6 @@ const SendButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  margin-left: 10px;
 `;
 
 const FileInput = styled.input`
@@ -172,35 +185,28 @@ const FileLabel = styled.label`
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  margin-left: 10px;
 `;
 
 const MessagingPage = () => {
-  // State variables to manage the component's data
   const [user, setUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [selectedRecipient, setSelectedRecipient] = useState('');
   const [userRole, setUserRole] = useState('');
   const fileInputRef = useRef(null);
-// Effect to handle user authentication
+
   useEffect(() => {
-    // If a user is logged in, set the user and their role
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         const role = getRole(currentUser.email);
         setUserRole(role);
       } else {
-        // If no user is logged in, set user to null
         setUser(null);
       }
     });
- // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, []);
-// Effect to fetch and update messages in real-time
-// Create a query to fetch messages for the current conversation
 
   useEffect(() => {
     if (user && selectedRecipient) {
@@ -209,7 +215,6 @@ const MessagingPage = () => {
         where('participants', 'array-contains', user.email),
         orderBy('timestamp', 'asc')
       );
-   // Set up a real-time listener for messages
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const newMessages = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
@@ -219,11 +224,11 @@ const MessagingPage = () => {
 
       return () => unsubscribe();
     }
-  }, [user, selectedRecipient]);     // Clean up the listener when the component unmounts or the user/recipient changes
-  // Function to handle sending a new message
+  }, [user, selectedRecipient]);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (newMessage.trim() && user && selectedRecipient) {   // Add the new message to the Firestore database
+    if (newMessage.trim() && user && selectedRecipient) {
       await addDoc(collection(db, 'messages'), {
         text: newMessage,
         sender: user.email,
@@ -231,18 +236,18 @@ const MessagingPage = () => {
         participants: [user.email, selectedRecipient],
         timestamp: serverTimestamp(),
       });
-      setNewMessage('');     // Clear the message input after sending
+      setNewMessage('');
     }
   };
 
-  const handleFileUpload = async (e) => {  // Function to handle file uploads
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (file && user && selectedRecipient) {
-      const storageRef = ref(storage, `chat_files/${file.name}`);   // Upload the file to Firebase Storage (RN DOES NOT WORK)
+      const storageRef = ref(storage, `chat_files/${file.name}`);
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
 
-      await addDoc(collection(db, 'messages'), {  // Add a new message with the file information
+      await addDoc(collection(db, 'messages'), {
         text: `File: ${file.name}`,
         fileURL: downloadURL,
         sender: user.email,
@@ -253,13 +258,13 @@ const MessagingPage = () => {
     }
   };
 
-  const handleDeleteMessage = async (messageId) => {  // Function to handle message deletion
-    if (window.confirm('Are you sure you want to delete this message?')) {   // Delete the message from the Firestore database
+  const handleDeleteMessage = async (messageId) => {
+    if (window.confirm('Are you sure you want to delete this message?')) {
       await deleteDoc(doc(db, 'messages', messageId));
     }
   };
 
-  const getRecipientOptions = () => {   // Function to get the list of recipients based on the user's role
+  const getRecipientOptions = () => {
     if (userRole === 'teacher') {
       return roles.students;
     } else {
@@ -267,15 +272,15 @@ const MessagingPage = () => {
     }
   };
 
-  return ( // all ui base
+  return (
     <PageContainer>
       <MessagingBox>
         <LightBulbContainer>
           <LightBulbAnimation />
         </LightBulbContainer>
         <Header>
-          <Dropdown 
-            onChange={(e) => setSelectedRecipient(e.target.value)} 
+          <Dropdown
+            onChange={(e) => setSelectedRecipient(e.target.value)}
             value={selectedRecipient}
           >
             <option value="">Select Recipient</option>
@@ -294,8 +299,8 @@ const MessagingPage = () => {
               {messages.map((msg) => (
                 <MessageContainer key={msg.id} isCurrentUser={msg.sender === user?.email}>
                   <MessageBubble isCurrentUser={msg.sender === user?.email}>
-                    <strong>{msg.sender === user?.email ? 'You' : msg.sender}:</strong> 
-                    {msg.text}
+                    <strong>{msg.sender === user?.email ? 'You' : msg.sender}:</strong>
+                    <div dangerouslySetInnerHTML={{ __html: msg.text }} />
                     {msg.fileURL && <a href={msg.fileURL} target="_blank" rel="noopener noreferrer">View File</a>}
                     {msg.sender === user?.email && (
                       <MessageOptions onClick={() => handleDeleteMessage(msg.id)}>...</MessageOptions>
@@ -305,14 +310,23 @@ const MessagingPage = () => {
               ))}
             </ConversationArea>
             <MessageForm onSubmit={handleSendMessage}>
-              <MessageInput
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message..."
-              />
-              <SendButton type="submit">Send</SendButton>
-              <FileLabel htmlFor="file-upload">Upload File</FileLabel>
+              <QuillEditorWrapper>
+                <ReactQuill
+                  value={newMessage}
+                  onChange={setNewMessage}
+                  placeholder="Type your message..."
+                  modules={{
+                    toolbar: [
+                      ['bold', 'italic'], // Add bold and italic options
+                    ]
+                  }}
+                  formats={['bold', 'italic']}
+                />
+              </QuillEditorWrapper>
+              <ButtonContainer>
+                <FileLabel htmlFor="file-upload">Upload File</FileLabel>
+                <SendButton type="submit">Send</SendButton>
+              </ButtonContainer>
               <FileInput
                 id="file-upload"
                 type="file"
