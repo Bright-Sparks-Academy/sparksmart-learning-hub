@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 const styles = {
   pageContainer: {
@@ -27,82 +28,93 @@ const styles = {
     top: '50px',
     left: '30px'
   },
-  accountInfo: {
+  teacherInfo: {
     position: 'absolute',
-    top: '275px',
-    left: '6px',
+    top: '80px',
+    left: '15px',
     backgroundColor: '#F7D703',
-    width: '315px',
-    height: '254px',
-    borderRadius: '25px',
+    width: '250px',
+    height: '120px',
+    borderRadius: '15px',
     paddingTop: '5px',
     boxSizing: 'border-box'
   },
-  accountInfoDetails: {
+  teacherInfoDetails: {
     margin: '0',
     padding: '2px 35px',
-    paddingLeft: '70px',
-    fontSize: '10px'
+    paddingLeft: '70px'
   },
-  editInfoBtn: {
-    backgroundColor: '#D9D9D9',
+  teacherViewBtn: {
+    backgroundColor: 'black',
     borderRadius: '15px',
-    width: '123px',
-    height: '32px',
+    width: '50px',
+    height: '20px',
     position: 'absolute',
-    top: '197px',
-    left: '14px',
+    top: '95px',
+    left: '190px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
   },
-  editInfoText: {
-    color: 'black',
-    textAlign: 'center',
-    fontSize: '12px'
-  },
-  deleteAccountBtn: {
-    backgroundColor: '#ff0000',
-    borderRadius: '15px',
-    width: '159px',
-    height: '32px',
-    position: 'absolute',
-    top: '197px',
-    left: '142px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  deleteAccountText: {
+  teacherViewText: {
     color: 'white',
     textAlign: 'center',
     fontSize: '12px'
   }
 };
 
-const TeacherDashboard = () => (
+const TeacherDashboardOld = () => (
   <div style={styles.pageContainer}>
     <h1 style={styles.heading}>Teacher Dashboard</h1>
     <p>Welcome to the teacher dashboard.</p>
     <div style={styles.header}>Teacher Dashboard</div>
     <div style={styles.subheader}>Teacher Name's Profile</div>
-    <div style={styles.accountInfo}>
-      <div style={styles.accountInfoDetails}>Teacher Name</div>
-      <div style={styles.accountInfoDetails}>Class: Java</div>
-      <div style={styles.accountInfoDetails}>Last Joined: 5/24/24</div>
-      <div style={styles.accountInfoDetails}>Email: example@site.com</div>
-
-      <div style={styles.editInfoBtn}>
-        <div style={styles.editInfoText}>Edit Info</div>
-      </div>
-
-      <div style={styles.deleteAccountBtn}>
-        <div style={styles.deleteAccountText}>Delete Account</div>
+    <div style={styles.teacherInfo}>
+      <div style={styles.teacherInfoDetails}>Teacher Name</div>
+      <div style={styles.teacherInfoDetails}>User ID</div>
+      <div style={styles.teacherInfoDetails}>Class: Java</div>
+      <div style={styles.teacherInfoDetails}>Last Joined: 5/24/24</div>
+      <div style={styles.teacherInfoDetails}>Email: example@site.com</div>
+      <div style={styles.teacherViewBtn}>
+        <div style={styles.teacherViewText}>View</div>
       </div>
   </div>
 
-  
+  <div style={styles.courseInfo}>
+    <div style={styles.courseInfoWhite}>
+
+      <div style={styles.lesson1}>
+        <p style={styles.lessonText}>Lesson 1</p>
+      </div>
+
+      <div style={styles.lesson2}>
+        <p style={styles.lessonText}>Lesson 2</p>
+      </div>
+
+      <div style={styles.lesson3}>
+        <p style={styles.lessonText}>Lesson 3</p>
+      </div>
+
+      <div style={styles.lesson4}>
+        <p style={styles.lessonText}>Lesson 4</p>
+      </div>
+
+      <div style={styles.lesson5}>
+        <p style={styles.lessonText}>Lesson 5</p>
+      </div>
+      
+      <div style={styles.lesson6}>
+        <p style={styles.lessonText}>Lesson 6</p>
+      </div>
+
+      <div style={styles.lesson7}>
+        <p style={styles.lessonText}>Lesson 7</p>
+      </div>
+
+      
+    </div>
+  </div>
   </div>
 );
 
-export default TeacherDashboard;
+export default TeacherDashboardOld;
