@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Todolist from './Todolist.js';
+import Todolist from '../views/Todolist.js';
 import axios from 'axios';
 
 // Author: John Nguyen 
