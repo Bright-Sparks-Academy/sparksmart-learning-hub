@@ -9,7 +9,9 @@
     "jspdf": "^2.5.1",
     "marked": "^13.0.2",
     "openai": "^4.52.7",
-    "react-helmet": "^6.1.0"
+    "quill": "^2.0.2",
+    "react-helmet": "^6.1.0",
+    "react-quill": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^5.1.1",
