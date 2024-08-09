@@ -203,6 +203,118 @@ const styles = {
     color: 'black',
     textAlign: 'center',
     fontSize: '20px'
+  },
+  messages: {
+    position: 'absolute',
+    top: '536px',
+    left: '6px',
+    backgroundColor: '#FFD900',
+    width: '315px',
+    height: '328px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    boxSizing: 'border-box'
+  },
+  messages1: {
+    position: 'absolute',
+    top: '50px',
+    left: '22px',
+    backgroundColor: '#D9D9D9',
+    width: '282px',
+    height: '123px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    boxSizing: 'border-box'
+  },
+  messages2: {
+    position: 'absolute',
+    top: '182px',
+    left: '22px',
+    backgroundColor: '#D9D9D9',
+    width: '282px',
+    height: '123px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    boxSizing: 'border-box'
+  },
+  numMessages: {
+    position: 'absolute',
+    top: '9px',
+    left: '25.24px',
+    width: '32px',
+    height: '50px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '40px'
+  },
+  newMessages: {
+    position: 'absolute',
+    top: '61px',
+    left: '-0.18px',
+    width: '76px',
+    height: '40px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '16px'
+  },
+  messagesdetails: {
+    margin: '0',
+    padding: '2px 35px',
+    paddingLeft: '70px',
+    fontSize: '18px'
+  },
+  viewMessagesBtn: {
+    backgroundColor: '#000000',
+    borderRadius: '15px',
+    width: '144px',
+    height: '25px',
+    position: 'absolute',
+    top: '3px',
+    left: '6.41px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  viewMessagesText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  reportProblem: {
+    backgroundColor: '#FF0000',
+    borderRadius: '25px',
+    width: '315px',
+    height: '35px',
+    position: 'absolute',
+    top: '874px',
+    left: '6px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  reportProblemText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  options: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: '25px',
+    width: '315px',
+    height: '35px',
+    position: 'absolute',
+    top: '914px',
+    left: '6px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  optionsText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: '20px'
   }
 };
 
@@ -274,6 +386,38 @@ const TeacherDashboard = () => (
 
     </div>
 
+  </div>
+
+  <div style={styles.messages}>
+    <div style={styles.messages1}>
+      <div style={styles.numMessages}>11</div>
+      <div style={styles.newMessages}>New Messages</div>
+      <div style={styles.messagesdetails}>Class: Java</div>
+      <div style={styles.messagesdetails}>Student: Student A</div>
+
+      <div style={styles.viewMessagesBtn}>
+        <div style={styles.viewMessagesText}>View Messages</div>
+      </div>
+    </div>
+
+    <div style={styles.messages2}>
+      <div style={styles.numMessages}>8</div>
+      <div style={styles.newMessages}>New Messages</div>
+      <div style={styles.messagesdetails}>Class: Java</div>
+      <div style={styles.messagesdetails}>Student: Student B</div>
+
+      <div style={styles.viewMessagesBtn}>
+        <div style={styles.viewMessagesText}>View Messages</div>
+      </div>
+    </div>
+  </div>
+
+  <div style={styles.reportProblem}>
+    <div style={styles.reportProblemText}>Report a problem</div>
+  </div>
+
+  <div style={styles.options}>
+    <div style={styles.optionsText}>Options</div>
   </div>
 
   
