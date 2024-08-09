@@ -78,6 +78,41 @@ const TeacherDashboard = () => (
         <div style={styles.teacherViewText}>View</div>
       </div>
   </div>
+
+  <div style={styles.courseInfo}>
+    <div style={styles.courseInfoWhite}>
+
+      <div style={styles.lesson1}>
+        <p style={styles.lessonText}>Lesson 1</p>
+      </div>
+
+      <div style={styles.lesson2}>
+        <p style={styles.lessonText}>Lesson 2</p>
+      </div>
+
+      <div style={styles.lesson3}>
+        <p style={styles.lessonText}>Lesson 3</p>
+      </div>
+
+      <div style={styles.lesson4}>
+        <p style={styles.lessonText}>Lesson 4</p>
+      </div>
+
+      <div style={styles.lesson5}>
+        <p style={styles.lessonText}>Lesson 5</p>
+      </div>
+      
+      <div style={styles.lesson6}>
+        <p style={styles.lessonText}>Lesson 6</p>
+      </div>
+
+      <div style={styles.lesson7}>
+        <p style={styles.lessonText}>Lesson 7</p>
+      </div>
+
+      
+    </div>
+  </div>
   </div>
 );
 
