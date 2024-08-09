@@ -45,7 +45,7 @@ const styles = {
     margin: '0',
     padding: '2px 35px',
     paddingLeft: '70px',
-    fontSize: '10px'
+    fontSize: '20px'
   },
   editInfoBtn: {
     backgroundColor: '#D9D9D9',
@@ -62,7 +62,7 @@ const styles = {
   editInfoText: {
     color: 'black',
     textAlign: 'center',
-    fontSize: '12px'
+    fontSize: '20px'
   },
   deleteAccountBtn: {
     backgroundColor: '#ff0000',
@@ -79,7 +79,7 @@ const styles = {
   deleteAccountText: {
     color: 'white',
     textAlign: 'center',
-    fontSize: '12px'
+    fontSize: '20px'
   },
   classSchedule: {
     position: 'absolute',
@@ -151,7 +151,7 @@ const styles = {
     margin: '0',
     padding: '2px 35px',
     paddingLeft: '70px',
-    fontSize: '8px'
+    fontSize: '20px'
   },
   scheduleMeetingBtn: {
     backgroundColor: '#16A10A',
@@ -268,11 +268,11 @@ const styles = {
   viewMessagesBtn: {
     backgroundColor: '#000000',
     borderRadius: '15px',
-    width: '144px',
-    height: '25px',
+    width: '157.95px',
+    height: '31px',
     position: 'absolute',
-    top: '3px',
-    left: '6.41px',
+    top: '85px',
+    left: '82.94px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
@@ -321,7 +321,7 @@ const styles = {
     top: '275px',
     left: '689px',
     backgroundColor: '#F7D703',
-    width: '409',
+    width: '409px',
     height: '674px',
     borderRadius: '25px',
     paddingTop: '5px',
@@ -497,10 +497,63 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center'
   },
-  postHistoryBtn: {
+  postHistoryText: {
     color: 'white',
     textAlign: 'center',
     fontSize: '20px'
+  },
+  preferences: {
+    position: 'absolute',
+    top: '275px',
+    left: '1106px',
+    backgroundColor: '#F7D703',
+    width: '400px',
+    height: '674px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    boxSizing: 'border-box'
+  },
+  languageBtn: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: '25px',
+    width: '187px',
+    height: '32px',
+    position: 'absolute',
+    top: '57px',
+    left: '203px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  languageText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  restoreDefaultsBtn: {
+    backgroundColor: '#FF0000',
+    borderRadius: '25px',
+    width: '255px',
+    height: '38px',
+    position: 'absolute',
+    top: '535px',
+    left: '65px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  languageText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  preferencesItem: {
+    margin: '0',
+    padding: '2px 35px',
+    paddingLeft: '70px',
+    fontSize: '20px',
+    top: '60px',
+    left: '20px'
   }
 };
 
@@ -614,39 +667,61 @@ const TeacherDashboard = () => (
       <div style={styles.leaveRequestText}>Request to Leave</div>
     </div>
 
-  <div style={styles.changeRequest}>
-    <div style={styles.changeRequestText}>Request a Change</div>
-  </div>
-
-  <div style={styles.courseOptionsStudent}>Student Options:</div>
-
-  <div style={styles.gradebookBtn}>
-    <div style={styles.gradebookText}>View Student Gradebook</div>
-  </div>
-
-  <div style={styles.studentPostHistoryBtn}>
-    <div style={styles.studentPostHistoryText}>View Student Post History</div>
-  </div>
-
-  <div style={styles.reportedStudentsBtn}>
-      <div style={styles.reportedStudentsText}>View Status on Reported Students</div>
+    <div style={styles.changeRequest}>
+      <div style={styles.changeRequestText}>Request a Change</div>
     </div>
 
-  <div style={styles.adminBtn}>
-    <div style={styles.adminText}>Contact Administrator</div>
+    <div style={styles.courseOptionsStudent}>Student Options:</div>
+
+    <div style={styles.gradebookBtn}>
+      <div style={styles.gradebookText}>View Student Gradebook</div>
+    </div>
+
+    <div style={styles.studentPostHistoryBtn}>
+      <div style={styles.studentPostHistoryText}>View Student Post History</div>
+    </div>
+
+    <div style={styles.reportedStudentsBtn}>
+        <div style={styles.reportedStudentsText}>View Status on Reported Students</div>
+      </div>
+
+    <div style={styles.adminBtn}>
+      <div style={styles.adminText}>Contact Administrator</div>
+    </div>
+
+    <div style={styles.courseMaterialsBtn}>
+      <div style={styles.courseMaterialsText}>View Course Materials</div>
+    </div>
+
+    <div style={styles.rulesBtn}>
+      <div style={styles.rulesText}>View Rules and Agreements</div>
+    </div>
+
+    <div style={styles.postHistoryBtn}>
+        <div style={styles.postHistoryText}>View Post History</div>
+    </div>
+
   </div>
 
-  <div style={styles.courseMaterialsBtn}>
-    <div style={styles.courseMaterialsText}>View Course Materials</div>
-  </div>
+  <div style = {styles.preferences}>
 
-  <div style={styles.rulesBtn}>
-    <div style={styles.rulesText}>View Rules and Agreements</div>
-  </div>
+    <div style={styles.preferencesItem}>Language: English</div>
+    <div style={styles.preferencesItem}>Allow Notifications</div>
+    <div style={styles.preferencesItem}>Dark Mode</div>
+    <div style={styles.preferencesItem}>Allow 2FA</div>
+    <div style={styles.preferencesItem}>Allow Contact via SMS</div>
+    <div style={styles.preferencesItem}>Brightness:</div>
+    <div style={styles.preferencesItem}>Text Size:</div>
+    <div style={styles.preferencesItem}>Mic Volume:</div>
+    <div style={styles.preferencesItem}>Speaker Volume:</div>
 
-  <div style={styles.postHistoryBtn}>
-      <div style={styles.postHistoryText}>View Post History</div>
-  </div>
+    <div style={styles.languageBtn}>
+        <div style={styles.languageText}>View Post History</div>
+    </div>
+
+    <div style={styles.restoreDefaultsBtn}>
+        <div style={styles.restoreDefaultsText}>View Post History</div>
+    </div>
 
   </div>
 
