@@ -315,6 +315,192 @@ const styles = {
     color: 'black',
     textAlign: 'center',
     fontSize: '20px'
+  },
+  courseOptions: {
+    position: 'absolute',
+    top: '275px',
+    left: '689px',
+    backgroundColor: '#F7D703',
+    width: '409',
+    height: '674px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    boxSizing: 'border-box'
+  },
+  courseOptionsClass: {
+    position: 'absolute',
+    top: '64px',
+    left: '34px',
+    width: '120px',
+    height: '25px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '20px'
+  },
+  leaveRequest: {
+    backgroundColor: '#FF0000',
+    borderRadius: '25px',
+    width: '209px',
+    height: '27px',
+    position: 'absolute',
+    top: '105px',
+    left: '100px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  leaveRequestText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  changeRequest: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: '25px',
+    width: '209px',
+    height: '27px',
+    position: 'absolute',
+    top: '143px',
+    left: '100px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  changeRequestText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  courseOptionsStudent: {
+    position: 'absolute',
+    top: '225px',
+    left: '34px',
+    width: '159px',
+    height: '25px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '20px'
+  },
+  gradebookBtn: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: '25px',
+    width: '347px',
+    height: '30px',
+    position: 'absolute',
+    top: '261px',
+    left: '31px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  gradebookText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  studentPostHistoryBtn: {
+    backgroundColor: '#000000',
+    borderRadius: '25px',
+    width: '347px',
+    height: '30px',
+    position: 'absolute',
+    top: '298px',
+    left: '31px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  studentPostHistoryText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  reportedStudentsBtn: {
+    backgroundColor: '#FF0000',
+    borderRadius: '25px',
+    width: '347px',
+    height: '30px',
+    position: 'absolute',
+    top: '335px',
+    left: '31px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  reportedStudentsText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  adminBtn: {
+    backgroundColor: '#FFFFB0',
+    borderRadius: '25px',
+    width: '347px',
+    height: '30px',
+    position: 'absolute',
+    top: '437px',
+    left: '31px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  adminText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  courseMaterialsBtn: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: '25px',
+    width: '347px',
+    height: '30px',
+    position: 'absolute',
+    top: '477px',
+    left: '31px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  courseMaterialsText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  rulesBtn: {
+    backgroundColor: '#D9D9D9',
+    borderRadius: '25px',
+    width: '347px',
+    height: '30px',
+    position: 'absolute',
+    top: '517px',
+    left: '31px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  rulesText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: '20px'
+  },
+  postHistoryBtn: {
+    backgroundColor: '#000000',
+    borderRadius: '25px',
+    width: '347px',
+    height: '30px',
+    position: 'absolute',
+    top: '557px',
+    left: '31px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  postHistoryBtn: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '20px'
   }
 };
 
@@ -418,6 +604,50 @@ const TeacherDashboard = () => (
 
   <div style={styles.options}>
     <div style={styles.optionsText}>Options</div>
+  </div>
+
+  <div style={styles.courseOptions}>
+
+    <div style={styles.courseOptionsClass}>Class: Java 1</div>
+
+    <div style={styles.leaveRequest}>
+      <div style={styles.leaveRequestText}>Request to Leave</div>
+    </div>
+
+  <div style={styles.changeRequest}>
+    <div style={styles.changeRequestText}>Request a Change</div>
+  </div>
+
+  <div style={styles.courseOptionsStudent}>Student Options:</div>
+
+  <div style={styles.gradebookBtn}>
+    <div style={styles.gradebookText}>View Student Gradebook</div>
+  </div>
+
+  <div style={styles.studentPostHistoryBtn}>
+    <div style={styles.studentPostHistoryText}>View Student Post History</div>
+  </div>
+
+  <div style={styles.reportedStudentsBtn}>
+      <div style={styles.reportedStudentsText}>View Status on Reported Students</div>
+    </div>
+
+  <div style={styles.adminBtn}>
+    <div style={styles.adminText}>Contact Administrator</div>
+  </div>
+
+  <div style={styles.courseMaterialsBtn}>
+    <div style={styles.courseMaterialsText}>View Course Materials</div>
+  </div>
+
+  <div style={styles.rulesBtn}>
+    <div style={styles.rulesText}>View Rules and Agreements</div>
+  </div>
+
+  <div style={styles.postHistoryBtn}>
+      <div style={styles.postHistoryText}>View Post History</div>
+  </div>
+
   </div>
 
   
