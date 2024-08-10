@@ -2,7 +2,6 @@
 
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { lineBreak } from 'html2canvas/dist/types/css/property-descriptors/line-break';
 
 const styles = {
   pageContainer: {
