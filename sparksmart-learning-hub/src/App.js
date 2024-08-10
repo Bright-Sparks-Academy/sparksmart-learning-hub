@@ -15,6 +15,9 @@ import MessagingPage from './views/MessagingPage.js';
 // import AddQuestionPage from './views/AddQuestionPage.js';
 // import ProgressTrackingPage from './views/ProgressTrackingPage.js';
 // import Mastery from './views/AiLearningPlan.js';
+import StudentLogin from './views/StudentLogin.js';
+import TeacherLogin from './views/TeacherLogin.js';
+import AdminLogin from './views/AdminLogin.js';
 import SchedulingPage from './views/SchedulingPage.js'; // Import the new SchedulingPage
 import { auth } from './firebaseConfig.js';
 import { getRole } from './roles.js';
@@ -61,6 +64,9 @@ const App = () => {
             <NavBar user={user} />
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/student-login" element={user ? <Navigate to="/student/dashboard" /> : <StudentLogin />} />
+              <Route path="/teacher-login" element={user ? <Navigate to="/teacher/dashboard" /> : <TeacherLogin />} />
+              <Route path="/admin-login" element={user ? <Navigate to="/admin/dashboard" /> : <AdminLogin />} />
               <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
               <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
               <Route path="/admin/dashboard" element={<PrivateRoute>{role === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
