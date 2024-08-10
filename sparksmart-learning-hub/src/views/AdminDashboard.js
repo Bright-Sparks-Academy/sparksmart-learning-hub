@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
+import axios from "axios";
 
 const styles = {
   pageContainer: {
@@ -707,74 +708,161 @@ const styles = {
   }
 };
 
-const AdminDashboard = () => (
-  <div style={styles.pageContainer}>
-    <h1 style={styles.heading}>Admin Dashboard</h1>
-    <p>Welcome to the admin dashboard.</p>
-    <div style={styles.header}>Admin Dashboard</div>
-    <div style={styles.subheader}>Subheader</div>
-    <div style={styles.adminInfo}>
-      <div style={styles.adminInfoDetails}>Admin Info</div>
-      <div style={styles.adminViewBtn}>
-        <div style={styles.adminViewText}>View</div>
+
+const AdminDashboard = () => {
+  //Storage of response information
+  const [adminInfo, setAdminInfo] = useState(null);
+  const [instructorData, setInstructorData] = useState(null);
+  const [courseMaterialData, setCourseMaterialData] = useState(null);
+  const [chatroomMonitorData, setChatroomMonitorData] = useState(null);
+  //State of opening admin info using the button.
+  const [isAdminInfoOpened, setIsAdminInfoOpened] = useState(false);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [adminInfoResponse, courseMaterialDataResponse, instructorDataResponse, chatroomMonitorDataResponse] = await Promise.all([
+          axios.get("http://localhost:3000/api/admin-info"),
+          axios.get("http://localhost:3000/api/course-materials"),
+          axios.get("http://localhost:3000/api/instructors"),
+          axios.get("http://localhost:3000/api/chatroom-monitor"),
+        ]);
+  
+        setAdminInfo(adminInfoResponse.data);
+        setCourseMaterialData(courseMaterialDataResponse.data);
+        setInstructorData(instructorDataResponse.data);
+        setChatroomMonitorData(chatroomMonitorDataResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError(error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+
+  const displayAdminInfo = () => {
+    setIsAdminInfoOpened(!isAdminInfoOpened);
+  };
+
+  //const instructorDataEntries = Object.entries(instructorData);
+  //const instructorADataEntries = Object.entries(instructorDataEntries[0]);
+  //const instructorBDataEntries = Object.entries(instructorDataEntries[1]);
+  //const courseMaterialDataEntries = Object.entries(courseMaterialData);
+  //const chatroomMonitorDataEntries = Object.entries(chatroomMonitorData);
+  
+  return (
+    <>
+    <div style={styles.pageContainer}>
+      <h1 style={styles.heading}>Admin Dashboard</h1>
+      <p>Welcome to the admin dashboard.</p>
+      <div style={styles.header}>Admin Dashboard</div>
+      <div style={styles.subheader}>Subheader</div>
+      <div style={styles.adminInfo}>
+        <div style={styles.adminInfoDetails}>Admin Info</div>
+        <div>{isAdminInfoOpened && (
+            <>
+              <ul>
+                <li>Name: {adminInfo.name}</li>
+                <li>Role: {adminInfo.role}</li>
+                <li>Email: {adminInfo.email}</li>
+              </ul>
+            </>
+          )}</div>
+        <div style={styles.adminViewBtn} onClick = {displayAdminInfo}>
+          <div style={styles.adminViewText}>{isAdminInfoOpened ? "Close" : "View" }</div>
+        </div>
+      </div>
+      <div style={styles.managedInstructors}>
+        <div style={styles.managedInstructorsText}>Managed Instructors</div>
+        <div style={styles.instructorA}>
+          <div style={styles.instructor1}>Instructor A</div>
+           {
+            <ul>
+              {/*instructorADataEntries.map(([key, value]) => (
+                <li key={key}>{key}: {value}</li>
+              ))*/}
+            </ul>
+          } 
+        </div>
+        <div style={styles.instructorB}>
+          <div style={styles.instructor2}>Instructor B</div>
+          {
+            <ul>
+              {/*instructorBDataEntries.map(([key, value]) => (
+                <li key={key}>{key}: {value}</li>
+              ))*/}
+            </ul>
+          } 
+        </div>
+      </div>
+      <div style={styles.communication}>
+        <div style={styles.communicationText}>Communication</div>
+        <div style={styles.adminA}>Admin A</div>
+        <div style={styles.adminB}>Admin B</div>
+        <div style={styles.communicationViewBtn}>
+          <div style={styles.communicationViewText}>View</div>
+        </div>
+      </div>
+      <div style={styles.courseMaterials}>
+        <div style={styles.courseMaterialsText}>Course Materials</div>
+        <div style={styles.courseMaterialsWhite}>
+          <div style={styles.lessonRecordings}>
+            <div style={styles.lessonRecordingsText}>Lesson Recordings</div>
+            {
+            <ul>
+              {/*courseMaterialDataEntries.map(courseMaterial => {
+                cMdataEntries = Object.entries(courseMaterial);
+                cMdataEntries.map(([key, value]) => (<>
+                  <li key={key}>{key}: {value}</li>
+                </>));
+              })*/}
+            </ul>
+            } 
+          </div>
+          <div style={styles.publishedAssignments}>
+            <div style={styles.publishedAssignmentsText}>Published Assignments</div>
+          </div>
+        </div>
+      </div>
+      <div style={styles.managedStudents}>
+        <div style={styles.managedStudentsText}>Managed Students</div>
+        <div style={styles.studentA}>
+          <div style={styles.student1}>Student A</div>
+        </div>
+        <div style={styles.studentB}>
+          <div style={styles.student2}>Student B</div>
+        </div>
+      </div>
+      <div style={styles.chatroomMonitor}>
+        <div style={styles.chatroomMonitorText}>Chatroom Monitor</div>
+        <div style={styles.chatroomMonitorWhite}>
+          <div style={styles.selectInstructorChatroom}>
+            <div style={styles.selectInstructorChatroomText}>Select Instructor</div>
+          </div>
+          <div style={styles.chatroomStudentA}>
+            <div style={styles.student1Chat}>Student A</div>
+            <div>
+              <ul>
+                {/*chatroomMonitorDataEntries.map(([key, value]) => (
+                  <li key={key}>{key}: {value}</li>
+                ))*/}
+              </ul>
+            </div>
+          </div>
+          <div style={styles.chatroomViewButton}>
+            <div style={styles.chatroomViewButtonText}>View</div>
+          </div>
+          <div style={styles.chatroomReportButton}>
+            <div style={styles.chatroomReportButtonText}>Report</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div style={styles.managedInstructors}>
-      <div style={styles.managedInstructorsText}>Managed Instructors</div>
-      <div style={styles.instructorA}>
-        <div style={styles.instructor1}>Instructor A</div>
-      </div>
-      <div style={styles.instructorB}>
-        <div style={styles.instructor2}>Instructor B</div>
-      </div>
-    </div>
-    <div style={styles.communication}>
-      <div style={styles.communicationText}>Communication</div>
-      <div style={styles.adminA}>Admin A</div>
-      <div style={styles.adminB}>Admin B</div>
-      <div style={styles.communicationViewBtn}>
-        <div style={styles.communicationViewText}>View</div>
-      </div>
-    </div>
-    <div style={styles.courseMaterials}>
-      <div style={styles.courseMaterialsText}>Course Materials</div>
-      <div style={styles.courseMaterialsWhite}>
-        <div style={styles.lessonRecordings}>
-          <div style={styles.lessonRecordingsText}>Lesson Recordings</div>
-        </div>
-        <div style={styles.publishedAssignments}>
-          <div style={styles.publishedAssignmentsText}>Published Assignments</div>
-        </div>
-      </div>
-    </div>
-    <div style={styles.managedStudents}>
-      <div style={styles.managedStudentsText}>Managed Students</div>
-      <div style={styles.studentA}>
-        <div style={styles.student1}>Student A</div>
-      </div>
-      <div style={styles.studentB}>
-        <div style={styles.student2}>Student B</div>
-      </div>
-    </div>
-    <div style={styles.chatroomMonitor}>
-      <div style={styles.chatroomMonitorText}>Chatroom Monitor</div>
-      <div style={styles.chatroomMonitorWhite}>
-        <div style={styles.selectInstructorChatroom}>
-          <div style={styles.selectInstructorChatroomText}>Select Instructor</div>
-        </div>
-        <div style={styles.chatroomStudentA}>
-          <div style={styles.student1Chat}>Student A</div>
-        </div>
-        <div style={styles.chatroomViewButton}>
-          <div style={styles.chatroomViewButtonText}>View</div>
-        </div>
-        <div style={styles.chatroomReportButton}>
-          <div style={styles.chatroomReportButtonText}>Report</div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+    </>
+  );
+}
 
 ReactDOM.render(<AdminDashboard />, document.getElementById('root'));
 

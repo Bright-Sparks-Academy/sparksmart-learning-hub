@@ -31,9 +31,9 @@ app.use(cors({
 app.get('/api/admin-info', async (req, res) => {
   try {
     const adminInfo = {
-      name: 'Admin Name',
-      role: 'Administrator',
-      // Add more admin info as needed
+      name: 'Nikhil Munagala',
+      role: 'Admin',
+      email: 'nikhilsaimunagala@gmail.com'
     };
     res.json(adminInfo);
   } catch (error) {
@@ -44,25 +44,21 @@ app.get('/api/admin-info', async (req, res) => {
 // Endpoint to fetch instructors data
 app.get('/api/instructors', async (req, res) => {
   try {
-    const querySnapshot = await getDocs(collection(db, 'instructors'));
-    const instructors = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const instructors = [
+      {
+        name: "Instructor A",
+        subject: "Math",
+        gradesTaught: "1,2,3"
+      },
+      {
+        name: "Instructor B",
+        subject: "English",
+        gradesTaught: "4,5,6"
+      }
+    ];    
     res.json(instructors);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch instructors data' });
-  }
-});
-
-// Endpoint to fetch communication data
-app.get('/api/communication', async (req, res) => {
-  try {
-    const communicationData = {
-      adminA: 'Admin A Info',
-      adminB: 'Admin B Info',
-      // Add more communication info as needed
-    };
-    res.json(communicationData);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch communication data' });
   }
 });
 
@@ -71,7 +67,8 @@ app.get('/api/course-materials', async (req, res) => {
   try {
     const courseMaterials = [
       { id: 1, title: 'Course Material 1', description: 'Description of course material 1' },
-      // Add more course materials as needed
+      { id: 2, title: 'Course Material 2', description: 'Description of course material 2' },
+      { id: 3, title: 'Course Material 3', description: 'Description of course material 3' }
     ];
     res.json(courseMaterials);
   } catch (error) {
@@ -85,7 +82,8 @@ app.get('/api/chatroom-monitor', async (req, res) => {
     const chatroomMonitor = {
       monitorA: 'Chatroom Monitor A Info',
       monitorB: 'Chatroom Monitor B Info',
-      // Add more chatroom monitor info as needed
+      monitorC: 'Chatroom Monitor C Info',
+      monitorD: 'Chatroom Monitor D Info'
     };
     res.json(chatroomMonitor);
   } catch (error) {
