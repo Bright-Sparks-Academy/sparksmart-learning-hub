@@ -1,5 +1,3 @@
-// /Users/tom/Documents/GitHub/sparksmart-learning-hub/sparksmart-learning-hub/src/views/Profile.js
-
 import React, { useState, useRef, useEffect, useContext } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import userIcon from "../assets/user.png";
@@ -213,13 +211,12 @@ const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const [fullName, setFullName] = useState("");
   const [bio, setBio] = useState("");
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null); // Reference to file input
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       setFullName(user.displayName || "");
-      //Figure out a way to set username.
     }
   }, [user]);
 
@@ -227,18 +224,16 @@ const Profile = () => {
     return array.filter(item => item !== stringToRemove);
   }
 
-  //Function that deletes the email in the associated role and logouts permanently.
   const deleteAccount = () => {
     const role = getRole(user.email);
-    if (role == "member") roles.members = removeEmail(roles.members, user.email);
-    if (role == "admin") roles.admins = removeEmail(roles.admins, user.email);
-    if (role == "teacher") roles.teachers = removeEmail(roles.teachers, user.email);
-    else {
-      if (roles.students.includes(user.email)) roles.students = removeEmail(roles.students, user.email);
+    if (role === "member") roles.members = removeEmail(roles.members, user.email);
+    if (role === "admin") roles.admins = removeEmail(roles.admins, user.email);
+    if (role === "teacher") roles.teachers = removeEmail(roles.teachers, user.email);
+    else if (roles.students.includes(user.email)) {
+      roles.students = removeEmail(roles.students, user.email);
     }
-    console.log(roles.students.length);
     handleLogout();
-  }
+  };
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
@@ -261,7 +256,7 @@ const Profile = () => {
       try {
         await updateProfile(user, { displayName: fullName });
         const userRef = doc(db, "users", user.uid);
-        await updateDoc(userRef, { bio: bio });
+        await updateDoc(userRef, { bio });
         setUser({ ...user, displayName: fullName });
         alert("Profile updated successfully!");
       } catch (error) {
@@ -282,13 +277,29 @@ const Profile = () => {
   };
 
   if (!user) return <div>Loading...</div>;
-  const myData = (<> <input type="text" name="name" required/> </>);
+
   return (
     <ProfileContainer>
       <SliderStyles />
       <ProfileTitle>User Profile</ProfileTitle>
-      <ProfilePicture src={userIcon} />
+      <ProfilePicture src={user.photoURL || userIcon} alt="Profile" />
       <ProfileName>{fullName}</ProfileName>
+
+      {/* Avatar Upload */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleAvatarChange}
+      />
+      <ChangeInfoButton onClick={() => fileInputRef.current.click()}>
+        Change Avatar
+      </ChangeInfoButton>
+
+      {/* Save Changes Button */}
+      <RedButton onClick={handleSave}>
+        Save Changes
+      </RedButton>
 
       <ProfileInfoContainer>
         {/* Account Management */}
@@ -306,16 +317,15 @@ const Profile = () => {
 
             <AccountSectionContainer style={{ padding: "0.6rem" }}>
               <div>Username: </div>
-              <Modal field = "Username" textField = {myData}></Modal>
-              
+              <Modal field="Username" textField={<input type="text" name="name" required />} />
             </AccountSectionContainer>
 
             <AccountSectionContainer style={{ padding: "0.6rem" }}>
               <div>Password: </div>
-              <Modal field = "Password" textField = {myData}></Modal>
+              <Modal field="Password" textField={<input type="password" name="password" required />} />
             </AccountSectionContainer>
           </SectionContent>
-          <RedButton onClick = {deleteAccount}>Delete Account</RedButton>
+          <RedButton onClick={deleteAccount}>Delete Account</RedButton>
         </ProfileItem>
 
         {/* Course Options */}
@@ -331,9 +341,7 @@ const Profile = () => {
               </SelectClassDropdown>
             </CourseSelectionContainer>
             <ButtonsContainer>
-              <CourseOptionsButton>
-                Request a Change/Addition
-              </CourseOptionsButton>
+              <CourseOptionsButton>Request a Change/Addition</CourseOptionsButton>
               <CourseOptionsButton
                 style={{
                   backgroundColor: "red",
@@ -343,9 +351,7 @@ const Profile = () => {
               >
                 Request to Remove
               </CourseOptionsButton>
-              <AccountSectionContainer
-                style={{ marginLeft: "4rem", width: "100%" }}
-              >
+              <AccountSectionContainer style={{ marginLeft: "4rem", width: "100%" }}>
                 Instructor:{" "}
               </AccountSectionContainer>
               <DoubleButtonContainer>
@@ -371,9 +377,7 @@ const Profile = () => {
               <LongCourseOptionsButton style={{ backgroundColor: "lightgray" }}>
                 View Rules and Agreements
               </LongCourseOptionsButton>
-              <LongCourseOptionsButton
-                style={{ backgroundColor: "black", color: "white" }}
-              >
+              <LongCourseOptionsButton style={{ backgroundColor: "black", color: "white" }}>
                 View Post History
               </LongCourseOptionsButton>
             </ButtonsContainer>
@@ -412,7 +416,7 @@ const Profile = () => {
             <AccountSectionContainer>
               <div>Brightness: </div>
               <SliderContainer>
-                <input class="slider" type="range" min="0" max="100" />
+                <input className="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -423,7 +427,7 @@ const Profile = () => {
             <AccountSectionContainer>
               <div>Text Size: </div>
               <SliderContainer>
-                <input class="slider" type="range" min="0" max="100" />
+                <input className="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -434,7 +438,7 @@ const Profile = () => {
             <AccountSectionContainer>
               <div>Mic Volume: </div>
               <SliderContainer>
-                <input class="slider" type="range" min="0" max="100" />
+                <input className="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -445,7 +449,7 @@ const Profile = () => {
             <AccountSectionContainer>
               <div>Speaker Volume: </div>
               <SliderContainer>
-                <input class="slider" type="range" min="0" max="100" />
+                <input className="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -455,6 +459,11 @@ const Profile = () => {
           </SectionContent>
           <RedButton
             style={{ width: "10rem", height: "2.5rem", marginLeft: "8.5rem" }}
+            onClick={() => {
+              setFullName('');
+              setBio('');
+              // Reset other preferences if needed
+            }}
           >
             Restore Defaults
           </RedButton>
@@ -470,7 +479,7 @@ const Profile = () => {
 
             <AccountSectionContainer>
               <div>Full Name: </div>
-              <ChangeInfoButton>Change Name</ChangeInfoButton>
+              <ChangeInfoButton onClick={() => setFullName('')}>Change Name</ChangeInfoButton>
             </AccountSectionContainer>
 
             <AccountSectionContainer>

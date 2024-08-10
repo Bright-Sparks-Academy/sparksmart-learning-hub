@@ -391,13 +391,14 @@ const StudentDashboard = () => {
   const [progressData, setProgressData] = useState([]);
   const [selectedInstructor, setSelectedInstructor] = useState('Instructor A'); // State for instructor filter
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [toDoListResponse, progressResponse] = await Promise.all([
-          axios.get("http://localhost:3000/api/todo-list"),
-          axios.get("http://localhost:3000/api/progress-data"),
+          axios.get("/api/todo-list"),
+          axios.get("/api/progress-data"),
         ]);
 
         setToDoList(toDoListResponse.data);
@@ -405,6 +406,8 @@ const StudentDashboard = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
         setError(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -413,6 +416,10 @@ const StudentDashboard = () => {
 
   // Filter recordings based on selected instructor
   const filteredRecordings = recordings.filter(recording => recording.instructor === selectedInstructor);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <DashboardContainer>
@@ -476,6 +483,7 @@ const StudentDashboard = () => {
         <DashboardItem style={{ gridRow: "span 2", alignItems: "center" }}>
           <SectionHeader>To-Do List</SectionHeader>
           <TodoListBody>
+            <TodoListHeader>My To-Do List</TodoListHeader> {/* This line now uses the TodoListHeader */}
             <CurrentDateContainer>
               <NavButton>{"<"}</NavButton>
               June 2024

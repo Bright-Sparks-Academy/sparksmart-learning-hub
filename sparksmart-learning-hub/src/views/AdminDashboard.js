@@ -710,14 +710,13 @@ const styles = {
 
 
 const AdminDashboard = () => {
-  //Storage of response information
   const [adminInfo, setAdminInfo] = useState(null);
   const [instructorData, setInstructorData] = useState(null);
   const [courseMaterialData, setCourseMaterialData] = useState(null);
   const [chatroomMonitorData, setChatroomMonitorData] = useState(null);
-  //State of opening admin info using the button.
   const [isAdminInfoOpened, setIsAdminInfoOpened] = useState(false);
   const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -740,63 +739,61 @@ const AdminDashboard = () => {
   
     fetchData();
   }, []);
-  
 
   const displayAdminInfo = () => {
     setIsAdminInfoOpened(!isAdminInfoOpened);
   };
 
-  //const instructorDataEntries = Object.entries(instructorData);
-  //const instructorADataEntries = Object.entries(instructorDataEntries[0]);
-  //const instructorBDataEntries = Object.entries(instructorDataEntries[1]);
-  //const courseMaterialDataEntries = Object.entries(courseMaterialData);
-  //const chatroomMonitorDataEntries = Object.entries(chatroomMonitorData);
-  
   return (
-    <>
     <div style={styles.pageContainer}>
       <h1 style={styles.heading}>Admin Dashboard</h1>
       <p>Welcome to the admin dashboard.</p>
       <div style={styles.header}>Admin Dashboard</div>
       <div style={styles.subheader}>Subheader</div>
+      
+      {/* Display error if exists */}
+      {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
+
       <div style={styles.adminInfo}>
         <div style={styles.adminInfoDetails}>Admin Info</div>
-        <div>{isAdminInfoOpened && (
-            <>
-              <ul>
-                <li>Name: {adminInfo.name}</li>
-                <li>Role: {adminInfo.role}</li>
-                <li>Email: {adminInfo.email}</li>
-              </ul>
-            </>
-          )}</div>
-        <div style={styles.adminViewBtn} onClick = {displayAdminInfo}>
+        {isAdminInfoOpened && adminInfo && (
+          <ul>
+            <li>Name: {adminInfo.name}</li>
+            <li>Role: {adminInfo.role}</li>
+            <li>Email: {adminInfo.email}</li>
+          </ul>
+        )}
+        <div style={styles.adminViewBtn} onClick={displayAdminInfo}>
           <div style={styles.adminViewText}>{isAdminInfoOpened ? "Close" : "View" }</div>
         </div>
       </div>
+
+      {/* Managed Instructors Section */}
       <div style={styles.managedInstructors}>
         <div style={styles.managedInstructorsText}>Managed Instructors</div>
         <div style={styles.instructorA}>
           <div style={styles.instructor1}>Instructor A</div>
-           {
+          {instructorData && (
             <ul>
-              {/*instructorADataEntries.map(([key, value]) => (
+              {Object.entries(instructorData[0] || {}).map(([key, value]) => (
                 <li key={key}>{key}: {value}</li>
-              ))*/}
+              ))}
             </ul>
-          } 
+          )}
         </div>
         <div style={styles.instructorB}>
           <div style={styles.instructor2}>Instructor B</div>
-          {
+          {instructorData && (
             <ul>
-              {/*instructorBDataEntries.map(([key, value]) => (
+              {Object.entries(instructorData[1] || {}).map(([key, value]) => (
                 <li key={key}>{key}: {value}</li>
-              ))*/}
+              ))}
             </ul>
-          } 
+          )}
         </div>
       </div>
+
+      {/* Communication Section */}
       <div style={styles.communication}>
         <div style={styles.communicationText}>Communication</div>
         <div style={styles.adminA}>Admin A</div>
@@ -805,27 +802,32 @@ const AdminDashboard = () => {
           <div style={styles.communicationViewText}>View</div>
         </div>
       </div>
+
+      {/* Course Materials Section */}
       <div style={styles.courseMaterials}>
         <div style={styles.courseMaterialsText}>Course Materials</div>
         <div style={styles.courseMaterialsWhite}>
           <div style={styles.lessonRecordings}>
             <div style={styles.lessonRecordingsText}>Lesson Recordings</div>
-            {
-            <ul>
-              {/*courseMaterialDataEntries.map(courseMaterial => {
-                cMdataEntries = Object.entries(courseMaterial);
-                cMdataEntries.map(([key, value]) => (<>
-                  <li key={key}>{key}: {value}</li>
-                </>));
-              })*/}
-            </ul>
-            } 
+            {courseMaterialData && (
+              <ul>
+                {courseMaterialData.map((courseMaterial, index) => (
+                  <li key={index}>
+                    {Object.entries(courseMaterial).map(([key, value]) => (
+                      <span key={key}>{key}: {value} </span>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div style={styles.publishedAssignments}>
             <div style={styles.publishedAssignmentsText}>Published Assignments</div>
           </div>
         </div>
       </div>
+
+      {/* Managed Students Section */}
       <div style={styles.managedStudents}>
         <div style={styles.managedStudentsText}>Managed Students</div>
         <div style={styles.studentA}>
@@ -835,6 +837,8 @@ const AdminDashboard = () => {
           <div style={styles.student2}>Student B</div>
         </div>
       </div>
+
+      {/* Chatroom Monitor Section */}
       <div style={styles.chatroomMonitor}>
         <div style={styles.chatroomMonitorText}>Chatroom Monitor</div>
         <div style={styles.chatroomMonitorWhite}>
@@ -843,13 +847,13 @@ const AdminDashboard = () => {
           </div>
           <div style={styles.chatroomStudentA}>
             <div style={styles.student1Chat}>Student A</div>
-            <div>
+            {chatroomMonitorData && (
               <ul>
-                {/*chatroomMonitorDataEntries.map(([key, value]) => (
+                {Object.entries(chatroomMonitorData).map(([key, value]) => (
                   <li key={key}>{key}: {value}</li>
-                ))*/}
+                ))}
               </ul>
-            </div>
+            )}
           </div>
           <div style={styles.chatroomViewButton}>
             <div style={styles.chatroomViewButtonText}>View</div>
@@ -860,9 +864,8 @@ const AdminDashboard = () => {
         </div>
       </div>
     </div>
-    </>
   );
-}
+};
 
 ReactDOM.render(<AdminDashboard />, document.getElementById('root'));
 

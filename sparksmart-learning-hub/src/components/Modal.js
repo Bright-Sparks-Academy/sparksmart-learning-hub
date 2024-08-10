@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
-import "./Modal.css"
-import styled, { createGlobalStyle } from "styled-components";
+import React, { useState } from 'react';
+import "./Modal.css";
+import styled from "styled-components";  // Removed `createGlobalStyle`
 
 const ChangeInfoButton = styled.button`
   background-color: lightgray;
@@ -26,30 +26,32 @@ const CloseButton = styled.button`
   cursor: pointer;
 `;
 
-//Function that creates a modal for entering either username/password for now.
-const Modal = ({field, textField}) => {
-    const[clickModal, setClickModal] = useState(false);
-    //Changes the state of clicking on the modal.
+// Function that creates a modal for entering either username/password for now.
+const Modal = ({ field, textField }) => {
+    const [clickModal, setClickModal] = useState(false);
+    
+    // Changes the state of clicking on the modal.
     const toggleModal = () => setClickModal(!clickModal);
+    
     return (
         <>
-            <ChangeInfoButton onClick = {toggleModal} className = "btn-modal">
+            <ChangeInfoButton onClick={toggleModal} className="btn-modal">
                 Change {field}
             </ChangeInfoButton>
             {clickModal && 
-                <div className = "modal">
-                    <div className = "overlay">
-                        <div className = "modal-content">
+                <div className="modal">
+                    <div className="overlay">
+                        <div className="modal-content">
                             <h1>Change {field}</h1>
                             <h4>Please enter your new {field} below</h4>
                             {textField}
-                            <CloseButton className = "close-modal" onClick = {toggleModal}>Exit</CloseButton>
+                            <CloseButton className="close-modal" onClick={toggleModal}>Exit</CloseButton>
                         </div>
                     </div>
                 </div>
             }
         </>
-    )
+    );
 }
 
 export default Modal;

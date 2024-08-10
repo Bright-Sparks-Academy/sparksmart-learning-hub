@@ -66,6 +66,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [showRoleSelection, setShowRoleSelection] = useState(true);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [user, setUser] = useState(null); // State to store the user
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
@@ -77,7 +78,8 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      
+      setUser(user); // Store the user in state
+
       // Store the selected role in localStorage
       localStorage.setItem('userRole', selectedRole);
 
@@ -126,6 +128,7 @@ const Login = () => {
         <Logo src={logo} alt="Lightbulb Logo" />
         <Heading>SparkSmart Learning Hub</Heading>
         <Button onClick={handleGoogleSignIn}>Sign in with Google</Button>
+        {user && <p>Welcome, {user.displayName}!</p>} {/* Display the user's name */}
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </Card>
     </PageContainer>

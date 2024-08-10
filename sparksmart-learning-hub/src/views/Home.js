@@ -100,6 +100,24 @@ const RightCenterTextButton = styled.button`
   }
 `;
 
+const AdminButton = styled.button`
+  color: white;
+  background-color: #333;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 21px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 400;
+  width: 150px;
+  
+  &:hover, &:focus {
+    transform: scale(1.02);
+    font-weight: 600;
+  }
+`;
+
 const Home = () => {
   const headingRef = useRef(null);
   const subheadingRef = useRef(null);
@@ -148,13 +166,17 @@ const Home = () => {
       <ContentContainer>
         <Heading ref={headingRef}>Welcome to SparkSmart Learning Hub</Heading>
         <Subheading ref={subheadingRef}>Choose an option below</Subheading>
-        {/* <ParallaxSection className="light-bulb">
+        
+        <ParallaxSection className="light-bulb">
           <LightBulbAnimation />
-        </ParallaxSection> */}
+        </ParallaxSection>
+        
         <CenterTextButtonDiv>
           <LeftCenterTextButton onClick={handleStudentLogin}>Student</LeftCenterTextButton>
           <RightCenterTextButton onClick={handleTeacherLogin}>Teacher</RightCenterTextButton>
         </CenterTextButtonDiv>
+        
+        <AdminButton onClick={handleAdminLogin}>Admin</AdminButton>
       </ContentContainer>
     </PageContainer>
   );
