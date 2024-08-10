@@ -9,12 +9,12 @@ import AdminDashboard from './views/AdminDashboard.js';
 import TeacherDashboard from './views/TeacherDashboard.js';
 import StudentDashboard from './views/StudentDashboard.js';
 import MessagingPage from './views/MessagingPage.js';
-import HomeworkPage from './views/HomeworkPage.js';
-import RecordingsPage from './views/RecordingsPage.js';
-import DiagnosticTestPage from './views/DiagnosticTestPage.js';
-import AddQuestionPage from './views/AddQuestionPage.js';
-import ProgressTrackingPage from './views/ProgressTrackingPage.js';
-import Mastery from './views/AiLearningPlan.js';
+// import HomeworkPage from './views/HomeworkPage.js';
+// import RecordingsPage from './views/RecordingsPage.js';
+// import DiagnosticTestPage from './views/DiagnosticTestPage.js';
+// import AddQuestionPage from './views/AddQuestionPage.js';
+// import ProgressTrackingPage from './views/ProgressTrackingPage.js';
+// import Mastery from './views/AiLearningPlan.js';
 import SchedulingPage from './views/SchedulingPage.js'; // Import the new SchedulingPage
 import { auth } from './firebaseConfig.js';
 import { getRole } from './roles.js';
@@ -67,12 +67,12 @@ const App = () => {
               <Route path="/teacher/dashboard" element={<PrivateRoute>{role === 'teacher' ? <TeacherDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
               <Route path="/student/dashboard" element={<PrivateRoute>{role === 'student' ? <StudentDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
               <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
-              <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />
+              {/* <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />
               <Route path="/diagnostic-test" element={<PrivateRoute><DiagnosticTestPage /></PrivateRoute>} />
               <Route path="/progress-tracking" element={<PrivateRoute><ProgressTrackingPage /></PrivateRoute>} />
-              <Route path="/mastery" element={<PrivateRoute><Mastery /></PrivateRoute>} />
-              <Route path="/add-question" element={<PrivateRoute>{role === 'admin' ? <AddQuestionPage /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
-              <Route path="/recordings-page" element={<PrivateRoute><RecordingsPage /></PrivateRoute>} />
+              <Route path="/mastery" element={<PrivateRoute><Mastery /></PrivateRoute>} /> */}
+              {/* <Route path="/add-question" element={<PrivateRoute>{role === 'admin' ? <AddQuestionPage /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+              <Route path="/recordings-page" element={<PrivateRoute><RecordingsPage /></PrivateRoute>} /> */}
               <Route path="/scheduling" element={<PrivateRoute><SchedulingPage /></PrivateRoute>} /> {/* Add this line */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>

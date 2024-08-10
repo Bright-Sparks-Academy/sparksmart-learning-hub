@@ -9,12 +9,14 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.js";
+import Modal from '../components/Modal.js';
+import { roles, getRole } from '../roles.js';
 
 const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #FFFFEF;
+  background-color: #ffffef;
   width: 99.4vw;
   height: 110vh;
 `;
@@ -124,7 +126,7 @@ const DoubleButtonContainer = styled.div`
   justify-content: space-around;
   width: 100%;
   height: 4rem;
-`
+`;
 
 const AccountSectionContainer = styled.div`
   display: flex;
@@ -175,7 +177,7 @@ const SliderContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 11rem;
-  height: .9rem;
+  height: 0.9rem;
   margin-top: 0.3rem;
 `;
 
@@ -183,7 +185,7 @@ const SliderRangeContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
-  font-size: .8rem;
+  font-size: 0.8rem;
 `;
 
 const SliderStyles = createGlobalStyle`
@@ -217,8 +219,26 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       setFullName(user.displayName || "");
+      //Figure out a way to set username.
     }
   }, [user]);
+
+  function removeEmail(array, stringToRemove) {
+    return array.filter(item => item !== stringToRemove);
+  }
+
+  //Function that deletes the email in the associated role and logouts permanently.
+  const deleteAccount = () => {
+    const role = getRole(user.email);
+    if (role == "member") roles.members = removeEmail(roles.members, user.email);
+    if (role == "admin") roles.admins = removeEmail(roles.admins, user.email);
+    if (role == "teacher") roles.teachers = removeEmail(roles.teachers, user.email);
+    else {
+      if (roles.students.includes(user.email)) roles.students = removeEmail(roles.students, user.email);
+    }
+    console.log(roles.students.length);
+    handleLogout();
+  }
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
@@ -262,37 +282,40 @@ const Profile = () => {
   };
 
   if (!user) return <div>Loading...</div>;
-
+  const myData = (<> <input type="text" name="name" required/> </>);
   return (
     <ProfileContainer>
       <SliderStyles />
       <ProfileTitle>User Profile</ProfileTitle>
       <ProfilePicture src={userIcon} />
-      <ProfileName>Student Name</ProfileName>
+      <ProfileName>{fullName}</ProfileName>
 
       <ProfileInfoContainer>
         {/* Account Management */}
         <ProfileItem>
           <SectionHeader>Account management</SectionHeader>
           <SectionContent>
-            <AccountSectionContainer style={{ padding:'0.6rem' }}>User ID: </AccountSectionContainer>
+            <AccountSectionContainer style={{ padding: "0.6rem" }}>
+              User ID: {user.uid}
+            </AccountSectionContainer>
 
-            <AccountSectionContainer style={{ padding:'0.6rem' }}>
+            <AccountSectionContainer style={{ padding: "0.6rem" }}>
               <div>Email: </div>
               <ChangeInfoButton>Change Email</ChangeInfoButton>
             </AccountSectionContainer>
 
-            <AccountSectionContainer style={{ padding:'0.6rem' }}>
+            <AccountSectionContainer style={{ padding: "0.6rem" }}>
               <div>Username: </div>
-              <ChangeInfoButton>Change Username</ChangeInfoButton>
+              <Modal field = "Username" textField = {myData}></Modal>
+              
             </AccountSectionContainer>
 
-            <AccountSectionContainer style={{ padding:'0.6rem' }}>
+            <AccountSectionContainer style={{ padding: "0.6rem" }}>
               <div>Password: </div>
-              <ChangeInfoButton>Change Password</ChangeInfoButton>
+              <Modal field = "Password" textField = {myData}></Modal>
             </AccountSectionContainer>
           </SectionContent>
-          <RedButton>Delete Account</RedButton>
+          <RedButton onClick = {deleteAccount}>Delete Account</RedButton>
         </ProfileItem>
 
         {/* Course Options */}
@@ -300,24 +323,60 @@ const Profile = () => {
           <SectionHeader>Course Options</SectionHeader>
           <SectionContent>
             <CourseSelectionContainer>
-              <AccountSectionContainer style={{ marginLeft: '.7rem' }}>Choose Course</AccountSectionContainer>
+              <AccountSectionContainer style={{ marginLeft: ".7rem" }}>
+                Choose Course
+              </AccountSectionContainer>
               <SelectClassDropdown>
                 <option value="">Select Class</option>
               </SelectClassDropdown>
             </CourseSelectionContainer>
-              <ButtonsContainer>
-                <CourseOptionsButton>Request a Change/Addition</CourseOptionsButton>
-                <CourseOptionsButton style={{ backgroundColor: 'red', color: 'white', width: '11rem' }}>Request to Remove</CourseOptionsButton>
-                <AccountSectionContainer style={{ marginLeft: '4rem', width: '100%' }}>Instructor: </AccountSectionContainer>
-                <DoubleButtonContainer>
-                  <CourseOptionsButton style={{ width: '11rem' }}>Change Instructor</CourseOptionsButton>
-                  <CourseOptionsButton style={{ backgroundColor: 'red', color: 'white', width: '11rem' }}>Report a Problem</CourseOptionsButton>
-                </DoubleButtonContainer>
-                <LongCourseOptionsButton style={{ backgroundColor: '#FFFFB0' }}>Contact Administrator</LongCourseOptionsButton>
-                <LongCourseOptionsButton style={{ backgroundColor: 'lightgray' }}>View Current Course Transcript</LongCourseOptionsButton>
-                <LongCourseOptionsButton style={{ backgroundColor: 'lightgray' }}>View Rules and Agreements</LongCourseOptionsButton>
-                <LongCourseOptionsButton style={{ backgroundColor: 'black', color:'white' }}>View Post History</LongCourseOptionsButton>
-              </ButtonsContainer>
+            <ButtonsContainer>
+              <CourseOptionsButton>
+                Request a Change/Addition
+              </CourseOptionsButton>
+              <CourseOptionsButton
+                style={{
+                  backgroundColor: "red",
+                  color: "white",
+                  width: "11rem",
+                }}
+              >
+                Request to Remove
+              </CourseOptionsButton>
+              <AccountSectionContainer
+                style={{ marginLeft: "4rem", width: "100%" }}
+              >
+                Instructor:{" "}
+              </AccountSectionContainer>
+              <DoubleButtonContainer>
+                <CourseOptionsButton style={{ width: "11rem" }}>
+                  Change Instructor
+                </CourseOptionsButton>
+                <CourseOptionsButton
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    width: "11rem",
+                  }}
+                >
+                  Report a Problem
+                </CourseOptionsButton>
+              </DoubleButtonContainer>
+              <LongCourseOptionsButton style={{ backgroundColor: "#FFFFB0" }}>
+                Contact Administrator
+              </LongCourseOptionsButton>
+              <LongCourseOptionsButton style={{ backgroundColor: "lightgray" }}>
+                View Current Course Transcript
+              </LongCourseOptionsButton>
+              <LongCourseOptionsButton style={{ backgroundColor: "lightgray" }}>
+                View Rules and Agreements
+              </LongCourseOptionsButton>
+              <LongCourseOptionsButton
+                style={{ backgroundColor: "black", color: "white" }}
+              >
+                View Post History
+              </LongCourseOptionsButton>
+            </ButtonsContainer>
           </SectionContent>
         </ProfileItem>
 
@@ -332,28 +391,28 @@ const Profile = () => {
 
             <AccountSectionContainer>
               <div>Allow Notifications: </div>
-              <CheckBox type="checkbox"/>
+              <CheckBox type="checkbox" />
             </AccountSectionContainer>
 
             <AccountSectionContainer>
               <div>Dark Mode: </div>
-              <CheckBox type="checkbox"/>
+              <CheckBox type="checkbox" />
             </AccountSectionContainer>
 
             <AccountSectionContainer>
               <div>Allow 2FA: </div>
-              <CheckBox type="checkbox"/>
+              <CheckBox type="checkbox" />
             </AccountSectionContainer>
 
             <AccountSectionContainer>
               <div>Allow Contact Via SMS: </div>
-              <CheckBox type="checkbox"/>
+              <CheckBox type="checkbox" />
             </AccountSectionContainer>
 
             <AccountSectionContainer>
               <div>Brightness: </div>
               <SliderContainer>
-                <input class="slider" type="range" min='0' max='100'/>
+                <input class="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -364,7 +423,7 @@ const Profile = () => {
             <AccountSectionContainer>
               <div>Text Size: </div>
               <SliderContainer>
-                <input class="slider" type="range" min='0' max='100'/>
+                <input class="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -375,7 +434,7 @@ const Profile = () => {
             <AccountSectionContainer>
               <div>Mic Volume: </div>
               <SliderContainer>
-                <input class="slider" type="range" min='0' max='100'/>
+                <input class="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -386,7 +445,7 @@ const Profile = () => {
             <AccountSectionContainer>
               <div>Speaker Volume: </div>
               <SliderContainer>
-                <input class="slider" type="range" min='0' max='100'/>
+                <input class="slider" type="range" min="0" max="100" />
                 <SliderRangeContainer>
                   <span>0</span>
                   <span>100</span>
@@ -394,7 +453,11 @@ const Profile = () => {
               </SliderContainer>
             </AccountSectionContainer>
           </SectionContent>
-          <RedButton style={{ width: '10rem', height: '2.5rem', marginLeft: '8.5rem' }}>Restore Defaults</RedButton>
+          <RedButton
+            style={{ width: "10rem", height: "2.5rem", marginLeft: "8.5rem" }}
+          >
+            Restore Defaults
+          </RedButton>
         </ProfileItem>
 
         {/* User Information */}
