@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import logo from '../assets/lightbulb.png';
 
@@ -36,9 +36,8 @@ const InputFieldDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-//   margin-bottom: 20px;
-    margin-top: 2rem;
-  gap: 30px; /* Adjust the gap as needed */
+  margin-top: 2rem;
+  gap: 30px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -47,26 +46,26 @@ const InputFieldDiv = styled.div`
 `;
 
 const Username = styled.input`
-    font-family: 'Quicksand', sans-serif;
-    border-radius: 5px;
-    border: none;
-    font-size: 0.85rem;
-    padding: 9px 16px;
+  font-family: 'Quicksand', sans-serif;
+  border-radius: 5px;
+  border: none;
+  font-size: 0.85rem;
+  padding: 9px 16px;
 
-    &:hover, &:focus {
-      border: 2px solid black;
+  &:hover, &:focus {
+    border: 2px solid black;
   }
 `;
 
 const Password = styled.input`
-    font-family: 'Quicksand', sans-serif;
-    border-radius: 5px;
-    border: none;
-    font-size: 0.85rem;
-    padding: 9px 16px;
+  font-family: 'Quicksand', sans-serif;
+  border-radius: 5px;
+  border: none;
+  font-size: 0.85rem;
+  padding: 9px 16px;
 
-    &:hover, &:focus {
-      border: 2px solid black;
+  &:hover, &:focus {
+    border: 2px solid black;
   }
 `;
 
@@ -88,46 +87,50 @@ const Button = styled.button`
 `;
 
 const SignUpLink = styled.p`
-    cursor: pointer;
-    font-size: 0.8rem;
-    color: blue;
-    font-weight: bold;
-`
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: blue;
+  font-weight: bold;
+`;
 
 const ErrorMessage = styled.p`
   color: red;
   margin-top: 1rem;
 `;
 
-// const RoleButton = styled(Button)`
-//   background-color: #FFD900;
-//   margin: 0.5rem;
-// `;
-
 const StudentLogin = () => {
+  const [error, setError] = useState(null);
 
-    const handleSignupRedirect = () => {
-        window.location.href = 'https://tally.so/r/mO4r8A';
-    };
+  const handleLogin = () => {
+    // Simulating login validation
+    const isError = true; // Replace this with actual login validation logic
+
+    if (isError) {
+      setError('Invalid username or password.');
+    } else {
+      setError(null);
+    }
+  };
+
+  const handleSignupRedirect = () => {
+    window.location.href = 'https://tally.so/r/mO4r8A';
+  };
 
   return (
     <PageContainer>
-        <Card>
-            <Logo src={logo} alt="Lightbulb Logo" />
-            <Heading>Student Login</Heading>
-            <InputFieldDiv>
-                <Username
-                    placeholder='Enter your username'
-                />
-                <Password
-                    placeholder="Enter your password"
-                />
-            </InputFieldDiv>
-            <Button>Login</Button>
-            <SignUpLink onClick={handleSignupRedirect}>Sign up</SignUpLink>
-        </Card>
+      <Card>
+        <Logo src={logo} alt="Lightbulb Logo" />
+        <Heading>Student Login</Heading>
+        <InputFieldDiv>
+          <Username placeholder="Enter your username" />
+          <Password placeholder="Enter your password" />
+        </InputFieldDiv>
+        <Button onClick={handleLogin}>Login</Button>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        <SignUpLink onClick={handleSignupRedirect}>Sign up</SignUpLink>
+      </Card>
     </PageContainer>
-  )
-}
+  );
+};
 
-export default StudentLogin
+export default StudentLogin;
