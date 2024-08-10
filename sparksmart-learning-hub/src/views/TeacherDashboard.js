@@ -8,12 +8,8 @@ const styles = {
     marginTop: '70px',
     padding: '1rem',
     fontFamily: "'Gotham', 'Quicksand', sans-serif",
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFFFEF',
     color: '#000000',
-  },
-  heading: {
-    fontSize: '2rem',
-    fontWeight: 'bold',
   },
   header: {
     textAlign: 'center',
@@ -30,6 +26,17 @@ const styles = {
     top: '50px',
     left: '30px'
   },
+  accountInfoText: {
+    position: 'absolute',
+    top: '15px',
+    left: '19px',
+    width: '235px',
+    height: '30px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '16px'
+  },
   accountInfo: {
     position: 'absolute',
     top: '275px',
@@ -45,6 +52,7 @@ const styles = {
     margin: '0',
     padding: '2px 35px',
     paddingLeft: '70px',
+    paddingTop: '50',
     fontSize: '20px'
   },
   editInfoBtn: {
@@ -91,6 +99,17 @@ const styles = {
     borderRadius: '25px',
     paddingTop: '5px',
     boxSizing: 'border-box'
+  },
+  classScheduleText: {
+    position: 'absolute',
+    top: '15px',
+    left: '12px',
+    width: '170px',
+    height: '30px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '16px'
   },
   classScheduleWhite: {
     position: 'absolute',
@@ -151,7 +170,11 @@ const styles = {
     margin: '0',
     padding: '2px 35px',
     paddingLeft: '70px',
-    fontSize: '20px'
+    fontSize: '20px',
+    top: '6px',
+    left: '15px',
+    width: '276px',
+    height: '100px'
   },
   scheduleMeetingBtn: {
     backgroundColor: '#16A10A',
@@ -326,6 +349,17 @@ const styles = {
     borderRadius: '25px',
     paddingTop: '5px',
     boxSizing: 'border-box'
+  },
+  courseOptionsText: {
+    position: 'absolute',
+    top: '18px',
+    left: '23px',
+    width: '175px',
+    height: '30px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '16px'
   },
   courseOptionsClass: {
     position: 'absolute',
@@ -513,6 +547,17 @@ const styles = {
     paddingTop: '5px',
     boxSizing: 'border-box'
   },
+  preferencesText: {
+    position: 'absolute',
+    top: '17px',
+    left: '13px',
+    width: '137px',
+    height: '30px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '16px'
+  },
   languageBtn: {
     backgroundColor: '#D9D9D9',
     borderRadius: '25px',
@@ -559,13 +604,13 @@ const styles = {
 
 const TeacherDashboard = () => (
   <div style={styles.pageContainer}>
-    <h1 style={styles.heading}>Teacher Dashboard</h1>
-    <p>Welcome to the teacher dashboard.</p>
+
     <div style={styles.header}>Teacher Dashboard</div>
     <div style={styles.subheader}>Teacher Name's Profile</div>
 
 
     <div style={styles.accountInfo}>
+      <div style = {styles.accountInfoText}>Account Information</div>
       <div style={styles.accountInfoDetails}>Teacher Name</div>
       <div style={styles.accountInfoDetails}>Class: Java</div>
       <div style={styles.accountInfoDetails}>Last Joined: 5/24/24</div>
@@ -581,6 +626,7 @@ const TeacherDashboard = () => (
   </div>
 
   <div style={styles.classSchedule}>
+    <div style={styles.classScheduleText}>Class Schedule</div>
     <div style={styles.classScheduleWhite}>
 
         <div style={styles.meeting1}>
@@ -661,6 +707,8 @@ const TeacherDashboard = () => (
 
   <div style={styles.courseOptions}>
 
+    <div style={styles.courseOptionsText}>Course Options</div>
+
     <div style={styles.courseOptionsClass}>Class: Java 1</div>
 
     <div style={styles.leaveRequest}>
@@ -704,6 +752,8 @@ const TeacherDashboard = () => (
   </div>
 
   <div style = {styles.preferences}>
+
+    <div style = {styles.preferencesText}>Preferences</div>
 
     <div style={styles.preferencesItem}>Language: English</div>
     <div style={styles.preferencesItem}>Allow Notifications</div>
