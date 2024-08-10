@@ -2,6 +2,7 @@
 
 import ReactDOM from 'react-dom';
 import React from 'react';
+import { lineBreak } from 'html2canvas/dist/types/css/property-descriptors/line-break';
 
 const styles = {
   pageContainer: {
@@ -237,6 +238,17 @@ const styles = {
     borderRadius: '25px',
     paddingTop: '5px',
     boxSizing: 'border-box'
+  },
+  messagesText: {
+    position: 'absolute',
+    top: '11px',
+    left: '12px',
+    width: '112px',
+    height: '30px',
+    borderRadius: '25px',
+    paddingTop: '5px',
+    color: 'black',
+    fontSize: '16px'
   },
   messages1: {
     position: 'absolute',
@@ -674,6 +686,8 @@ const TeacherDashboard = () => (
   </div>
 
   <div style={styles.messages}>
+
+    <div style={styles.messagesText}>Messages</div>
     <div style={styles.messages1}>
       <div style={styles.numMessages}>11</div>
       <div style={styles.newMessages}>New Messages</div>
