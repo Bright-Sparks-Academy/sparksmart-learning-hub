@@ -19,6 +19,7 @@ import StudentLogin from './views/StudentLogin.js';
 import TeacherLogin from './views/TeacherLogin.js';
 import AdminLogin from './views/AdminLogin.js';
 import SchedulingPage from './views/SchedulingPage.js'; // Import the new SchedulingPage
+import ConnectionsPage from './views/Connections.js';
 import { auth } from './firebaseConfig.js';
 import { getRole } from './roles.js';
 import GlobalStyle from './GlobalStyles.js';
@@ -73,6 +74,7 @@ const App = () => {
               <Route path="/teacher/dashboard" element={<PrivateRoute>{role === 'teacher' ? <TeacherDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
               <Route path="/student/dashboard" element={<PrivateRoute>{role === 'student' ? <StudentDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
               <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
+              <Route path="/connections" element={<PrivateRoute><ConnectionsPage /></PrivateRoute>} />
               {/* <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />
               <Route path="/diagnostic-test" element={<PrivateRoute><DiagnosticTestPage /></PrivateRoute>} />
               <Route path="/progress-tracking" element={<PrivateRoute><ProgressTrackingPage /></PrivateRoute>} />
