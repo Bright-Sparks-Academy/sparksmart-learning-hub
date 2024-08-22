@@ -27,6 +27,9 @@ import { onAuthStateChanged } from 'firebase/auth';
 import PrivateRoute from './components/PrivateRoute.js';
 import { UserProvider } from './context/UserContext.js';
 import { RecordingsProvider } from './context/RecordingsContext.js';
+import SessionViewer from './views/SessionViewer.js';
+import EditStudent from './views/EditStudent.js';
+import UserProfile from './views/UserProfile.js';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -73,6 +76,9 @@ const App = () => {
               <Route path="/admin/dashboard" element={<PrivateRoute>{role === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
               <Route path="/teacher/dashboard" element={<PrivateRoute>{role === 'teacher' ? <TeacherDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
               <Route path="/student/dashboard" element={<PrivateRoute>{role === 'student' ? <StudentDashboard /> : <Navigate to="/dashboard" />}</PrivateRoute>} />
+              <Route path="/session-viewer" element={<PrivateRoute>{role === 'teacher' ? <SessionViewer /> : <Navigate to="/session-viewer" />}</PrivateRoute>} />
+              <Route path="/edit-student" element={<PrivateRoute>{role === 'teacher' ? <EditStudent /> : <Navigate to="/edit-student" />}</PrivateRoute>} />
+              <Route path="/user-profile" element={<PrivateRoute>{role === 'teacher' ? <UserProfile /> : <Navigate to="/user-profile" />}</PrivateRoute>} />
               <Route path="/messaging" element={<PrivateRoute><MessagingPage /></PrivateRoute>} />
               <Route path="/connections" element={<PrivateRoute><ConnectionsPage /></PrivateRoute>} />
               {/* <Route path="/homework" element={<PrivateRoute><HomeworkPage /></PrivateRoute>} />

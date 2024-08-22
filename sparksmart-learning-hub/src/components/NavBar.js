@@ -108,7 +108,11 @@ const NavBar = ({ user }) => {
             <NavLink to="/recordings-page" $isActive={location.pathname === '/recordings-page'}>Recordings</NavLink>
             <NavLink to="/mastery" $isActive={location.pathname === '/mastery'}>AI Learning Plans</NavLink>
             <NavLink to="/diagnostic-test" $isActive={location.pathname === '/diagnostic-test'}>Diagnostic Test</NavLink>
+            <NavLink to="/session-viewer" $isActive={location.pathname === '/session-viewer'}>Session Viewer</NavLink>
+            <NavLink to="/edit-student" $isActive={location.pathname === '/edit-student'}>Edit Student</NavLink>
+            <NavLink to="/user-profile" $isActive={location.pathname === '/user-profile'}>User Profile</NavLink>
             <NavLink to="/connections" $isActive={location.pathname === '/connections'}>Connections</NavLink>
+            
           </>
         )}
       </NavLinks>
